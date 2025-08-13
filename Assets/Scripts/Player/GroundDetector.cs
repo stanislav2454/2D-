@@ -58,7 +58,9 @@ public class GroundDetector : MonoBehaviour
 
     private bool IsGround(Collider2D collider) =>
          collider.TryGetComponent<Ground>(out _) != null;
-        // collider.GetComponent<Ground>() != null;
+
+    // не пойму, есть смысл исп.TryGetComponent ?
+    // или лучше: collider.GetComponent<Ground>() != null;
 
     private bool HasValidContact(Collision2D collision)
     {

@@ -15,8 +15,6 @@ public class Jumper : MonoBehaviour
 
     public void Jump()
     {
-       // Сбрасываем вертикальную скорость перед прыжком (если нужно)
-       // _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0); 
         _rigidbody.AddForce(Vector2.up * _jumpPower, ForceMode2D.Impulse);
     }
 }

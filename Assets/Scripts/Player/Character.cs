@@ -4,6 +4,8 @@
 [RequireComponent(typeof(Jumper), typeof(GroundDetector), typeof(Crawler))]
 public class Character : MonoBehaviour
 {
+    private const int MaxJumps = 2;
+
     [SerializeField] private Userinput _input;
     [SerializeField] private CharacterMovement _movement;
     [SerializeField] private Jumper _jumper;
@@ -11,7 +13,6 @@ public class Character : MonoBehaviour
     [SerializeField] private Crawler _crawler;
 
     private int _availableJumps;
-    private const int MaxJumps = 2;
 
     private void Awake()
     {
@@ -28,6 +29,12 @@ public class Character : MonoBehaviour
         HandleCrawling();
     }
 
+    private void FixedUpdate()
+    {
+        HandleMovement();
+        HandleJump();
+    }
+
     private void ResetAvailableJumps()
     {
         if (_groundDetector.IsGrounded && _groundDetector.JustLanded)
@@ -36,16 +43,9 @@ public class Character : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
-    {
-        HandleMovement();
-        HandleJump();
-    }
-
     private void HandleMovement()
     {
         if (_input.HorizontalDirection != 0)
-            //_movement.Move(_input.HorizontalDirection, _crawler.IsCrawling);
             _movement.Move(_input.HorizontalDirection, _input.IsCrawlPressed);
     }
 
