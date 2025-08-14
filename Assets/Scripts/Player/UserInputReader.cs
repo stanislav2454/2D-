@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[DisallowMultipleComponent]
 public class UserInputReader : MonoBehaviour
 {
     public const string Horizontal = nameof(Horizontal);

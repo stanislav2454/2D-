@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(CapsuleCollider2D))]
+[RequireComponent(typeof(CapsuleCollider2D)), DisallowMultipleComponent]
 public class Crawler : MonoBehaviour
 {
     private const float PositionYoffset = 0.3f;

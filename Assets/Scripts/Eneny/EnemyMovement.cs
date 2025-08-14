@@ -3,13 +3,12 @@
 public class EnemyMovement : MonoBehaviour
 {
     [SerializeField] private float _speed = 5f;
-    //[SerializeField] private float _rotationSpeed = 5f;//cs(6,36): warning CS0414: The field 'EnemyMovement._rotationSpeed' is assigned but its value is never used
     [SerializeField] private float _reachThreshold = 0.2f;
-   // [SerializeField] private float _rotationThreshold = 0.01f;//cs(8,36): warning CS0414: The field 'EnemyMovement._rotationThreshold' is assigned but its value is never used
 
     private EnemyPath _path;
     private int _currentWaypointIndex;
     private Transform _currentWaypoint;
+    private bool _isMoving = true;
 
     private void Start()
     {
@@ -18,11 +17,16 @@ public class EnemyMovement : MonoBehaviour
 
     private void Update()
     {
-        if (_path == null)
+        if (_path == null || _isMoving == false)
             return;
 
         transform.position = MoveTowardsWaypoint(transform, _currentWaypoint, _speed);
         _currentWaypoint = CheckWaypointReached(transform, _currentWaypoint, _reachThreshold, _path);
+    }
+
+    public void StopMovement()
+    {
+        _isMoving = false;
     }
 
     public void Initialize(EnemyPath path)
@@ -33,16 +37,14 @@ public class EnemyMovement : MonoBehaviour
         _path = path;
         _currentWaypointIndex = 0;
         _currentWaypoint = _path.GetWaypoint(_currentWaypointIndex);
+        _isMoving = true;
     }
 
     private Vector3 MoveTowardsWaypoint(Transform current, Transform currentWaypoint, float speed)
     {
-        Vector3 position = Vector3.MoveTowards(
+        return Vector3.MoveTowards(
             current.position, currentWaypoint.position, speed * Time.deltaTime);
-
-        return position;
     }
-
 
     private Transform CheckWaypointReached(
         Transform current, Transform currentWaypoint, float reachThreshold, EnemyPath path)

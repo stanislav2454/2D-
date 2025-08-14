@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[DisallowMultipleComponent]
 [RequireComponent(typeof(UserInputReader), typeof(CharacterMovement))]
 [RequireComponent(typeof(Jumper), typeof(GroundDetector), typeof(Crawler))]
 public class Character : MonoBehaviour
@@ -12,7 +13,7 @@ public class Character : MonoBehaviour
     [SerializeField] private GroundDetector _groundDetector;
     [SerializeField] private Crawler _crawler;
 
-    private int _availableJumps;
+    [SerializeField] private int _availableJumps;
 
     private void Awake()
     {
@@ -21,25 +22,33 @@ public class Character : MonoBehaviour
         _jumper = GetComponent<Jumper>();
         _groundDetector = GetComponent<GroundDetector>();
         _crawler = GetComponent<Crawler>();
+
+        _availableJumps = MaxJumps;
     }
 
     private void Update()
     {
-        ResetAvailableJumps();
+        HandleJump();
         HandleCrawling();
     }
 
     private void FixedUpdate()
     {
+        UpdateJumps();
         HandleMovement();
-        HandleJump();
     }
 
-    private void ResetAvailableJumps()
+    private void UpdateJumps()
     {
-        if (_groundDetector.IsGrounded && _groundDetector.JustLanded)
+        if (_groundDetector.IsGrounded)
         {
-            _availableJumps = MaxJumps;
+            if (_groundDetector.JustLanded)
+                _availableJumps = MaxJumps;
+        }
+        else
+        {
+            if (_availableJumps <= 0)
+                return;
         }
     }
 

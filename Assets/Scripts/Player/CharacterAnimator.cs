@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(Animator), typeof(SpriteRenderer))]
+[RequireComponent(typeof(Animator), typeof(SpriteRenderer)), DisallowMultipleComponent]
 public class CharacterAnimator : MonoBehaviour
 {
     private const float MinimalDetectionSpeed = 0.2f;

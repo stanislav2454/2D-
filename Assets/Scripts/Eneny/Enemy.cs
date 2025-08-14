@@ -1,20 +1,29 @@
+﻿using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyMovement))]
 public class Enemy : MonoBehaviour
 {
-    private const float LifeTime = 5f;
+    [SerializeField] private float _lifeTime = 5f;
 
     public EnemyMovement Movement { get; private set; }
+    private Coroutine _deathCoroutine;
 
     private void Awake()
     {
         Movement = GetComponent<EnemyMovement>();
-        Die();
+        _deathCoroutine = StartCoroutine(DieAfterDelay());
     }
 
-    private void Die()
+    private IEnumerator DieAfterDelay()
     {
-        Destroy(gameObject, LifeTime);
+        yield return new WaitForSeconds(_lifeTime);
+        Destroy(gameObject);
+    }
+
+    private void OnDisable()
+    {
+        if (_deathCoroutine != null)
+            StopCoroutine(_deathCoroutine);
     }
 }

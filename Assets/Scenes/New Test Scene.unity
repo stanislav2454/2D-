@@ -412,7 +412,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 440da53e50863af4088ee7a36ccda20c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isGrounded: 0
   _animator: {fileID: 214819811}
   _spriteRenderer: {fileID: 214819812}
 --- !u!4 &223175531 stripped
@@ -977,6 +976,7 @@ MonoBehaviour:
   _jumper: {fileID: 0}
   _groundDetector: {fileID: 0}
   _crawler: {fileID: 0}
+  _availableJumps: 3
 --- !u!114 &989934190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -989,8 +989,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c90f59d6526090848852ba7b232f1024, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _groundContactCount: 0
-  _wasGrounded: 0
+  _maxGroundAngle: 0.6
 --- !u!114 &989934191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1032,7 +1031,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8669e9070c4514e4aa705377933c1ce5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isJump: 0
 --- !u!114 &989934194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1045,7 +1043,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82dd5c818d635ac49bb0627befcd97e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _crawlHeight: 0.3
   _crawlTransformScale: {x: 1, y: 0.5, z: 1}
   _playerView: {fileID: 214819813}
 --- !u!114 &989934195
@@ -2146,7 +2143,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7403949508772033796, guid: 69749be5cd4e78948b41210766186977, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
