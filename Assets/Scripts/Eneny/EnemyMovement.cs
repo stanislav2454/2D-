@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[DisallowMultipleComponent, RequireComponent(typeof(Enemy))]
 public class EnemyMovement : MonoBehaviour
 {
     [SerializeField] private float _speed = 5f;
@@ -12,7 +13,7 @@ public class EnemyMovement : MonoBehaviour
 
     private void Start()
     {
-        transform.rotation = GetComponentInParent<Enemy>().transform.rotation;
+        transform.rotation = GetComponent<Enemy>().transform.rotation;
     }
 
     private void Update()

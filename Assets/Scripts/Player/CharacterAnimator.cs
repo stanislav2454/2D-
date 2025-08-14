@@ -1,16 +1,9 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(Animator), typeof(SpriteRenderer)), DisallowMultipleComponent]
+[DisallowMultipleComponent, RequireComponent(typeof(Animator), typeof(SpriteRenderer))]
 public class CharacterAnimator : MonoBehaviour
 {
     private const float MinimalDetectionSpeed = 0.2f;
-    private const string IsWalking = nameof(IsWalking);
-    private const string IsCrawling = nameof(IsCrawling);
-    private const string IsJumping = nameof(IsJumping);
-    private const string IsFalling = nameof(IsFalling);
-    private const string HorizontalVelocity = nameof(HorizontalVelocity);
-    private const string VerticalVelocity = nameof(VerticalVelocity);
-    private const string IsGrounded = nameof(IsGrounded);
 
     [SerializeField] private Animator _animator;
     [SerializeField] private SpriteRenderer _spriteRenderer;
@@ -23,24 +16,24 @@ public class CharacterAnimator : MonoBehaviour
     public void UpdateMovementAnimation(float horizontalSpeed, bool isCrawling)
     {
         float absSpeedX = Mathf.Abs(horizontalSpeed);
-        _animator.SetFloat(HorizontalVelocity, absSpeedX);
+        _animator.SetFloat(CharacterAnimatorData.Params.HorizontalVelocity, absSpeedX);
 
         bool isMoving = absSpeedX > MinimalDetectionSpeed;
-        _animator.SetBool(IsWalking, isMoving && !isCrawling);
-        _animator.SetBool(IsCrawling, isCrawling);
+        _animator.SetBool(CharacterAnimatorData.Params.IsWalking, isMoving && !isCrawling);
+        _animator.SetBool(CharacterAnimatorData.Params.IsCrawling, isCrawling);
     }
 
     public void UpdateVerticalAnimation(float verticalSpeed)
     {
         float absSpeedY = Mathf.Abs(verticalSpeed);
-        _animator.SetFloat(VerticalVelocity, absSpeedY);
+        _animator.SetFloat(CharacterAnimatorData.Params.VerticalVelocity, absSpeedY);
     }
 
     public void UpdateJumpFallAnimation(bool isGrounded, float verticalVelocity)
     {
-        _animator.SetBool(IsGrounded, isGrounded);
-        _animator.SetBool(IsJumping, isGrounded == false && verticalVelocity > 0);
-        _animator.SetBool(IsFalling, isGrounded == false && verticalVelocity < 0);
+        _animator.SetBool(CharacterAnimatorData.Params.IsGrounded, isGrounded);
+        _animator.SetBool(CharacterAnimatorData.Params.IsJumping, isGrounded == false && verticalVelocity > 0);
+        _animator.SetBool(CharacterAnimatorData.Params.IsFalling, isGrounded == false && verticalVelocity < 0);
     }
 
     public void FlipSprite(float horizontalDirection)
@@ -49,5 +42,19 @@ public class CharacterAnimator : MonoBehaviour
             _spriteRenderer.flipX = false;
         else if (horizontalDirection < 0)
             _spriteRenderer.flipX = true;
+    }
+
+    public static class CharacterAnimatorData
+    {
+        public static class Params
+        {
+            public static readonly int IsWalking = Animator.StringToHash(nameof(IsWalking));
+            public static readonly int IsCrawling = Animator.StringToHash(nameof(IsCrawling));
+            public static readonly int IsJumping = Animator.StringToHash(nameof(IsJumping));
+            public static readonly int IsFalling = Animator.StringToHash(nameof(IsFalling));
+            public static readonly int HorizontalVelocity = Animator.StringToHash(nameof(HorizontalVelocity));
+            public static readonly int VerticalVelocity = Animator.StringToHash(nameof(VerticalVelocity));
+            public static readonly int IsGrounded = Animator.StringToHash(nameof(IsGrounded));
+        }
     }
 }

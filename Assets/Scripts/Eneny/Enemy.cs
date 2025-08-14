@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(EnemyMovement))]
+[DisallowMultipleComponent, RequireComponent(typeof(EnemyMovement))]
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _lifeTime = 5f;
