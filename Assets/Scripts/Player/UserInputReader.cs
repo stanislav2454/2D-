@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 
-public class Userinput : MonoBehaviour
+public class UserInputReader : MonoBehaviour
 {
     public const string Horizontal = nameof(Horizontal);
+    private const KeyCode JumpKey = KeyCode.Space;
+    private const KeyCode CrawlKey = KeyCode.LeftControl;
 
     public float HorizontalDirection { get; private set; }
     public bool IsCrawlPressed { get; private set; }
 
-    [SerializeField] private bool _isJump;
+    private bool _isJump;
 
     private void Update()
     {
@@ -24,7 +26,7 @@ public class Userinput : MonoBehaviour
 
     private void UpdateJump()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(JumpKey))
             _isJump = true;
     }
 
@@ -37,5 +39,5 @@ public class Userinput : MonoBehaviour
     }
 
     private void UpdateCrawl() =>
-        IsCrawlPressed = Input.GetKey(KeyCode.LeftControl);
+        IsCrawlPressed = Input.GetKey(CrawlKey);
 }

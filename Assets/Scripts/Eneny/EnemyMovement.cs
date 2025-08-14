@@ -3,9 +3,9 @@
 public class EnemyMovement : MonoBehaviour
 {
     [SerializeField] private float _speed = 5f;
-    [SerializeField] private float _rotationSpeed = 5f;
+    //[SerializeField] private float _rotationSpeed = 5f;//cs(6,36): warning CS0414: The field 'EnemyMovement._rotationSpeed' is assigned but its value is never used
     [SerializeField] private float _reachThreshold = 0.2f;
-    [SerializeField] private float _rotationThreshold = 0.01f;
+   // [SerializeField] private float _rotationThreshold = 0.01f;//cs(8,36): warning CS0414: The field 'EnemyMovement._rotationThreshold' is assigned but its value is never used
 
     private EnemyPath _path;
     private int _currentWaypointIndex;

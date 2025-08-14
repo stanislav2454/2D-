@@ -3,70 +3,51 @@
 [RequireComponent(typeof(Animator), typeof(SpriteRenderer))]
 public class CharacterAnimator : MonoBehaviour
 {
-    private const float MinimalDetectionSpeed = 0.1f;
-
-    [SerializeField] private bool _isGrounded;
-    [SerializeField] private float _flipThreshold = 0.1f;
+    private const float MinimalDetectionSpeed = 0.2f;
+    private const string IsWalking = nameof(IsWalking);
+    private const string IsCrawling = nameof(IsCrawling);
+    private const string IsJumping = nameof(IsJumping);
+    private const string IsFalling = nameof(IsFalling);
+    private const string HorizontalVelocity = nameof(HorizontalVelocity);
+    private const string VerticalVelocity = nameof(VerticalVelocity);
+    private const string IsGrounded = nameof(IsGrounded);
 
     [SerializeField] private Animator _animator;
     [SerializeField] private SpriteRenderer _spriteRenderer;
-    [SerializeField] private Rigidbody2D _rigidbody;
-    [SerializeField] private GroundDetector _groundDetector;
-    [SerializeField] private Crawler _crawler;
-
-    private string _walkParam = "IsWalking";
-    private string _crawlParam = "IsCrawling";
-    private string _jumpParam = "IsJumping";
-    private string _fallParam = "IsFalling";
-    private string _speedX = "HorizontalVelocity";
-    private string _speedY = "VerticalVelocity";
-    private string _isGround = "IsGrounded";
-    public bool _isFacingRight = true;
 
     private void Awake()
     {
         _animator = GetComponentInChildren<Animator>();
     }
 
-    private void Update()
+    public void UpdateMovementAnimation(float horizontalSpeed, bool isCrawling)
     {
-        UpdateMovementAnimations();
-        UpdateJumpFallAnimations();
-        Flip();
+        float absSpeedX = Mathf.Abs(horizontalSpeed);
+        _animator.SetFloat(HorizontalVelocity, absSpeedX);
+
+        bool isMoving = absSpeedX > MinimalDetectionSpeed;
+        _animator.SetBool(IsWalking, isMoving && !isCrawling);
+        _animator.SetBool(IsCrawling, isCrawling);
     }
 
-    private void UpdateMovementAnimations()
+    public void UpdateVerticalAnimation(float verticalSpeed)
     {
-        float speedX = Mathf.Abs(_rigidbody.velocity.x);
-        _animator.SetFloat(_speedX, speedX);
-
-        float speedY = Mathf.Abs(_rigidbody.velocity.y);
-        _animator.SetFloat(_speedY, speedY);
-
-        bool isMoving = speedX > MinimalDetectionSpeed;
-        _animator.SetBool(_walkParam, isMoving && _crawler.IsCrawling == false);
-
-        _animator.SetBool(_crawlParam, _crawler.IsCrawling);
-
+        float absSpeedY = Mathf.Abs(verticalSpeed);
+        _animator.SetFloat(VerticalVelocity, absSpeedY);
     }
 
-    private void Flip()
+    public void UpdateJumpFallAnimation(bool isGrounded, float verticalVelocity)
     {
-        if (_rigidbody.velocity.x > 0)
+        _animator.SetBool(IsGrounded, isGrounded);
+        _animator.SetBool(IsJumping, isGrounded == false && verticalVelocity > 0);
+        _animator.SetBool(IsFalling, isGrounded == false && verticalVelocity < 0);
+    }
+
+    public void FlipSprite(float horizontalDirection)
+    {
+        if (horizontalDirection > 0)
             _spriteRenderer.flipX = false;
-        else if (_rigidbody.velocity.x < 0)
+        else if (horizontalDirection < 0)
             _spriteRenderer.flipX = true;
-    }
-
-    private void UpdateJumpFallAnimations()
-    {
-        bool isGrounded = _groundDetector.IsGrounded;
-        _animator.SetBool(_isGround, isGrounded);
-
-        bool isJumping = isGrounded == false && _rigidbody.velocity.y > 0;
-        bool isFalling = isGrounded == false && _rigidbody.velocity.y < 0;
-
-        _animator.SetBool(_jumpParam, isJumping);
-        _animator.SetBool(_fallParam, isFalling);
     }
 }

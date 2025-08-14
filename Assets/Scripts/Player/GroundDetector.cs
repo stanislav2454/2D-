@@ -1,76 +1,52 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
+[RequireComponent(typeof(Collider2D))]
 public class GroundDetector : MonoBehaviour
 {
-    private const int GroundContactDecrement = 1;
-    private const float angleDeviation = 0.3f;
+    [Header("Ground Settings"), Tooltip("Максимально допустимый угол поверхности, которая считается \"землёй\". 1 = 0° (пол), 0 = 90° (стена)")]
+    [SerializeField, Range(0, 1)] private float _maxGroundAngle = 0.7f;
+    // 1.0f (0°) - Только строго горизонтальные поверхности.
+    // 0.7f (~45°)  cos(45°) ≈ 0.707 - Позволяет стоять на склонах до 45 градусов
+    // 0.5f (~60°) cos(60°) = 0.5 - Персонаж сможет стоять на крутых склонах.
+    // 0.0f (90°) cos(90°) = 0 - Любая поверхность. Персонаж будет "стоять" даже на вертикальных стенах
+    private readonly HashSet<Collider2D> _groundContacts = new HashSet<Collider2D>();
 
-    [SerializeField] private int _groundContactCount;
-    [SerializeField] private bool _wasGrounded;
+    private bool _wasGroundedLastFrame;
 
-    public bool IsGrounded => _groundContactCount > 0;
+    public bool IsGrounded => _groundContacts.Count > 0;
     public bool JustLanded { get; private set; }
     public bool JustLeftGround { get; private set; }
 
     private void FixedUpdate()
     {
-        JustLanded = _wasGrounded == false && IsGrounded;
-        JustLeftGround = _wasGrounded && !IsGrounded;
-        _wasGrounded = IsGrounded;
+        JustLanded = _wasGroundedLastFrame == false && IsGrounded;
+        JustLeftGround = _wasGroundedLastFrame && IsGrounded == false;
+        _wasGroundedLastFrame = IsGrounded;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (IsGround(collision.collider) == false)
+        if (collision.collider.TryGetComponent<Ground>(out _) == false)
             return;
 
-        if (HasValidContact(collision))
-            _groundContactCount++;
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (IsGround(collision.collider) == false)
-            return;
-
-        bool hadValidContact = false;
-
-        foreach (var contact in collision.contacts)
+        foreach (ContactPoint2D contact in collision.contacts)
         {
-            if (CheckAngleDeviation(contact))
+            if (IsValidSurfaceAngle(contact.normal))
             {
-                hadValidContact = true;
+                _groundContacts.Add(collision.collider);
                 break;
             }
         }
-
-        if (hadValidContact == false && _groundContactCount > 0)
-            _groundContactCount--;
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (IsGround(collision.collider) == false)
-            return;
-
-        _groundContactCount = Mathf.Max(0, _groundContactCount - GroundContactDecrement);
+        if (_groundContacts.Contains(collision.collider))
+            _groundContacts.Remove(collision.collider);
     }
 
-    private bool IsGround(Collider2D collider) =>
-         collider.TryGetComponent<Ground>(out _) != null;
+    private bool IsValidSurfaceAngle(Vector2 surfaceNormal) =>
+         Vector2.Dot(surfaceNormal, Vector2.up) >= _maxGroundAngle;
 
-    // не пойму, есть смысл исп.TryGetComponent ?
-    // или лучше: collider.GetComponent<Ground>() != null;
-
-    private bool HasValidContact(Collision2D collision)
-    {
-        foreach (var contact in collision.contacts)
-            if (CheckAngleDeviation(contact))
-                return true;
-
-        return false;
-    }
-
-    private bool CheckAngleDeviation(ContactPoint2D contact) =>
-        Vector2.Dot(contact.normal, Vector2.up) > angleDeviation;
 }

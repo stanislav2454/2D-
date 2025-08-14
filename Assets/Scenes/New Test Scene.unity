@@ -413,13 +413,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isGrounded: 0
-  _flipThreshold: 0.1
   _animator: {fileID: 214819811}
   _spriteRenderer: {fileID: 214819812}
-  _rigidbody: {fileID: 989934187}
-  _groundDetector: {fileID: 989934190}
-  _crawler: {fileID: 989934194}
-  _isFacingRight: 1
 --- !u!4 &223175531 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7638018370183137374, guid: 8ef120fc8bb537344b2a423cc6a85153, type: 3}
@@ -686,6 +681,7 @@ GameObject:
   - component: {fileID: 963844440}
   - component: {fileID: 963844442}
   - component: {fileID: 963844443}
+  - component: {fileID: 963844445}
   - component: {fileID: 963844444}
   m_Layer: 0
   m_Name: Chest
@@ -842,10 +838,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 963844439}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56d77a9491f4ccf45a795a5cb82bd631, type: 3}
+  m_Script: {fileID: 11500000, guid: b86fe995694f37a47af639c3eddad543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _friction: 1
+  _rigidbody: {fileID: 0}
+  _collider: {fileID: 0}
+--- !u!114 &963844445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963844439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65f2f37d75fb0064dbeb8c6da105d511, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &989934185
 GameObject:
   m_ObjectHideFlags: 0
@@ -994,7 +1004,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _jumpPower: 6
-  _doubleJumpMultiplier: 0.8
+  _playerView: {fileID: 214819813}
 --- !u!114 &989934192
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1009,6 +1019,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _acceleration: 15
   _settings: {fileID: 11400000, guid: 9988c3e391ec8ca4291f575d68c1c572, type: 2}
+  _playerView: {fileID: 214819813}
 --- !u!114 &989934193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1036,7 +1047,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _crawlHeight: 0.3
   _crawlTransformScale: {x: 1, y: 0.5, z: 1}
-  _spriteTransform: {fileID: 214819813}
+  _playerView: {fileID: 214819813}
 --- !u!114 &989934195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1655,10 +1666,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1135220498}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56d77a9491f4ccf45a795a5cb82bd631, type: 3}
+  m_Script: {fileID: 11500000, guid: 65f2f37d75fb0064dbeb8c6da105d511, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _friction: 1
 --- !u!1 &1140861864
 GameObject:
   m_ObjectHideFlags: 0

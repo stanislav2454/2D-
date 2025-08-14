@@ -5,13 +5,18 @@ public class CharacterMovement : MonoBehaviour
 {
     [SerializeField] private float _acceleration = 15f;
     [SerializeField] private MovementSettings _settings;
+    [SerializeField] private Transform _playerView;
 
+    private CharacterAnimator _animator;
     private Rigidbody2D _rigidbody;
     private bool _isCrawling;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
+
+        if (_playerView != null)
+            _animator = _playerView.GetComponent<CharacterAnimator>();
     }
 
     public void Move(float horizontalDirection, bool isCrawling)
@@ -20,6 +25,9 @@ public class CharacterMovement : MonoBehaviour
 
         float targetSpeed = horizontalDirection * GetCurrentSpeed();
         ApplyMovement(targetSpeed);
+
+        _animator?.UpdateMovementAnimation(horizontalDirection, isCrawling);
+        _animator?.FlipSprite(horizontalDirection);
     }
 
     private void ApplyMovement(float targetSpeed)
