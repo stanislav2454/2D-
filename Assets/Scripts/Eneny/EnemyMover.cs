@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [DisallowMultipleComponent, RequireComponent(typeof(Enemy))]
-public class EnemyMovement : MonoBehaviour
+public class EnemyMover : MonoBehaviour
 {
     [SerializeField] private float _speed = 5f;
     [SerializeField] private float _reachThreshold = 0.2f;
@@ -10,11 +10,6 @@ public class EnemyMovement : MonoBehaviour
     private int _currentWaypointIndex;
     private Transform _currentWaypoint;
     private bool _isMoving = true;
-
-    private void Start()
-    {
-        transform.rotation = GetComponent<Enemy>().transform.rotation;
-    }
 
     private void Update()
     {

@@ -1,17 +1,17 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-[DisallowMultipleComponent, RequireComponent(typeof(EnemyMovement))]
+[DisallowMultipleComponent, RequireComponent(typeof(EnemyMover))]
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _lifeTime = 5f;
 
-    public EnemyMovement Movement { get; private set; }
+    public EnemyMover Movement { get; private set; }
     private Coroutine _deathCoroutine;
 
     private void Awake()
     {
-        Movement = GetComponent<EnemyMovement>();
+        Movement = GetComponent<EnemyMover>();
         _deathCoroutine = StartCoroutine(DieAfterDelay());
     }
 

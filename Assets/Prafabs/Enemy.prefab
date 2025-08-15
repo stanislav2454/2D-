@@ -73,7 +73,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1334565601
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -117,7 +117,6 @@ GameObject:
   - component: {fileID: 4061019536421871691}
   - component: {fileID: 3522616661689572740}
   - component: {fileID: 1715152372696679967}
-  - component: {fileID: 7403949508772033796}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -153,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f16dd3fb0bc1a44b90bf14108fc6134, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lifeTime: 5
+  _lifeTime: 12
 --- !u!114 &1715152372696679967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,19 +165,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9f898b51a5c9b340b5b667e03e5da8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 5
+  _speed: 3
   _reachThreshold: 0.2
---- !u!114 &7403949508772033796
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8646047195352732346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cfb1815509a20f4c87a847b0f0ae4d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _rotationSpeed: 5
-  _minRotationAngle: 0.1

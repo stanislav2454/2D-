@@ -4,15 +4,26 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private float _spawnInterval = 2f;
-    [SerializeField] private EnemySpawnPoint[] _spawnPoints;
+    [SerializeField] private EnemySpawnData[] _spawnData;
     [SerializeField] private Enemy _enemyPrefab;
+    [SerializeField] public Transform parent;
+    [SerializeField] private int _maxEnemies = 10;
 
+    private int _spawnedCount = 0;
     private WaitForSeconds _spawnWait;
     private Coroutine _spawningCoroutine;
 
     private void Awake()
     {
         _spawnWait = new WaitForSeconds(_spawnInterval);
+    }
+
+    private void OnValidate()
+    {
+        if (_enemyPrefab == null)
+            Debug.LogWarning("Enemy prefab is not set!", this);
+        if (_spawnData.Length == 0)
+            Debug.LogWarning("Spawn data array is empty!", this);
     }
 
     private void OnEnable() =>
@@ -22,37 +33,48 @@ public class EnemySpawner : MonoBehaviour
     {
         if (_spawningCoroutine != null)
             StopCoroutine(_spawningCoroutine);
+        _spawningCoroutine = null;
+    }
+
+    private void OnDestroy()
+    {
+        if (_spawningCoroutine != null)
+            StopCoroutine(_spawningCoroutine);
     }
 
     private IEnumerator SpawnRoutine()
     {
-        while (enabled)
+        while (enabled && _spawnedCount < _maxEnemies)
         {
             yield return _spawnWait;
-            TrySpawnEnemy();
+            SpawnEnemy();
+            _spawnedCount++;
         }
     }
 
-    private void TrySpawnEnemy()
+    private void SpawnEnemy()
     {
-        if (_spawnPoints.Length == 0)
+        if (_spawnData.Length == 0)
             return;
 
-        EnemySpawnPoint spawnPoint = GetRandomSpawnPoint();
-        SpawnEnemyAtPoint(spawnPoint);
+        EnemySpawnData spawnData = GetRandomSpawnData();
+        SpawnEnemyAtPoint(spawnData);
     }
 
-    private EnemySpawnPoint GetRandomSpawnPoint()
+    private EnemySpawnData GetRandomSpawnData()
     {
-        int randomIndex = Random.Range(0, _spawnPoints.Length);
-        return _spawnPoints[randomIndex];
+        int randomIndex = Random.Range(0, _spawnData.Length);
+        return _spawnData[randomIndex];
     }
 
-    private void SpawnEnemyAtPoint(EnemySpawnPoint spawnPoint)
+    private void SpawnEnemyAtPoint(EnemySpawnData spawnData)
     {
-        Enemy newEnemy = Instantiate(_enemyPrefab, spawnPoint.Position, spawnPoint.Rotation);
+        if (spawnData.SpawnPoint == null || _enemyPrefab == null)
+            return;
 
-        if (spawnPoint.Path != null && newEnemy.Movement != null)
-            newEnemy.Movement.Initialize(spawnPoint.Path);
+        Enemy newEnemy = Instantiate(_enemyPrefab, spawnData.SpawnPoint.Position, spawnData.SpawnPoint.Rotation, parent);
+
+        if (spawnData.RandomPath != null && newEnemy.Movement != null)
+            newEnemy.Movement.Initialize(spawnData.RandomPath);
     }
 }
