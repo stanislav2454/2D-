@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D)), DisallowMultipleComponent]
+[RequireComponent(typeof(Rigidbody2D), typeof(Flipper)), DisallowMultipleComponent]
 public class CharacterMovement : MonoBehaviour
 {
     [SerializeField] private float _acceleration = 15f;
     [SerializeField] private MovementSettings _settings;
     [SerializeField] private Transform _playerView;
+    [SerializeField] private Flipper _flipper;
 
     private CharacterAnimator _animator;
     private Rigidbody2D _rigidbody;
@@ -14,6 +15,7 @@ public class CharacterMovement : MonoBehaviour
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
+        _flipper = GetComponent<Flipper>();
 
         if (_playerView != null)
             _animator = _playerView.GetComponent<CharacterAnimator>();
@@ -27,7 +29,7 @@ public class CharacterMovement : MonoBehaviour
         ApplyMovement(targetSpeed);
 
         _animator?.UpdateMovementAnimation(horizontalDirection, isCrawling);
-        _animator?.FlipSprite(horizontalDirection);
+        _flipper.Flip(horizontalDirection);
     }
 
     private void ApplyMovement(float targetSpeed)

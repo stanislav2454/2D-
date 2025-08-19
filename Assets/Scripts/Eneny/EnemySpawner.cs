@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -8,6 +9,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private Enemy _enemyPrefab;
     [SerializeField] public Transform parent;
     [SerializeField] private int _maxEnemies = 10;
+    [SerializeField] private TextMeshProUGUI _spawnedCountText;
 
     private int _spawnedCount = 0;
     private WaitForSeconds _spawnWait;
@@ -42,6 +44,12 @@ public class EnemySpawner : MonoBehaviour
             StopCoroutine(_spawningCoroutine);
     }
 
+    private void HandleEnemyDeath()
+    {
+        _spawnedCount--;
+        _spawnedCountText.text = $"Enemies: {_spawnedCount}";
+    }
+
     private IEnumerator SpawnRoutine()
     {
         while (enabled && _spawnedCount < _maxEnemies)
@@ -49,6 +57,7 @@ public class EnemySpawner : MonoBehaviour
             yield return _spawnWait;
             SpawnEnemy();
             _spawnedCount++;
+            _spawnedCountText.text = $"Enemies: {_spawnedCount}";
         }
     }
 
@@ -73,6 +82,8 @@ public class EnemySpawner : MonoBehaviour
             return;
 
         Enemy newEnemy = Instantiate(_enemyPrefab, spawnData.SpawnPoint.Position, spawnData.SpawnPoint.Rotation, parent);
+
+        newEnemy.Dead += HandleEnemyDeath;
 
         if (spawnData.RandomPath != null && newEnemy.Movement != null)
             newEnemy.Movement.Initialize(spawnData.RandomPath);

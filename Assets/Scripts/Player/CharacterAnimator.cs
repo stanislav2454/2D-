@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 
-[DisallowMultipleComponent, RequireComponent(typeof(Animator), typeof(SpriteRenderer))]
+[DisallowMultipleComponent, RequireComponent(typeof(Animator))]
 public class CharacterAnimator : MonoBehaviour
 {
     private const float MinimalDetectionSpeed = 0.2f;
 
     [SerializeField] private Animator _animator;
-    [SerializeField] private SpriteRenderer _spriteRenderer;
 
     private void Awake()
     {
@@ -34,14 +33,6 @@ public class CharacterAnimator : MonoBehaviour
         _animator.SetBool(CharacterAnimatorData.Params.IsGrounded, isGrounded);
         _animator.SetBool(CharacterAnimatorData.Params.IsJumping, isGrounded == false && verticalVelocity > 0);
         _animator.SetBool(CharacterAnimatorData.Params.IsFalling, isGrounded == false && verticalVelocity < 0);
-    }
-
-    public void FlipSprite(float horizontalDirection)
-    {
-        if (horizontalDirection > 0)
-            _spriteRenderer.flipX = false;
-        else if (horizontalDirection < 0)
-            _spriteRenderer.flipX = true;
     }
 
     public static class CharacterAnimatorData
