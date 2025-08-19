@@ -1,0 +1,61 @@
+using UnityEngine;
+using UnityEngine.Pool;
+
+public class EnemyPool : MonoBehaviour
+{
+    [SerializeField] private int _defaultCapacity = 10;
+    [SerializeField] private int _maxSize = 20;
+    [SerializeField] private bool _collectionCheck = true;
+    [SerializeField] private Enemy _enemyPrefab;
+
+    private IObjectPool<Enemy> _pool;
+
+    public IObjectPool<Enemy> Pool => _pool;
+
+    private void Awake()
+    {
+        _pool = new ObjectPool<Enemy>(
+            CreatePooledObject,
+            OnGetFromPool,
+            OnReturnedToPool,
+            OnDestroyPooledObject,
+            _collectionCheck,
+            _defaultCapacity,
+            _maxSize
+        );
+    }
+
+    private Enemy CreatePooledObject()
+    {
+        Enemy enemy = Instantiate(_enemyPrefab, transform);
+        enemy.gameObject.SetActive(false);
+        enemy.SetPool(this);
+        return enemy;
+    }
+
+    private void OnGetFromPool(Enemy enemy)
+    {
+        enemy.gameObject.SetActive(true);
+        enemy.ResetEnemy();
+    }
+
+    private void OnReturnedToPool(Enemy enemy)
+    {
+        enemy.gameObject.SetActive(false);
+    }
+
+    private void OnDestroyPooledObject(Enemy enemy)
+    {
+        Destroy(enemy.gameObject);
+    }
+
+    public Enemy GetEnemy()
+    {
+        return _pool.Get();
+    }
+
+    public void ReleaseEnemy(Enemy enemy)
+    {
+        _pool.Release(enemy);
+    }
+}

@@ -3,19 +3,19 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class Flipper : MonoBehaviour
 {
-    [SerializeField] private Transform _playerView;
+    [SerializeField] private Transform _view;
     private SpriteRenderer _spriteRenderer;
 
     private void Awake()
     {
-        if (_playerView != null)
-            _spriteRenderer = _playerView.GetComponent<SpriteRenderer>();
+        if (_view != null)
+            _spriteRenderer = _view.GetComponent<SpriteRenderer>();
     }
 
     private void OnValidate()
     {
-        if (_playerView == null)
-            Debug.LogWarning("playerView Transform is not set!", this);
+        if (_view == null)
+            Debug.LogWarning("View Transform is not set!", this);
         if (_spriteRenderer == null)
             Debug.LogWarning("SpriteRenderer is not set!", this);
     }

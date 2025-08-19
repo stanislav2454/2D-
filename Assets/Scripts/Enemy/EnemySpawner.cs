@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private float _spawnInterval = 2f;
     [SerializeField] private EnemySpawnData[] _spawnData;
-    [SerializeField] private Enemy _enemyPrefab;
+    // [SerializeField] private Enemy _enemyPrefab;
+    [SerializeField] private EnemyPool _enemyPool;
+
     [SerializeField] public Transform parent;
     [SerializeField] private int _maxEnemies = 10;
     [SerializeField] private TextMeshProUGUI _spawnedCountText;
@@ -18,12 +21,16 @@ public class EnemySpawner : MonoBehaviour
     private void Awake()
     {
         _spawnWait = new WaitForSeconds(_spawnInterval);
+
+        if (_enemyPool == null)
+            _enemyPool = GetComponent<EnemyPool>();
     }
 
     private void OnValidate()
     {
-        if (_enemyPrefab == null)
-            Debug.LogWarning("Enemy prefab is not set!", this);
+        if (_enemyPool == null)
+            Debug.LogWarning("Enemy pool is not set!", this);
+
         if (_spawnData.Length == 0)
             Debug.LogWarning("Spawn data array is empty!", this);
     }
@@ -35,6 +42,7 @@ public class EnemySpawner : MonoBehaviour
     {
         if (_spawningCoroutine != null)
             StopCoroutine(_spawningCoroutine);
+
         _spawningCoroutine = null;
     }
 
@@ -44,8 +52,10 @@ public class EnemySpawner : MonoBehaviour
             StopCoroutine(_spawningCoroutine);
     }
 
-    private void HandleEnemyDeath()
+    private void HandleEnemyDeath(Enemy enemy)
+    //private void HandleEnemyDeath()
     {
+        enemy.Dead -= HandleEnemyDeath;
         _spawnedCount--;
         _spawnedCountText.text = $"Enemies: {_spawnedCount}";
     }
@@ -78,10 +88,16 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemyAtPoint(EnemySpawnData spawnData)
     {
-        if (spawnData.SpawnPoint == null || _enemyPrefab == null)
+        if (spawnData.SpawnPoint == null)
             return;
 
-        Enemy newEnemy = Instantiate(_enemyPrefab, spawnData.SpawnPoint.Position, spawnData.SpawnPoint.Rotation, parent);
+        // Enemy newEnemy = Instantiate(_enemyPrefab, spawnData.SpawnPoint.Position, spawnData.SpawnPoint.Rotation, parent);
+        Enemy newEnemy = _enemyPool.GetEnemy();
+
+        newEnemy.transform.SetPositionAndRotation(spawnData.SpawnPoint.Position, Quaternion.identity);
+        //newEnemy.transform.SetPositionAndRotation(spawnData.SpawnPoint.Position, spawnData.SpawnPoint.Rotation);
+       
+        newEnemy.transform.SetParent(parent);
 
         newEnemy.Dead += HandleEnemyDeath;
 

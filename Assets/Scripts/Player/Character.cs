@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 
 [DisallowMultipleComponent]
-[RequireComponent(typeof(UserInputReader), typeof(CharacterMovement))]
+[RequireComponent(typeof(UserInputReader), typeof(CharacterMover))]
 [RequireComponent(typeof(Jumper), typeof(GroundDetector), typeof(Crawler))]
 public class Character : MonoBehaviour
 {
     private const int MaxJumps = 2;
 
     [SerializeField] private UserInputReader _input;
-    [SerializeField] private CharacterMovement _movement;
+    [SerializeField] private CharacterMover _movement;
     [SerializeField] private Jumper _jumper;
     [SerializeField] private GroundDetector _groundDetector;
     [SerializeField] private Crawler _crawler;
@@ -18,7 +18,7 @@ public class Character : MonoBehaviour
     private void Awake()
     {
         _input = GetComponent<UserInputReader>();
-        _movement = GetComponent<CharacterMovement>();
+        _movement = GetComponent<CharacterMover>();
         _jumper = GetComponent<Jumper>();
         _groundDetector = GetComponent<GroundDetector>();
         _crawler = GetComponent<Crawler>();
