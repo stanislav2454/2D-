@@ -7,7 +7,6 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _lifeTime = 5f;
     public Action<Enemy> Dead;
-    //public Action Dead;
     private Coroutine _deathCoroutine;
     private EnemyPool _pool;
 
@@ -16,7 +15,6 @@ public class Enemy : MonoBehaviour
     private void Awake()
     {
         Movement = GetComponent<EnemyMover>();
-        //_deathCoroutine = StartCoroutine(DieAfterDelay());
     }
 
     private void OnDisable()
@@ -36,6 +34,7 @@ public class Enemy : MonoBehaviour
             _deathCoroutine = null;
         }
 
+        transform.rotation = Quaternion.identity;
         _deathCoroutine = StartCoroutine(DieAfterDelay());
     }
 
@@ -51,14 +50,7 @@ public class Enemy : MonoBehaviour
     }
     public void Die()
     {
-        //if (_deathCoroutine != null)
-        //{
-        //    StopCoroutine(_deathCoroutine);
-        //    _deathCoroutine = null;
-        //}
-
         Dead?.Invoke(this);
-        //Destroy(gameObject);
         _pool.ReleaseEnemy(this);
     }
 }

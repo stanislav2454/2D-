@@ -5,7 +5,8 @@ public class EnemyMover : MonoBehaviour
 {
     [SerializeField] private float _speed = 5f;
     [SerializeField] private float _reachThreshold = 0.2f;
-    [SerializeField] private float _rotationSpeed = 5f; // Скорость поворота
+    [SerializeField] private float _rotationSpeed = 5f; 
+    [SerializeField] private Flipper _flipper; 
 
     private EnemyPath _path;
     private int _currentWaypointIndex;
@@ -16,39 +17,19 @@ public class EnemyMover : MonoBehaviour
     {
         if (_path == null || _isMoving == false)
             return;
-        //// Сохраняем предыдущую позицию для расчета направления
-        //Vector3 previousPosition = transform.position;
 
         transform.position = MoveTowardsWaypoint(transform, _currentWaypoint, _speed);
 
-        // 2 Вариант   Мгновенный поворот к waypoint
         if (_currentWaypoint != null)
         {
             Vector3 direction = (_currentWaypoint.position - transform.position).normalized;
-            if (direction != Vector3.zero)
-            {
-                transform.rotation = Quaternion.identity;
-                //transform.rotation = Quaternion.LookRotation(direction);
-            }
+
+            if (_flipper != null && direction != Vector3.zero)
+                _flipper.Flip(direction.x);
         }
-        //// 1 Вариант  Поворачиваем в направлении движения
-        //RotateTowardsMovementDirection(previousPosition);
 
         _currentWaypoint = IfWaypointReached(transform, _currentWaypoint, _reachThreshold, _path);
     }
-
-    //private void RotateTowardsMovementDirection(Vector3 previousPosition)
-    //{
-    //    // 1 Вариант Вычисляем направление движения
-    //    Vector3 movementDirection = (transform.position - previousPosition).normalized;
-
-    //    // 1 Вариант  Если есть движение, поворачиваем объект
-    //    if (movementDirection != Vector3.zero)
-    //    {
-    //        Quaternion targetRotation = Quaternion.LookRotation(movementDirection);
-    //        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
-    //    }
-    //}
 
     public void StopMovement()
     {

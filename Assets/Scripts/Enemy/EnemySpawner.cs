@@ -1,13 +1,11 @@
 ﻿using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Pool;
 
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private float _spawnInterval = 2f;
     [SerializeField] private EnemySpawnData[] _spawnData;
-    // [SerializeField] private Enemy _enemyPrefab;
     [SerializeField] private EnemyPool _enemyPool;
 
     [SerializeField] public Transform parent;
@@ -53,7 +51,6 @@ public class EnemySpawner : MonoBehaviour
     }
 
     private void HandleEnemyDeath(Enemy enemy)
-    //private void HandleEnemyDeath()
     {
         enemy.Dead -= HandleEnemyDeath;
         _spawnedCount--;
@@ -91,12 +88,9 @@ public class EnemySpawner : MonoBehaviour
         if (spawnData.SpawnPoint == null)
             return;
 
-        // Enemy newEnemy = Instantiate(_enemyPrefab, spawnData.SpawnPoint.Position, spawnData.SpawnPoint.Rotation, parent);
         Enemy newEnemy = _enemyPool.GetEnemy();
 
         newEnemy.transform.SetPositionAndRotation(spawnData.SpawnPoint.Position, Quaternion.identity);
-        //newEnemy.transform.SetPositionAndRotation(spawnData.SpawnPoint.Position, spawnData.SpawnPoint.Rotation);
-       
         newEnemy.transform.SetParent(parent);
 
         newEnemy.Dead += HandleEnemyDeath;
