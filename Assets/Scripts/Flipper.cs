@@ -16,6 +16,7 @@ public class Flipper : MonoBehaviour
     {
         if (_view == null)
             Debug.LogWarning("View Transform is not set!", this);
+
         if (_spriteRenderer == null)
             Debug.LogWarning("SpriteRenderer is not set!", this);
     }

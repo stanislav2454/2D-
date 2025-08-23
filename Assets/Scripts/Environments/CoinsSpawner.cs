@@ -5,7 +5,7 @@ public class CoinsSpawner : MonoBehaviour
 {
     [SerializeField] private float _spawnInterval = 2f;
     [SerializeField] private Coin _coinPrefab;
-    [SerializeField] public Transform parent; 
+    [SerializeField] private Transform _parent;
     [SerializeField] private Vector2 _spawnAreaMin;
     [SerializeField] private Vector2 _spawnAreaMax;
 
@@ -41,7 +41,7 @@ public class CoinsSpawner : MonoBehaviour
             Random.Range(_spawnAreaMin.x, _spawnAreaMax.x),
             Random.Range(_spawnAreaMin.y, _spawnAreaMax.y));
 
-        Coin newCoin = Instantiate(_coinPrefab, spawnPosition, Quaternion.identity, parent);
+        Coin newCoin = Instantiate(_coinPrefab, spawnPosition, Quaternion.identity, _parent);
     }
 
     private void OnDrawGizmosSelected()

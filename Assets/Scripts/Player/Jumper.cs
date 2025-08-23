@@ -19,6 +19,12 @@ public class Jumper : MonoBehaviour
             _animator = _playerView.GetComponent<CharacterAnimator>();
     }
 
+    private void Update()
+    {
+        _animator?.UpdateJumpFallAnimation(_groundDetector.IsGrounded, _rigidbody.velocity.y);
+        _animator?.UpdateVerticalAnimation(_rigidbody.velocity.y);
+    }
+
     public void Jump()
     {
         if (_groundDetector.IsGrounded)
@@ -26,11 +32,5 @@ public class Jumper : MonoBehaviour
             _rigidbody.AddForce(Vector2.up * _jumpPower, ForceMode2D.Impulse);
             _animator?.UpdateJumpFallAnimation(false, _rigidbody.velocity.y);
         }
-    }
-
-    private void Update()
-    {
-        _animator?.UpdateJumpFallAnimation(_groundDetector.IsGrounded, _rigidbody.velocity.y);
-        _animator?.UpdateVerticalAnimation(_rigidbody.velocity.y);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider2D)), DisallowMultipleComponent]
+[DisallowMultipleComponent, RequireComponent(typeof(Collider2D))]
 public class GroundDetector : MonoBehaviour
 {
     private readonly HashSet<Collider2D> GroundContacts = new HashSet<Collider2D>();

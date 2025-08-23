@@ -1,15 +1,19 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(EnemyPool))]
 public class EnemySpawner : MonoBehaviour
 {
+    private const string UIText = "Enemies:";
+    private readonly HashSet<Enemy> _activeEnemies = new HashSet<Enemy>();
+
     [SerializeField] private float _spawnInterval = 2f;
+    [SerializeField] private int _maxEnemies = 10;
     [SerializeField] private EnemySpawnData[] _spawnData;
     [SerializeField] private EnemyPool _enemyPool;
-
-    [SerializeField] public Transform parent;
-    [SerializeField] private int _maxEnemies = 10;
+    [SerializeField] private Transform parent;
     [SerializeField] private TextMeshProUGUI _spawnedCountText;
 
     private int _spawnedCount = 0;
@@ -20,8 +24,7 @@ public class EnemySpawner : MonoBehaviour
     {
         _spawnWait = new WaitForSeconds(_spawnInterval);
 
-        if (_enemyPool == null)
-            _enemyPool = GetComponent<EnemyPool>();
+        if (TryGetComponent(out _enemyPool)) ;
     }
 
     private void OnValidate()
@@ -31,6 +34,12 @@ public class EnemySpawner : MonoBehaviour
 
         if (_spawnData.Length == 0)
             Debug.LogWarning("Spawn data array is empty!", this);
+
+        if (parent == null)
+            Debug.LogWarning("Transform parent is not set!", this);
+
+        if (_spawnedCountText == null)
+            Debug.LogWarning("TextMeshProUGUI is not set!", this);
     }
 
     private void OnEnable() =>
@@ -42,6 +51,7 @@ public class EnemySpawner : MonoBehaviour
             StopCoroutine(_spawningCoroutine);
 
         _spawningCoroutine = null;
+        UnsubscribeFromAllEnemies();
     }
 
     private void OnDestroy()
@@ -50,23 +60,26 @@ public class EnemySpawner : MonoBehaviour
             StopCoroutine(_spawningCoroutine);
     }
 
-    private void HandleEnemyDeath(Enemy enemy)
-    {
-        enemy.Dead -= HandleEnemyDeath;
-        _spawnedCount--;
-        _spawnedCountText.text = $"Enemies: {_spawnedCount}";
-    }
-
     private IEnumerator SpawnRoutine()
     {
-        while (enabled && _spawnedCount < _maxEnemies)
+        while (enabled)
         {
-            yield return _spawnWait;
-            SpawnEnemy();
-            _spawnedCount++;
-            _spawnedCountText.text = $"Enemies: {_spawnedCount}";
+            if (_spawnedCount < _maxEnemies)
+            {
+                yield return _spawnWait;
+                SpawnEnemy();
+                _spawnedCount++;
+                UpdateCounterText(UIText, _spawnedCount);
+            }
+            else
+            {
+                yield return null;
+            }
         }
     }
+
+    private void UpdateCounterText(string textUI, int spawnedCount) =>
+        _spawnedCountText.text = $"{textUI} {spawnedCount}";
 
     private void SpawnEnemy()
     {
@@ -88,14 +101,39 @@ public class EnemySpawner : MonoBehaviour
         if (spawnData.SpawnPoint == null)
             return;
 
-        Enemy newEnemy = _enemyPool.GetEnemy();
+        GameObject newEnemy = _enemyPool.GetEnemy();
 
         newEnemy.transform.SetPositionAndRotation(spawnData.SpawnPoint.Position, Quaternion.identity);
         newEnemy.transform.SetParent(parent);
 
-        newEnemy.Dead += HandleEnemyDeath;
+        Enemy enemyComponent = newEnemy.GetComponent<Enemy>();
 
-        if (spawnData.RandomPath != null && newEnemy.Movement != null)
-            newEnemy.Movement.Initialize(spawnData.RandomPath);
+        if (enemyComponent != null)
+        {
+            enemyComponent.OnEnemyDeath += HandleEnemyDeath;
+            _activeEnemies.Add(enemyComponent);
+
+            EnemyPath randomPath = spawnData.RandomPath;
+
+            if (spawnData.RandomPath != null && enemyComponent.Movement != null)
+                enemyComponent.Initialize(randomPath);
+        }
+    }
+
+    private void HandleEnemyDeath(Enemy enemy)
+    {
+        enemy.OnEnemyDeath -= HandleEnemyDeath;
+        _activeEnemies.Remove(enemy);
+        _spawnedCount--;
+        UpdateCounterText(UIText, _spawnedCount);
+    }
+
+    private void UnsubscribeFromAllEnemies()
+    {
+        foreach (Enemy enemy in _activeEnemies)
+            if (enemy != null)
+                enemy.OnEnemyDeath -= HandleEnemyDeath;
+
+        _activeEnemies.Clear();
     }
 }

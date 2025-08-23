@@ -3,59 +3,51 @@ using UnityEngine.Pool;
 
 public class EnemyPool : MonoBehaviour
 {
+    [Header("Pool Settings")]
     [SerializeField] private int _defaultCapacity = 10;
     [SerializeField] private int _maxSize = 20;
     [SerializeField] private bool _collectionCheck = true;
     [SerializeField] private Enemy _enemyPrefab;
 
-    private IObjectPool<Enemy> _pool;
+    private IObjectPool<GameObject> _pool;
 
-    public IObjectPool<Enemy> Pool => _pool;
+    public IObjectPool<GameObject> Pool => _pool;
 
     private void Awake()
     {
-        _pool = new ObjectPool<Enemy>(
+        _pool = new ObjectPool<GameObject>(
             CreatePooledObject,
             OnGetFromPool,
             OnReturnedToPool,
             OnDestroyPooledObject,
             _collectionCheck,
             _defaultCapacity,
-            _maxSize
-        );
+            _maxSize);
     }
 
-    private Enemy CreatePooledObject()
+    public GameObject GetEnemy() =>
+         _pool.Get();
+
+    public void ReleaseEnemy(GameObject enemy) =>
+        _pool.Release(enemy);
+
+    private GameObject CreatePooledObject()
     {
         Enemy enemy = Instantiate(_enemyPrefab, transform);
         enemy.gameObject.SetActive(false);
         enemy.SetPool(this);
-        return enemy;
+        return enemy.gameObject;
     }
 
-    private void OnGetFromPool(Enemy enemy)
+    private void OnGetFromPool(GameObject enemy)
     {
-        enemy.gameObject.SetActive(true);
-        enemy.ResetEnemy();
+        enemy.SetActive(true);
+        enemy.GetComponent<Enemy>().ResetEnemy();
     }
 
-    private void OnReturnedToPool(Enemy enemy)
-    {
-        enemy.gameObject.SetActive(false);
-    }
+    private void OnReturnedToPool(GameObject enemy) =>
+        enemy.SetActive(false);
 
-    private void OnDestroyPooledObject(Enemy enemy)
-    {
-        Destroy(enemy.gameObject);
-    }
-
-    public Enemy GetEnemy()
-    {
-        return _pool.Get();
-    }
-
-    public void ReleaseEnemy(Enemy enemy)
-    {
-        _pool.Release(enemy);
-    }
+    private void OnDestroyPooledObject(GameObject enemy) =>
+        Destroy(enemy);
 }

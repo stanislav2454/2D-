@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(Flipper)), DisallowMultipleComponent]
+[DisallowMultipleComponent, RequireComponent(typeof(Rigidbody2D), typeof(Flipper))]
 public class CharacterMover : MonoBehaviour
 {
     [SerializeField] private float _acceleration = 15f;
