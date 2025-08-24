@@ -7,6 +7,7 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     private const string UIText = "Enemies:";
+    private const string TagPlayer = "Player";
     private readonly HashSet<Enemy> _activeEnemies = new HashSet<Enemy>();
 
     [SerializeField] private float _spawnInterval = 2f;
@@ -15,6 +16,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private EnemyPool _enemyPool;
     [SerializeField] private Transform parent;
     [SerializeField] private TextMeshProUGUI _spawnedCountText;
+    [SerializeField] private Transform _player;
 
     private int _spawnedCount = 0;
     private WaitForSeconds _spawnWait;
@@ -25,6 +27,9 @@ public class EnemySpawner : MonoBehaviour
         _spawnWait = new WaitForSeconds(_spawnInterval);
 
         if (TryGetComponent(out _enemyPool)) ;
+
+        if (_player == null)
+            _player = GameObject.FindGameObjectWithTag(TagPlayer)?.transform;
     }
 
     private void OnValidate()
@@ -40,6 +45,9 @@ public class EnemySpawner : MonoBehaviour
 
         if (_spawnedCountText == null)
             Debug.LogWarning("TextMeshProUGUI is not set!", this);
+
+        if (_player == null)
+            Debug.LogWarning("Player Transform is not set!", this);
     }
 
     private void OnEnable() =>
@@ -110,6 +118,7 @@ public class EnemySpawner : MonoBehaviour
 
         if (enemyComponent != null)
         {
+            enemyComponent.SetTarget(_player);
             enemyComponent.OnEnemyDeath += HandleEnemyDeath;
             _activeEnemies.Add(enemyComponent);
 

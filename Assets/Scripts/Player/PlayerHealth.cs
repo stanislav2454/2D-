@@ -8,23 +8,11 @@ public class PlayerHealth : BaseHealth
 
     public void Heal(int amount)
     {
+        if (amount <= 0) 
+            return; 
+
         CurrentHealth += amount;
         LimitHealth();
         InvokeHealthChanged(CurrentHealth);
     }
-
-#if UNITY_EDITOR
-    [ContextMenu("Take Test Damage")]
-    public void TakeTestDamage() =>
-        TakeDamage(_testDamageAmount);
-
-    [ContextMenu("Test Heal")]
-    public void TestHeal() =>
-        Heal(_testHealAmount);
-
-
-    [ContextMenu("Reset Health")]
-    public void EditorResetHealth() =>
-        ResetHealth();
-#endif
 }

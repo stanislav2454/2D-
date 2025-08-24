@@ -17,6 +17,12 @@ public class BaseHealth : MonoBehaviour, IDamageable
         InvokeHealthChanged(CurrentHealth);
     }
 
+    public void ResetHealth()
+    {
+        CurrentHealth = MaxHealth;
+        OnHealthChanged?.Invoke(CurrentHealth);
+    }
+
     public virtual void Die()
     {
         OnDeath?.Invoke();
@@ -40,10 +46,14 @@ public class BaseHealth : MonoBehaviour, IDamageable
         return actualDamage;
     }
 
-    public void ResetHealth()
+    public virtual void Heal(int amount)
     {
-        CurrentHealth = MaxHealth;
-        OnHealthChanged?.Invoke(CurrentHealth);
+        if (amount <= 0)
+            return;
+
+        CurrentHealth += amount;
+        LimitHealth();
+        InvokeHealthChanged(CurrentHealth);
     }
 
     protected void InvokeHealthChanged(int health) =>

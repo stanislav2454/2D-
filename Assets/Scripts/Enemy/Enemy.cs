@@ -45,6 +45,11 @@ public class Enemy : MonoBehaviour
     public void SetPool(EnemyPool pool) =>
         _health.SetPool(pool);
 
+    public void SetTarget(Transform target)
+    {
+        _ai.SetPlayerTransform(target);
+    }
+
     private void HandleDeath() =>
         OnEnemyDeath?.Invoke(this);
 }

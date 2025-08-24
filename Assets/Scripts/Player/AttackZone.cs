@@ -18,9 +18,11 @@ public class AttackZone : MonoBehaviour
             TargetsInZone.Remove(damageable);
     }
 
-
     public void CleanDestroyedTargets() =>
-        TargetsInZone.RemoveWhere(target => target == null || target.Equals(null));
+        TargetsInZone.RemoveWhere(target =>
+            target == null ||
+            target.Equals(null) ||
+            (target is MonoBehaviour behaviour && behaviour == null));
 
     public void ClearTargets() =>
         TargetsInZone.Clear();
@@ -32,7 +34,7 @@ public class AttackZone : MonoBehaviour
         if (collider == null)
             return;
 
-        Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
+        Gizmos.color = new Color(1f, 0f, 0f, 0.1f);
 
         switch (collider)
         {

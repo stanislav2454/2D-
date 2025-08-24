@@ -1,8 +1,8 @@
-using System;
+using UnityEngine;
 
 public static class Utils
 {
-    private static readonly Random s_random = new Random();
+    private static readonly System.Random s_random = new System.Random();
 
     public static int GenerateRandomIndex(int max) =>
          s_random.Next(max);
@@ -12,4 +12,10 @@ public static class Utils
 
     public static string UpdateUIText(string valueName, int currentValue) =>
          $"{valueName}: {currentValue}";
+
+    public static void DrawZone(Color color, Vector2 centre, float range)
+    {
+        Gizmos.color = color;
+        Gizmos.DrawWireSphere(centre, range);
+    }
 }

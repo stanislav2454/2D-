@@ -1,28 +1,25 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(EnemyMover))]
+[RequireComponent(typeof(EnemyMover), typeof(Attacker))]
 public class EnemyAI : MonoBehaviour
-{
+{ 
     private const float WaypointReachThreshhold = 0.5f;
     private const int IndexCorrector = 1;
 
-    [Header("AI Settings")]
     [SerializeField] private float _detectionRange = 4f;
     [SerializeField] private float _attackRange = 0.12f;
     [SerializeField] private float _attackCooldown = 3f;
-    [SerializeField] private int _attackDamage = 2;
 
     [Header("References")]
     [SerializeField] private EnemyPath _patrolPath;
     [SerializeField] private LayerMask _playerLayer;
     [SerializeField] private EnemyMover _mover;
     [SerializeField] private Transform _player;
+    [SerializeField] private Attacker _attacker;
 
     private int _currentWaypointIndex = 0;
     private bool _canAttack = true;
-    private bool _playerFound = false;
-
     private float _sqrDetectionRange;
     private float _sqrAttackRange;
     private float _sqrWaypointReachThreshold;
@@ -33,8 +30,8 @@ public class EnemyAI : MonoBehaviour
     private void Awake()
     {
         _mover = GetComponent<EnemyMover>();
+        _attacker = GetComponent<Attacker>(); 
         CalculateSquaredRanges();
-        FindPlayer();
     }
 
     private void OnEnable()
@@ -44,13 +41,8 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        if (_player == null || _playerFound == false)
-        {
-            FindPlayer();
-
-            if (_player == null || _playerFound == false)
-                return;
-        }
+        if (_player == null)
+            return;
 
         switch (_currentState)
         {
@@ -66,32 +58,10 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void CalculateSquaredRanges()
+    public void SetPlayerTransform(Transform playerTransform)
     {
-        _sqrDetectionRange = _detectionRange * _detectionRange;
-        _sqrAttackRange = _attackRange * _attackRange;
-        _sqrWaypointReachThreshold = WaypointReachThreshhold * WaypointReachThreshhold;
-    }
-
-    private void FindPlayer()
-    {
-        if (_player != null)
-        {
-            _playerFound = true;
-            return;
-        }
-
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-
-        if (playerObject != null)
-        {
-            _player = playerObject.transform;
-            _playerFound = true;
-        }
-        else
-        {
-            enabled = false;
-        }
+        if (playerTransform != null && playerTransform.CompareTag("Player"))
+            _player = playerTransform;
     }
 
     public void ResetAI()
@@ -108,6 +78,13 @@ public class EnemyAI : MonoBehaviour
         _currentWaypointIndex = 0;
     }
 
+    private void CalculateSquaredRanges()
+    {
+        _sqrDetectionRange = _detectionRange * _detectionRange;
+        _sqrAttackRange = _attackRange * _attackRange;
+        _sqrWaypointReachThreshold = WaypointReachThreshhold * WaypointReachThreshhold;
+    }
+
     private void PatrolBehavior()
     {
         if (_patrolPath != null && _patrolPath.Count > 0)
@@ -116,9 +93,7 @@ public class EnemyAI : MonoBehaviour
             _mover.SetChasing(false);
             _mover.MoveToTarget(waypoint.position);
 
-            float sqrDistanceToWaypoint = (transform.position - waypoint.position).sqrMagnitude;
-
-            if (sqrDistanceToWaypoint < _sqrWaypointReachThreshold)
+            if (GetSqrDistanceBetween(transform.position, waypoint.position) < _sqrWaypointReachThreshold)
                 _currentWaypointIndex = (_currentWaypointIndex + IndexCorrector) % _patrolPath.Count;
         }
 
@@ -133,42 +108,27 @@ public class EnemyAI : MonoBehaviour
         _mover.SetChasing(true);
         _mover.MoveToTarget(_player.position);
 
-        float sqrDistanceToPlayer = (_player.position - transform.position).sqrMagnitude;
-
-        if (_player != null && sqrDistanceToPlayer <= _sqrAttackRange)
+        if (_player != null && GetSqrDistanceBetween(_player.position, transform.position) <= _sqrAttackRange)
             _currentState = EnemyState.Attacking;
-        else if (_player == null || sqrDistanceToPlayer > _sqrDetectionRange || CanSeePlayer() == false)
+        else if (_player == null || GetSqrDistanceBetween(_player.position, transform.position) > _sqrDetectionRange || CanSeePlayer() == false)
             _currentState = EnemyState.Patrolling;
     }
 
     private void AttackBehavior()
     {
-        _mover.SetChasing(false); 
+        _mover.SetChasing(false);
         _mover.StopMovement();
 
         if (_canAttack && _player != null)
         {
-            AttackPlayer();
+            _attacker.AttackOnce();
             StartCoroutine(AttackCooldown());
         }
 
-        float sqrDistanceToPlayer = (_player.position - transform.position).sqrMagnitude;
-       
-        if (_player == null || sqrDistanceToPlayer > _sqrAttackRange)
+        if (_player == null || GetSqrDistanceBetween(_player.position, transform.position) > _sqrAttackRange)
         {
             _currentState = EnemyState.Chasing;
         }
-    }
-
-    private void AttackPlayer()
-    {
-        if (_player == null)
-            return;
-
-        PlayerHealth playerHealth = _player.GetComponent<PlayerHealth>();
-
-        if (playerHealth != null)        
-            playerHealth.TakeDamage(_attackDamage);        
     }
 
     private IEnumerator AttackCooldown()
@@ -183,9 +143,8 @@ public class EnemyAI : MonoBehaviour
         if (_player == null)
             return false;
 
-        float sqrDistanceToPlayer = (_player.position - transform.position).sqrMagnitude;
-
-        if (sqrDistanceToPlayer > _sqrDetectionRange) return false;
+        if (GetSqrDistanceBetween(_player.position, transform.position) > _sqrDetectionRange)
+            return false;
 
         RaycastHit2D hit = Physics2D.Raycast(
             transform.position,
@@ -196,15 +155,16 @@ public class EnemyAI : MonoBehaviour
         return hit.collider != null && hit.collider.CompareTag("Player");
     }
 
+    private float GetSqrDistanceBetween(Vector2 position, Vector2 target) =>
+         (position - target).sqrMagnitude;
+
     private void OnDrawGizmosSelected()
     {
         // Зона обнаружения
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, _detectionRange);
+        Utils.DrawZone(Color.yellow, transform.position, _detectionRange);
 
         // Зона атаки
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _attackRange);
+        Utils.DrawZone(Color.red, transform.position, _attackRange);
 
         // Линия взгляда к игроку
         if (_player != null)
