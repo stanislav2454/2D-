@@ -21,7 +21,6 @@ public class Crawler : MonoBehaviour
 
     private void Awake()
     {
-        //if (_playerView.GetComponentInChildren(out _animator) == false) { }
         _animator = GetComponentInChildren<CharacterAnimator>();
         _collider = GetComponent<CapsuleCollider2D>();
 
@@ -33,13 +32,9 @@ public class Crawler : MonoBehaviour
         _isCrawling = crawl;
 
         if (_isCrawling)
-        {
             ApplyCrawlState(speedX);
-        }
         else
-        {
             ResetCrawlState();
-        }
     }
 
     private void ApplyCrawlState(float speedX)

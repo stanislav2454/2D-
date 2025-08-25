@@ -1,13 +1,9 @@
-using TMPro;
 using UnityEngine;
 
 public class Collector : MonoBehaviour
 {
-    private const string UIText = "Coins:";
-
-    [SerializeField] private TextMeshProUGUI _coinsText;
-
-    private int _coinsAmount;
+    [SerializeField] private CoinsCounterUI _coinUI;
+    [SerializeField] private PlayerHealth _playerHealth;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -17,17 +13,15 @@ public class Collector : MonoBehaviour
 
     public void CollectCoin(Coin coin)
     {
-        _coinsAmount++;
+        _coinUI.AddCoin();
         Destroy(coin.gameObject);
-
-        _coinsText.text = $"{UIText} {_coinsAmount}";
     }
 
     public void CollectMedkit(Medkit medkit)
     {
-        if (TryGetComponent<PlayerHealth>(out PlayerHealth playerHealth))
+        if (_playerHealth != null)
         {
-            playerHealth.Heal(medkit.HealAmount);
+            _playerHealth.Heal(medkit.HealAmount);
             Destroy(medkit.gameObject);
         }
     }

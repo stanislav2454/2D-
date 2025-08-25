@@ -8,7 +8,5 @@ public class EnemyHealth : BaseHealth
     public override void Die()
     {
         base.Die();
-
-        _pool?.ReleaseEnemy(gameObject);
     }
 }

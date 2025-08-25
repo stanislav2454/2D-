@@ -3,7 +3,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(EnemyMover), typeof(Attacker))]
 public class EnemyAI : MonoBehaviour
-{ 
+{
     private const float WaypointReachThreshhold = 0.5f;
     private const int IndexCorrector = 1;
 
@@ -30,13 +30,25 @@ public class EnemyAI : MonoBehaviour
     private void Awake()
     {
         _mover = GetComponent<EnemyMover>();
-        _attacker = GetComponent<Attacker>(); 
+        _attacker = GetComponent<Attacker>();
         CalculateSquaredRanges();
     }
 
     private void OnEnable()
     {
         ResetAI();
+    }
+
+    private void OnValidate()
+    {
+        if (_player == null)
+            Debug.LogWarning("Transform player is not set!", this);
+
+        if (_patrolPath == null)
+            Debug.LogWarning("PatrolPath is not set!", this);
+
+        if (_playerLayer == null)
+            Debug.LogWarning("PlayerLayer is not set!", this);
     }
 
     private void Update()
@@ -60,7 +72,7 @@ public class EnemyAI : MonoBehaviour
 
     public void SetPlayerTransform(Transform playerTransform)
     {
-        if (playerTransform != null && playerTransform.CompareTag("Player"))
+        if (playerTransform != null && playerTransform.GetComponent<Character>())
             _player = playerTransform;
     }
 
@@ -152,7 +164,7 @@ public class EnemyAI : MonoBehaviour
             _detectionRange,
             _playerLayer);
 
-        return hit.collider != null && hit.collider.CompareTag("Player");
+        return hit.collider != null && hit.collider.GetComponent<Character>();
     }
 
     private float GetSqrDistanceBetween(Vector2 position, Vector2 target) =>

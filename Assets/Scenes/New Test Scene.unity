@@ -1409,7 +1409,6 @@ MonoBehaviour:
   _groundDetector: {fileID: 0}
   _crawler: {fileID: 0}
   _attacker: {fileID: 0}
-  _availableJumps: 3
 --- !u!114 &989934190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1492,7 +1491,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b22d7cc8c753f546b45c57d43d0c47a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _coinsText: {fileID: 1188636020}
+  _coinUI: {fileID: 1188636022}
+  _playerHealth: {fileID: 989934197}
 --- !u!114 &989934196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1519,8 +1519,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <CurrentHealth>k__BackingField: 0
-  _testDamageAmount: 30
-  _testHealAmount: 10
 --- !u!114 &989934198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2250,8 +2248,9 @@ GameObject:
   - component: {fileID: 1188636019}
   - component: {fileID: 1188636021}
   - component: {fileID: 1188636020}
+  - component: {fileID: 1188636022}
   m_Layer: 5
-  m_Name: Number of coins(TMP)
+  m_Name: Coins(TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2375,6 +2374,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1188636018}
   m_CullTransparentMesh: 1
+--- !u!114 &1188636022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188636018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4d4986435a5cca4495847b29b23c76b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _coinsText: {fileID: 1188636020}
 --- !u!1 &1188666483
 GameObject:
   m_ObjectHideFlags: 0
@@ -2452,7 +2464,7 @@ RectTransform:
   m_GameObject: {fileID: 1363459652}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2046374267}
@@ -2460,8 +2472,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 963.5, y: 547}
-  m_SizeDelta: {x: 1920, y: 1080}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1898.06, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1363459654
 MonoBehaviour:
@@ -2740,8 +2752,9 @@ GameObject:
   - component: {fileID: 1883976218}
   - component: {fileID: 1883976220}
   - component: {fileID: 1883976219}
+  - component: {fileID: 1883976221}
   m_Layer: 5
-  m_Name: Number of enemies(TMP)
+  m_Name: Enemies(TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2863,6 +2876,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1883976217}
   m_CullTransparentMesh: 1
+--- !u!114 &1883976221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1883976217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5c70b66461a3446ba1c8b5a4790a84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enemyCountText: {fileID: 1883976219}
 --- !u!1 &1916520854
 GameObject:
   m_ObjectHideFlags: 0
@@ -3212,7 +3238,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 60}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2054013141
@@ -3355,7 +3381,7 @@ MonoBehaviour:
   - {fileID: 404035170}
   _enemyPool: {fileID: 3463159447918856961}
   parent: {fileID: 455318810}
-  _spawnedCountText: {fileID: 1883976219}
+  _enemyCounterUI: {fileID: 1883976221}
   _player: {fileID: 0}
 --- !u!1 &2172706040129088459
 GameObject:
@@ -3737,8 +3763,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _healAmount: 25
-  _healSound: {fileID: 0}
-  _healEffect: {fileID: 0}
 --- !u!114 &8103967672596941532
 MonoBehaviour:
   m_ObjectHideFlags: 0

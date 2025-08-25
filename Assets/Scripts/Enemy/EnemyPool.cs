@@ -9,13 +9,13 @@ public class EnemyPool : MonoBehaviour
     [SerializeField] private bool _collectionCheck = true;
     [SerializeField] private Enemy _enemyPrefab;
 
-    private IObjectPool<GameObject> _pool;
+    private IObjectPool<Enemy> _pool;
 
-    public IObjectPool<GameObject> Pool => _pool;
+    public IObjectPool<Enemy> Pool => _pool;
 
     private void Awake()
     {
-        _pool = new ObjectPool<GameObject>(
+        _pool = new ObjectPool<Enemy>(
             CreatePooledObject,
             OnGetFromPool,
             OnReturnedToPool,
@@ -25,29 +25,29 @@ public class EnemyPool : MonoBehaviour
             _maxSize);
     }
 
-    public GameObject GetEnemy() =>
+    public Enemy GetEnemy() =>
          _pool.Get();
 
-    public void ReleaseEnemy(GameObject enemy) =>
+    public void ReleaseEnemy(Enemy enemy) =>
         _pool.Release(enemy);
 
-    private GameObject CreatePooledObject()
+    private Enemy CreatePooledObject()
     {
         Enemy enemy = Instantiate(_enemyPrefab, transform);
         enemy.gameObject.SetActive(false);
         enemy.SetPool(this);
-        return enemy.gameObject;
+        return enemy;
     }
 
-    private void OnGetFromPool(GameObject enemy)
+    private void OnGetFromPool(Enemy enemy)
     {
-        enemy.SetActive(true);
-        enemy.GetComponent<Enemy>().ResetEnemy();
+        enemy.gameObject.SetActive(true);
+        enemy.ResetEnemy();
     }
 
-    private void OnReturnedToPool(GameObject enemy) =>
-        enemy.SetActive(false);
+    private void OnReturnedToPool(Enemy enemy) =>
+        enemy.gameObject.SetActive(false);
 
-    private void OnDestroyPooledObject(GameObject enemy) =>
-        Destroy(enemy);
+    private void OnDestroyPooledObject(Enemy enemy) =>
+        Destroy(enemy.gameObject);
 }

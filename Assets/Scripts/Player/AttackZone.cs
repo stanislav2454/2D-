@@ -7,8 +7,7 @@ public class AttackZone : MonoBehaviour
     private HashSet<IDamageable> _targetsInZone = new HashSet<IDamageable>();
 
     public int TargetsInZoneCount => _targetsInZone.Count;
-    //public IReadOnlyCollection<IDamageable> Targets =>
-    //new List<IDamageable>(_targetsInZone).AsReadOnly();
+
     public IReadOnlyCollection<IDamageable> Targets
     {
         get
@@ -30,12 +29,6 @@ public class AttackZone : MonoBehaviour
             _targetsInZone.Remove(damageable);
     }
 
-    //public IReadOnlyCollection<IDamageable> GetTargets()
-    //{
-    //    CleanDestroyedTargets();
-    //    return new List<IDamageable>(_targetsInZone).AsReadOnly(); ;
-    //}
-    //CleanDestroyedTargets - юнити вызывает OnTriggerExit на уничтоженных сущностях. 
     public void CleanDestroyedTargets() =>
         _targetsInZone.RemoveWhere(target =>
             target == null ||
