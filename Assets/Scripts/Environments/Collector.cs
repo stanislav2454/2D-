@@ -28,13 +28,6 @@ public class Collector : MonoBehaviour
         if (TryGetComponent<PlayerHealth>(out PlayerHealth playerHealth))
         {
             playerHealth.Heal(medkit.HealAmount);
-
-            if (medkit.HealSound != null)
-                AudioSource.PlayClipAtPoint(medkit.HealSound, transform.position);
-
-            if (medkit.HealEffect != null)
-                Instantiate(medkit.HealEffect, transform.position, Quaternion.identity);
-
             Destroy(medkit.gameObject);
         }
     }

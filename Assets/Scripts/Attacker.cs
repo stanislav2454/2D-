@@ -38,7 +38,7 @@ public class Attacker : MonoBehaviour
         if (_attackZone != null)
         {
             _attackZone.CleanDestroyedTargets();
-            if (_attackZone.TargetsInZone.Count > 0)
+            if (_attackZone.TargetsInZoneCount > 0)
                 Attack();
         }
 
@@ -47,7 +47,7 @@ public class Attacker : MonoBehaviour
 
     public void StartAttacking()
     {
-        if (_isAttacking) 
+        if (_isAttacking)
             return;
 
         _isAttacking = true;
@@ -78,7 +78,7 @@ public class Attacker : MonoBehaviour
                 _attackZone.CleanDestroyedTargets();
                 yield return new WaitForSeconds(_damageInterval);
 
-                if (_attackZone.TargetsInZone.Count > 0)
+                if (_attackZone.TargetsInZoneCount > 0)
                     Attack();
             }
             else
@@ -90,7 +90,7 @@ public class Attacker : MonoBehaviour
 
     private void Attack()
     {
-        if (_attackZone == null || _attackZone.TargetsInZone.Count == 0)
+        if (_attackZone == null || _attackZone.TargetsInZoneCount == 0)
             return;
 
         int totalDamageDealt = CalculateDamageToTargets(_attackZone, _damage);
@@ -107,7 +107,7 @@ public class Attacker : MonoBehaviour
     private int CalculateDamageToTargets(AttackZone attackZone, int damage)
     {
         int totalDamageDealt = 0;
-        var targets = new List<IDamageable>(attackZone.TargetsInZone);
+        IReadOnlyCollection<IDamageable> targets = attackZone.Targets;
 
         foreach (var target in targets)
         {

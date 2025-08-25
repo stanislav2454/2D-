@@ -1,31 +1,49 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent, RequireComponent(typeof(Collider2D))]
 public class AttackZone : MonoBehaviour
 {
-    public HashSet<IDamageable> TargetsInZone { get; private set; } = new HashSet<IDamageable>();
+    private HashSet<IDamageable> _targetsInZone = new HashSet<IDamageable>();
+
+    public int TargetsInZoneCount => _targetsInZone.Count;
+    //public IReadOnlyCollection<IDamageable> Targets =>
+    //new List<IDamageable>(_targetsInZone).AsReadOnly();
+    public IReadOnlyCollection<IDamageable> Targets
+    {
+        get
+        {
+            CleanDestroyedTargets();
+            return new List<IDamageable>(_targetsInZone).AsReadOnly();
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.TryGetComponent<IDamageable>(out var damageable))
-            TargetsInZone.Add(damageable);
+            _targetsInZone.Add(damageable);
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.TryGetComponent<IDamageable>(out var damageable))
-            TargetsInZone.Remove(damageable);
+            _targetsInZone.Remove(damageable);
     }
 
+    //public IReadOnlyCollection<IDamageable> GetTargets()
+    //{
+    //    CleanDestroyedTargets();
+    //    return new List<IDamageable>(_targetsInZone).AsReadOnly(); ;
+    //}
+    //CleanDestroyedTargets - юнити вызывает OnTriggerExit на уничтоженных сущностях. 
     public void CleanDestroyedTargets() =>
-        TargetsInZone.RemoveWhere(target =>
+        _targetsInZone.RemoveWhere(target =>
             target == null ||
             target.Equals(null) ||
             (target is MonoBehaviour behaviour && behaviour == null));
 
     public void ClearTargets() =>
-        TargetsInZone.Clear();
+        _targetsInZone.Clear();
 
     private void OnDrawGizmosSelected()
     {

@@ -17,9 +17,6 @@ public class Character : MonoBehaviour
     [SerializeField] private Crawler _crawler;
     [SerializeField] private Attacker _attacker;
 
-    [Header("Jump Settings")]
-    [SerializeField] private int _availableJumps;
-
     private void Awake()
     {
         _input = GetComponent<UserInputReader>();
@@ -28,8 +25,6 @@ public class Character : MonoBehaviour
         _groundDetector = GetComponent<GroundDetector>();
         _crawler = GetComponent<Crawler>();
         _attacker = GetComponent<Attacker>();
-
-        _availableJumps = MaxJumps;
     }
 
     private void Update()
@@ -41,7 +36,6 @@ public class Character : MonoBehaviour
 
     private void FixedUpdate()
     {
-        UpdateJumps();
         HandleMovement();
     }
 
@@ -49,12 +43,6 @@ public class Character : MonoBehaviour
     {
         if (_input.HorizontalDirection != 0)
             _movement.Move(_input.HorizontalDirection, _input.IsCrawlPressed);
-    }
-
-    private void UpdateJumps()
-    {
-        if (_groundDetector.IsGrounded && _groundDetector.JustLanded)
-            _availableJumps = MaxJumps;
     }
 
     private void HandleAttack()
@@ -67,11 +55,8 @@ public class Character : MonoBehaviour
 
     private void HandleJump()
     {
-        if (_input.GetIsJump() && _availableJumps > 0)
-        {
+        if (_input.GetIsJump())
             _jumper.Jump();
-            _availableJumps--;
-        }
     }
 
     private void HandleCrawling() =>
