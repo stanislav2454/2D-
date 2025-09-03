@@ -28,7 +28,7 @@ public class EnemyMover : MonoBehaviour
             PatrolUpdate();
     }
 
-    public void SetChasing(bool isChasing)
+    public void SetChasingSpeed(bool isChasing)
     {
         _currentSpeed = isChasing ? _chaseSpeed : _patrolSpeed;
     }

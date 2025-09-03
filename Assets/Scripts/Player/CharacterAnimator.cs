@@ -9,7 +9,7 @@ public class CharacterAnimator : MonoBehaviour
 
     private void Awake()
     {
-        _animator = GetComponent<Animator>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     public void UpdateMovementAnimation(float horizontalSpeed, bool isCrawling)

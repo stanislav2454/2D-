@@ -1,23 +1,34 @@
-using TMPro;
 using UnityEngine;
 
-public class HealthStatusUI : MonoBehaviour
+public class HealthStatusUI : BaseCounterUI
 {
     [SerializeField] private BaseHealth _health;
-    [SerializeField] private TextMeshProUGUI[] _healthTexts;
+
+    protected override string TextPrefix => "Health:";
+
+    private void Awake()
+    {
+        if (_health == null)
+            _health = GetComponentInParent<BaseHealth>();
+
+        if (_health != null)
+        {
+            _currentValue = _health.CurrentHealth;
+        }
+    }
 
     private void OnEnable()
     {
-        _health.OnHealthChanged += UpdateText;
-        UpdateText(_health.CurrentHealth);
+        if (_health != null)
+        {
+            _health.OnHealthChanged += UpdateUI;
+            UpdateUI(_health.CurrentHealth);
+        }
     }
 
-    private void OnDisable() =>
-        _health.OnHealthChanged -= UpdateText;
-
-    private void UpdateText(int health)
+    private void OnDisable()
     {
-        foreach (var textElement in _healthTexts)
-            textElement.text = Utils.UpdateUIText("Health", health);
+        if (_health != null)
+            _health.OnHealthChanged -= UpdateUI;
     }
 }

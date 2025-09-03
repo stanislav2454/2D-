@@ -5,17 +5,19 @@ using UnityEngine;
 [RequireComponent(typeof(EnemyPool))]
 public class EnemySpawner : MonoBehaviour
 {
-    private const string TagPlayer = "Player";
+    private const int NumberEnemyToSpawn = 1;
+
     private readonly HashSet<Enemy> _activeEnemies = new HashSet<Enemy>();
 
     [SerializeField] private float _spawnInterval = 2f;
-    [SerializeField] private int _maxEnemies = 10;
+    [Range(0, 20)]
+    [SerializeField] private int _numberEnemiesToSpawn = 10;
     [SerializeField] private EnemySpawnData[] _spawnData;
     [SerializeField] private EnemyPool _enemyPool;
     [SerializeField] private Transform parent;
     [SerializeField] private EnemyCounterUI _enemyCounterUI;
-    [SerializeField] private Transform _player;
 
+    private int _spawnedCount = 0;
     private WaitForSeconds _spawnWait;
     private Coroutine _spawningCoroutine;
 
@@ -25,8 +27,7 @@ public class EnemySpawner : MonoBehaviour
 
         if (TryGetComponent(out _enemyPool)) ;
 
-        if (_player == null)
-            _player = GameObject.FindGameObjectWithTag(TagPlayer)?.transform;
+        _numberEnemiesToSpawn = Mathf.Min(_numberEnemiesToSpawn, _enemyPool.MaxSize);
     }
 
     private void OnValidate()
@@ -42,20 +43,22 @@ public class EnemySpawner : MonoBehaviour
 
         if (_enemyCounterUI == null)
             Debug.LogWarning("EnemyCounterUI is not set!", this);
-
-        if (_player == null)
-            Debug.LogWarning("Player Transform is not set!", this);
     }
 
-    private void OnEnable() =>
-        _spawningCoroutine = StartCoroutine(SpawnRoutine());
+    private void OnEnable()
+    {
+        if (_enemyPool != null)
+            _spawningCoroutine = StartCoroutine(SpawnRoutine());
+    }
 
     private void OnDisable()
     {
         if (_spawningCoroutine != null)
+        {
             StopCoroutine(_spawningCoroutine);
+            _spawningCoroutine = null;
+        }
 
-        _spawningCoroutine = null;
         UnsubscribeFromAllEnemies();
     }
 
@@ -63,17 +66,20 @@ public class EnemySpawner : MonoBehaviour
     {
         if (_spawningCoroutine != null)
             StopCoroutine(_spawningCoroutine);
+
+        UnsubscribeFromAllEnemies();
     }
 
     private IEnumerator SpawnRoutine()
     {
         while (enabled)
         {
-            if (_activeEnemies.Count < _maxEnemies)
+            if (_spawnedCount < _numberEnemiesToSpawn)
             {
                 yield return _spawnWait;
                 SpawnEnemy();
-                _enemyCounterUI.AddEnemy();
+                _spawnedCount += NumberEnemyToSpawn;
+                _enemyCounterUI.AddEnemy(NumberEnemyToSpawn);
             }
             else
             {
@@ -84,7 +90,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        if (_spawnData.Length == 0)
+        if (_spawnData.Length == 0 || _enemyPool == null)
             return;
 
         EnemySpawnData spawnData = GetRandomSpawnData();
@@ -104,36 +110,41 @@ public class EnemySpawner : MonoBehaviour
 
         Enemy enemy = _enemyPool.GetEnemy();
 
-        enemy.transform.SetPositionAndRotation(spawnData.SpawnPoint.Position, Quaternion.identity);
-        enemy.transform.SetParent(parent);
-        enemy.SetTarget(_player);
-        enemy.OnEnemyDeath += HandleEnemyDeath;
-        _activeEnemies.Add(enemy);
+        if (enemy != null)
+        {
+            enemy.transform.SetPositionAndRotation(spawnData.SpawnPoint.Position, Quaternion.identity);
+            enemy.transform.SetParent(parent);
+            enemy.OnEnemyDeath += HandleEnemyDeath;
+            _activeEnemies.Add(enemy);
 
-        EnemyPath randomPath = spawnData.RandomPath;
+            EnemyPath randomPath = spawnData.RandomPath;
 
-        if (spawnData.RandomPath != null && enemy.Movement != null)
-            enemy.Initialize(randomPath);
+            if (spawnData.RandomPath != null && enemy.Movement != null)
+                enemy.Initialize(randomPath);
+        }
     }
 
     private void HandleEnemyDeath(Enemy enemy)
     {
-        enemy.OnEnemyDeath -= HandleEnemyDeath;
-        _activeEnemies.Remove(enemy);
-        _enemyCounterUI.RemoveEnemy();
-        _enemyPool.ReleaseEnemy(enemy);
+        if (enemy != null)
+        {
+            enemy.OnEnemyDeath -= HandleEnemyDeath;
+            _activeEnemies.Remove(enemy);
+            _spawnedCount -= NumberEnemyToSpawn;
+            _enemyCounterUI.RemoveEnemy(NumberEnemyToSpawn);
+        }
     }
 
     private void UnsubscribeFromAllEnemies()
     {
         foreach (Enemy enemy in _activeEnemies)
             if (enemy != null)
-            {
                 enemy.OnEnemyDeath -= HandleEnemyDeath;
-                _enemyPool.ReleaseEnemy(enemy);
-            }
 
         _activeEnemies.Clear();
-        _enemyCounterUI.ResetCounter();
+        _spawnedCount = 0;
+
+        if (_enemyCounterUI != null)
+            _enemyCounterUI.ResetCounter();
     }
 }

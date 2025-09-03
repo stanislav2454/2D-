@@ -17,13 +17,11 @@ public class Crawler : MonoBehaviour
     private Vector2 _originalColliderOffset;
     private bool _isCrawling;
 
-    public bool IsCrawling => _isCrawling;
-
     private void Awake()
     {
-        _animator = GetComponentInChildren<CharacterAnimator>();
-        _collider = GetComponent<CapsuleCollider2D>();
+        if (_playerView.TryGetComponent(out _animator) == false) { }
 
+        _collider = GetComponent<CapsuleCollider2D>();
         CacheOriginalValues();
     }
 

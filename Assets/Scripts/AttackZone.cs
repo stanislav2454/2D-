@@ -30,10 +30,10 @@ public class AttackZone : MonoBehaviour
     }
 
     public void CleanDestroyedTargets() =>
-        _targetsInZone.RemoveWhere(target =>
-            target == null ||
-            target.Equals(null) ||
-            (target is MonoBehaviour behaviour && behaviour == null));
+          _targetsInZone.RemoveWhere(target =>
+              target == null ||
+              target.Equals(null) ||
+              (target is MonoBehaviour behaviour && behaviour == null));
 
     public void ClearTargets() =>
         _targetsInZone.Clear();

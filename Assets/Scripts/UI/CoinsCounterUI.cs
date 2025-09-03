@@ -1,27 +1,15 @@
-using TMPro;
-using UnityEngine;
-
-public class CoinsCounterUI : MonoBehaviour
+public class CoinsCounterUI : BaseCounterUI
 {
-    private const string UIText = "Coins:";
+    private const int Item = 1;
 
-    [SerializeField] private TextMeshProUGUI _coinsText;
-    private int _coinsAmount;
+    protected override string TextPrefix => "Coins:";
 
-    public void AddCoin()
-    {
-        _coinsAmount++;
-        UpdateUI();
-    }
+    public void AddCoin() =>
+        AddValue(Item);
 
-    public void ResetCoins()
-    {
-        _coinsAmount = 0;
-        UpdateUI();
-    }
+    public void AddCoin(int item) =>
+        AddValue(item);
 
-    private void UpdateUI()
-    {
-        _coinsText.text = $"{UIText} {_coinsAmount}";
-    }
+    public void ResetCoins() =>
+        ResetValue();
 }

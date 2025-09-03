@@ -23,7 +23,10 @@ public class EnemySpawnData : MonoBehaviour
         path = null;
 
         if (_paths == null || _paths.Length == 0)
+        {
+            Debug.LogError("Paths array is null or empty!", this);
             return false;
+        }
 
         path = _paths[Mathf.Clamp(index, 0, _paths.Length - 1)];
         return true;

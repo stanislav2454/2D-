@@ -3,7 +3,8 @@ using UnityEngine;
 public class Collector : MonoBehaviour
 {
     [SerializeField] private CoinsCounterUI _coinUI;
-    [SerializeField] private PlayerHealth _playerHealth;
+
+    private int _coinsAmount;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -13,15 +14,19 @@ public class Collector : MonoBehaviour
 
     public void CollectCoin(Coin coin)
     {
-        _coinUI.AddCoin();
+        const int NumberCoinsCollect = 1;
+        _coinsAmount += NumberCoinsCollect;
+        _coinUI.AddCoin(NumberCoinsCollect);
+
         Destroy(coin.gameObject);
     }
 
     public void CollectMedkit(Medkit medkit)
     {
-        if (_playerHealth != null)
+        if (TryGetComponent<PlayerHealth>(out var playerHealth))
         {
-            _playerHealth.Heal(medkit.HealAmount);
+            playerHealth.Heal(medkit.HealAmount);
+
             Destroy(medkit.gameObject);
         }
     }

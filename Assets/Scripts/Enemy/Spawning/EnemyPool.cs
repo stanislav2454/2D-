@@ -1,16 +1,18 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Pool;
 
 public class EnemyPool : MonoBehaviour
 {
     [Header("Pool Settings")]
     [SerializeField] private int _defaultCapacity = 10;
+    [Range(0, 20)]
     [SerializeField] private int _maxSize = 20;
     [SerializeField] private bool _collectionCheck = true;
     [SerializeField] private Enemy _enemyPrefab;
 
     private IObjectPool<Enemy> _pool;
 
+    public int MaxSize => _maxSize;
     public IObjectPool<Enemy> Pool => _pool;
 
     private void Awake()
@@ -42,12 +44,12 @@ public class EnemyPool : MonoBehaviour
     private void OnGetFromPool(Enemy enemy)
     {
         enemy.gameObject.SetActive(true);
-        enemy.ResetEnemy();
+        enemy.GetComponent<Enemy>().ResetEnemy();
     }
 
     private void OnReturnedToPool(Enemy enemy) =>
         enemy.gameObject.SetActive(false);
 
     private void OnDestroyPooledObject(Enemy enemy) =>
-        Destroy(enemy.gameObject);
+        Destroy(enemy);
 }

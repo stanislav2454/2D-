@@ -1,4 +1,4 @@
-public class EnemyHealth : BaseHealth
+﻿public class EnemyHealth : BaseHealth
 {
     private EnemyPool _pool;
 
@@ -8,5 +8,7 @@ public class EnemyHealth : BaseHealth
     public override void Die()
     {
         base.Die();
+
+        _pool?.ReleaseEnemy(GetComponent<Enemy>());
     }
 }

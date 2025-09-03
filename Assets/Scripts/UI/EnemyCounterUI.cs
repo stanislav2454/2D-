@@ -1,33 +1,21 @@
-using TMPro;
-using UnityEngine;
-
-public class EnemyCounterUI : MonoBehaviour
+public class EnemyCounterUI : BaseCounterUI
 {
-    private const string UIText = "Enemies:";
+    private const int Item = 1;
 
-    [SerializeField] private TextMeshProUGUI _enemyCountText;
-    private int _enemyCount;
+    protected override string TextPrefix => "Enemies:";
 
-    public void AddEnemy()
-    {
-        _enemyCount++;
-        UpdateUI();
-    }
+    public void AddEnemy() =>
+        AddValue(Item);
 
-    public void RemoveEnemy()
-    {
-        _enemyCount--;
-        UpdateUI();
-    }
+    public void AddEnemy(int item) =>
+        AddValue(item);
 
-    public void ResetCounter()
-    {
-        _enemyCount = 0;
-        UpdateUI();
-    }
+    public void RemoveEnemy() =>
+        SubtractValue(Item);
 
-    private void UpdateUI()
-    {
-        _enemyCountText.text = $"{UIText} {_enemyCount}";
-    }
+    public void RemoveEnemy(int item) =>
+        SubtractValue(item);
+
+    public void ResetCounter() =>
+        ResetValue();
 }

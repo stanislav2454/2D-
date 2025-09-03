@@ -29,22 +29,6 @@ public class Attacker : MonoBehaviour
             _ownerHealth = GetComponent<BaseHealth>();
     }
 
-    public void AttackOnce()
-    {
-        if (_isAttacking) return;
-
-        _isAttacking = true;
-
-        if (_attackZone != null)
-        {
-            _attackZone.CleanDestroyedTargets();
-            if (_attackZone.TargetsInZoneCount > 0)
-                Attack();
-        }
-
-        _isAttacking = false;
-    }
-
     public void StartAttacking()
     {
         if (_isAttacking)
@@ -120,13 +104,4 @@ public class Attacker : MonoBehaviour
 
         return totalDamageDealt;
     }
-
-    public void SetDamage(int newDamage) =>
-        _damage = newDamage;
-
-    public void SetDamageInterval(float newInterval) =>
-        _damageInterval = newInterval;
-
-    public void SetHealRatio(float newRatio) =>
-        _healRatio = Mathf.Clamp01(newRatio);
 }

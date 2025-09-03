@@ -1,4 +1,3 @@
-public class PlayerHealth : BaseHealth
+﻿public class PlayerHealth : BaseHealth
 {
-
 }

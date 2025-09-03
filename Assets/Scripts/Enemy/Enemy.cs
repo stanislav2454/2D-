@@ -4,9 +4,9 @@ using UnityEngine;
 [DisallowMultipleComponent, RequireComponent(typeof(EnemyMover), typeof(EnemyHealth), typeof(EnemyAI))]
 public class Enemy : MonoBehaviour
 {
+    private EnemyMover _mover;
     private EnemyHealth _health;
     private EnemyAI _ai;
-    private EnemyMover _mover;
 
     public EnemyMover Movement { get; private set; }
 
@@ -14,10 +14,10 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
-        Movement = GetComponent<EnemyMover>();
+        _mover = GetComponent<EnemyMover>();
+        Movement = _mover;
         _health = GetComponent<EnemyHealth>();
         _ai = GetComponent<EnemyAI>();
-        _mover = GetComponent<EnemyMover>();
     }
 
     private void OnEnable() =>
@@ -44,11 +44,6 @@ public class Enemy : MonoBehaviour
 
     public void SetPool(EnemyPool pool) =>
         _health.SetPool(pool);
-
-    public void SetTarget(Transform target)
-    {
-        _ai.SetPlayerTransform(target);
-    }
 
     private void HandleDeath() =>
         OnEnemyDeath?.Invoke(this);
