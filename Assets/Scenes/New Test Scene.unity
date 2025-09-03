@@ -1131,10 +1131,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2182035369824937794, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
-      propertyPath: m_IncludeLayers.m_Bits
-      value: 2048
-      objectReference: {fileID: 0}
     - target: {fileID: 4837384122218112796, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.5
@@ -1179,20 +1175,11 @@ PrefabInstance:
       propertyPath: _coinUI
       value: 
       objectReference: {fileID: 941138851}
-    - target: {fileID: 6776721935901609013, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
-      propertyPath: _settings
-      value: 
-      objectReference: {fileID: 11400000, guid: 9988c3e391ec8ca4291f575d68c1c572, type: 2}
     - target: {fileID: 6785936280359399190, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 6785936280359399190, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 7467601082869353456, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1811,8 +1798,6 @@ MonoBehaviour:
   _damageInterval: 0.5
   _damage: 1
   _attackZone: {fileID: 0}
-  _healRatio: 0
-  _ownerHealth: {fileID: 0}
 --- !u!114 &9085624406822059889
 MonoBehaviour:
   m_ObjectHideFlags: 0

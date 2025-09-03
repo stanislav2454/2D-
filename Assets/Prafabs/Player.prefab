@@ -468,6 +468,8 @@ GameObject:
   - component: {fileID: 4454272093985505970}
   - component: {fileID: 5704735201354132509}
   - component: {fileID: 5855443247974145190}
+  - component: {fileID: 3409126156442593634}
+  - component: {fileID: 2783149425745376021}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -640,10 +642,7 @@ MonoBehaviour:
   _movement: {fileID: 0}
   _jumper: {fileID: 0}
   _crawler: {fileID: 0}
-  _attackZone: {fileID: 0}
-  _attackDamageInterval: 0.5
-  _attackDamage: 8
-  _healRatio: 0.5
+  _attacker: {fileID: 0}
 --- !u!114 &4454272093985505970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -687,6 +686,36 @@ MonoBehaviour:
   <CurrentHealth>k__BackingField: 0
   _testDamageAmount: 10
   _testHealAmount: 10
+--- !u!114 &3409126156442593634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6785936280359399190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52d33a96f542dbc449607399e6652542, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _damageInterval: 0.5
+  _damage: 8
+  _attackZone: {fileID: 4912071412223842435}
+--- !u!114 &2783149425745376021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6785936280359399190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109cd1c459cfeb14cb7ae305778fd707, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _healRatio: 0.5
+  _ownerHealth: {fileID: 5855443247974145190}
+  _attacker: {fileID: 3409126156442593634}
 --- !u!1 &7300484012961744614
 GameObject:
   m_ObjectHideFlags: 0
@@ -732,7 +761,7 @@ CircleCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 6144
+    m_Bits: 2048
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
