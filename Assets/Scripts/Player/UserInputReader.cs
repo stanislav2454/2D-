@@ -12,7 +12,7 @@ public class UserInputReader : MonoBehaviour
     public bool IsCrawlPressed { get; private set; }
     public bool IsAttackPressed { get; private set; }
 
-    private bool _isJump;
+    private bool _isJump = false;
     private bool _attackTrigger;
 
     private void Update()

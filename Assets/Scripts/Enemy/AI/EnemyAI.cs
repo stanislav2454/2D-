@@ -61,6 +61,20 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    public void ResetAI()
+    {
+        _currentState = EnemyState.Patrolling;
+        _canAttack = true;
+        _currentWaypointIndex = 0;
+        StopAllCoroutines();
+    }
+
+    public void SetPatrolPath(EnemyPath path)
+    {
+        _patrolPath = path;
+        _currentWaypointIndex = 0;
+    }
+
     private void CalculateSquaredRanges()
     {
         _sqrAttackRange = _attackRange * _attackRange;
@@ -77,20 +91,6 @@ public class EnemyAI : MonoBehaviour
     {
         _player = null;
         _currentState = EnemyState.Patrolling;
-    }
-
-    public void ResetAI()
-    {
-        _currentState = EnemyState.Patrolling;
-        _canAttack = true;
-        _currentWaypointIndex = 0;
-        StopAllCoroutines();
-    }
-
-    public void SetPatrolPath(EnemyPath path)
-    {
-        _patrolPath = path;
-        _currentWaypointIndex = 0;
     }
 
     private void PatrolBehavior()

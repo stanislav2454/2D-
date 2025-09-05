@@ -22,16 +22,39 @@ public class CharacterAnimator : MonoBehaviour
         _animator.SetBool(CharacterAnimatorData.Params.IsCrawling, isCrawling);
     }
 
-    public void UpdateVerticalAnimation(float verticalSpeed)
-    {
-        float absSpeedY = Mathf.Abs(verticalSpeed);
-        _animator.SetFloat(CharacterAnimatorData.Params.VerticalVelocity, absSpeedY);
-    }
-
     public void UpdateJumpFallAnimation(bool isGrounded, float verticalVelocity)
     {
         _animator.SetBool(CharacterAnimatorData.Params.IsGrounded, isGrounded);
-        _animator.SetBool(CharacterAnimatorData.Params.IsJumping, isGrounded == false && verticalVelocity > 0);
-        _animator.SetBool(CharacterAnimatorData.Params.IsFalling, isGrounded == false && verticalVelocity < 0);
+        _animator.SetFloat(CharacterAnimatorData.Params.VerticalVelocity, verticalVelocity);
+
+        if (isGrounded)
+        {
+            _animator.SetBool(CharacterAnimatorData.Params.IsJumping, false);
+            _animator.SetBool(CharacterAnimatorData.Params.IsFalling, false);
+        }
+        else
+        {
+            if (verticalVelocity > 0)
+            {
+                _animator.SetBool(CharacterAnimatorData.Params.IsJumping, true);
+                _animator.SetBool(CharacterAnimatorData.Params.IsFalling, false);
+            }
+            else
+            {
+                _animator.SetBool(CharacterAnimatorData.Params.IsJumping, false);
+                _animator.SetBool(CharacterAnimatorData.Params.IsFalling, true);
+            }
+        }
+    }
+
+    public void PlayAttackAnimation()
+    {
+        _animator.SetTrigger(CharacterAnimatorData.Params.AttackTrigger);
+    }
+
+    public void StopAttackAnimation()
+    {
+        _animator.ResetTrigger(CharacterAnimatorData.Params.AttackTrigger);
+        _animator.SetBool(CharacterAnimatorData.Params.IsAttacking, false);
     }
 }

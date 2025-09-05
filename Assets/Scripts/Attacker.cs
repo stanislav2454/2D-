@@ -9,16 +9,20 @@ public class Attacker : MonoBehaviour
     [SerializeField] private float _damageInterval = 0.5f;
     [SerializeField] private int _damage = 1;
     [SerializeField] private AttackZone _attackZone;
+    [SerializeField] private CharacterAnimator _animator;
 
     private Coroutine _attackCoroutine;
     private bool _isAttacking;
 
-    public event System.Action<int> OnDamageDealt;
+    public event System.Action Attacked;
 
     private void Awake()
     {
         if (_attackZone == null)
             _attackZone = GetComponentInChildren<AttackZone>();
+
+        if (_animator == null)
+            _animator = GetComponentInChildren<CharacterAnimator>();
     }
 
     private void OnDisable()
@@ -44,6 +48,8 @@ public class Attacker : MonoBehaviour
             StopCoroutine(_attackCoroutine);
             _attackCoroutine = null;
         }
+
+        _animator?.StopAttackAnimation();
     }
 
     private IEnumerator AttackRoutine()
@@ -71,8 +77,7 @@ public class Attacker : MonoBehaviour
             return;
 
         int totalDamageDealt = CalculateDamageToTargets(_attackZone, _damage);
-
-        OnDamageDealt?.Invoke(totalDamageDealt);
+        Attacked?.Invoke();
     }
 
     private int CalculateDamageToTargets(AttackZone attackZone, int damage)

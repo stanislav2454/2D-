@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour
 
     public EnemyMover Movement { get; private set; }
 
-    public event Action<Enemy> OnEnemyDeath;
+    public event Action<Enemy> EnemyDied;
 
     private void Awake()
     {
@@ -21,10 +21,10 @@ public class Enemy : MonoBehaviour
     }
 
     private void OnEnable() =>
-        _health.OnDeath += HandleDeath;
+        _health.Died += HandleDeath;
 
     private void OnDisable() =>
-        _health.OnDeath -= HandleDeath;
+        _health.Died -= HandleDeath;
 
     public void ResetEnemy()
     {
@@ -46,5 +46,5 @@ public class Enemy : MonoBehaviour
         _health.SetPool(pool);
 
     private void HandleDeath() =>
-        OnEnemyDeath?.Invoke(this);
+        EnemyDied?.Invoke(this);
 }

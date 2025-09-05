@@ -9,18 +9,7 @@ public class GroundDetector : MonoBehaviour
     [Header("Ground Settings"), Tooltip("Максимально допустимый угол поверхности, которая считается \"землёй\". 1 = 0° (пол), 0 = 90° (стена)")]
     [SerializeField, Range(0, 1)] private float _maxGroundAngle = 0.7f;
 
-    private bool _wasGroundedLastFrame;
-
     public bool IsGrounded => GroundContacts.Count > 0;
-    public bool JustLanded { get; private set; }
-    public bool JustLeftGround { get; private set; }
-
-    private void FixedUpdate()
-    {
-        JustLanded = _wasGroundedLastFrame == false && IsGrounded;
-        JustLeftGround = _wasGroundedLastFrame && IsGrounded == false;
-        _wasGroundedLastFrame = IsGrounded;
-    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {

@@ -8,8 +8,8 @@ public class BaseHealth : MonoBehaviour, IDamageable
 
     [field: SerializeField] public int CurrentHealth { get; protected set; }
 
-    public event Action OnDeath;
-    public event Action<int> OnHealthChanged;
+    public event Action Died;
+    public event Action<int> HealthChanged;
 
     private void Awake()
     {
@@ -19,9 +19,9 @@ public class BaseHealth : MonoBehaviour, IDamageable
 
     public virtual void Die()
     {
-        OnDeath?.Invoke();
-        OnDeath = null;
-        OnHealthChanged = null;
+        Died?.Invoke();
+        Died = null;
+        HealthChanged = null;
         CurrentHealth = MaxHealth;
     }
 
@@ -31,7 +31,7 @@ public class BaseHealth : MonoBehaviour, IDamageable
         CurrentHealth -= actualDamage;
         LimitHealth();
 
-        OnHealthChanged?.Invoke(CurrentHealth);
+        HealthChanged?.Invoke(CurrentHealth);
 
         if (CurrentHealth <= 0)
             Die();
@@ -52,11 +52,11 @@ public class BaseHealth : MonoBehaviour, IDamageable
     public void ResetHealth()
     {
         CurrentHealth = MaxHealth;
-        OnHealthChanged?.Invoke(CurrentHealth);
+        HealthChanged?.Invoke(CurrentHealth);
     }
 
     protected void InvokeHealthChanged(int health) =>
-        OnHealthChanged?.Invoke(health);
+        HealthChanged?.Invoke(health);
 
     protected void LimitHealth() =>
         CurrentHealth = Mathf.Clamp(CurrentHealth, MinHealth, MaxHealth);

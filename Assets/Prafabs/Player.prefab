@@ -460,16 +460,15 @@ GameObject:
   - component: {fileID: 8869274398865000248}
   - component: {fileID: 5333696821135983268}
   - component: {fileID: 4594055071321023800}
+  - component: {fileID: 3353201999493121068}
   - component: {fileID: 6776721935901609013}
   - component: {fileID: 473663351033134465}
   - component: {fileID: 7313071523046532531}
   - component: {fileID: 6694256431082190761}
-  - component: {fileID: 3353201999493121068}
   - component: {fileID: 4454272093985505970}
   - component: {fileID: 5704735201354132509}
   - component: {fileID: 5855443247974145190}
   - component: {fileID: 3409126156442593634}
-  - component: {fileID: 2783149425745376021}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -570,6 +569,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8669e9070c4514e4aa705377933c1ce5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3353201999493121068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6785936280359399190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ae38e8b1f93904468cf4201bf3074b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _input: {fileID: 4594055071321023800}
+  _movement: {fileID: 6776721935901609013}
+  _jumper: {fileID: 7313071523046532531}
+  _crawler: {fileID: 4454272093985505970}
+  _attacker: {fileID: 3409126156442593634}
+  _animator: {fileID: 2596255769587532739}
 --- !u!114 &6776721935901609013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -612,7 +629,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _jumpPower: 6
-  _playerView: {fileID: 1939768626955330289}
 --- !u!114 &6694256431082190761
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -626,23 +642,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxGroundAngle: 0.6
---- !u!114 &3353201999493121068
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6785936280359399190}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ae38e8b1f93904468cf4201bf3074b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _input: {fileID: 0}
-  _movement: {fileID: 0}
-  _jumper: {fileID: 0}
-  _crawler: {fileID: 0}
-  _attacker: {fileID: 0}
 --- !u!114 &4454272093985505970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -701,21 +700,7 @@ MonoBehaviour:
   _damageInterval: 0.5
   _damage: 8
   _attackZone: {fileID: 4912071412223842435}
---- !u!114 &2783149425745376021
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6785936280359399190}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 109cd1c459cfeb14cb7ae305778fd707, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _healRatio: 0.5
-  _ownerHealth: {fileID: 5855443247974145190}
-  _attacker: {fileID: 3409126156442593634}
+  _animator: {fileID: 2596255769587532739}
 --- !u!1 &7300484012961744614
 GameObject:
   m_ObjectHideFlags: 0

@@ -96,7 +96,7 @@ MonoBehaviour:
   _spawnData:
   - {fileID: 879716794423804212}
   _enemyPool: {fileID: 1435135018029510084}
-  parent: {fileID: 0}
+  parent: {fileID: 2593045698768603268, guid: 015dc90d7ee567f49bb4a3fcfa0d1b1f, type: 3}
   _enemyCounterUI: {fileID: 0}
 --- !u!114 &1435135018029510084
 MonoBehaviour:

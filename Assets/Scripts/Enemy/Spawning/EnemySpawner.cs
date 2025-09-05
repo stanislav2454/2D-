@@ -10,8 +10,7 @@ public class EnemySpawner : MonoBehaviour
     private readonly HashSet<Enemy> _activeEnemies = new HashSet<Enemy>();
 
     [SerializeField] private float _spawnInterval = 2f;
-    [Range(0, 20)]
-    [SerializeField] private int _numberEnemiesToSpawn = 10;
+    [SerializeField] [Range(0, 20)] private int _numberEnemiesToSpawn = 10;
     [SerializeField] private EnemySpawnData[] _spawnData;
     [SerializeField] private EnemyPool _enemyPool;
     [SerializeField] private Transform parent;
@@ -114,7 +113,7 @@ public class EnemySpawner : MonoBehaviour
         {
             enemy.transform.SetPositionAndRotation(spawnData.SpawnPoint.Position, Quaternion.identity);
             enemy.transform.SetParent(parent);
-            enemy.OnEnemyDeath += HandleEnemyDeath;
+            enemy.EnemyDied += HandleEnemyDeath;
             _activeEnemies.Add(enemy);
 
             EnemyPath randomPath = spawnData.RandomPath;
@@ -128,7 +127,7 @@ public class EnemySpawner : MonoBehaviour
     {
         if (enemy != null)
         {
-            enemy.OnEnemyDeath -= HandleEnemyDeath;
+            enemy.EnemyDied -= HandleEnemyDeath;
             _activeEnemies.Remove(enemy);
             _spawnedCount -= NumberEnemyToSpawn;
             _enemyCounterUI.RemoveEnemy(NumberEnemyToSpawn);
@@ -139,7 +138,7 @@ public class EnemySpawner : MonoBehaviour
     {
         foreach (Enemy enemy in _activeEnemies)
             if (enemy != null)
-                enemy.OnEnemyDeath -= HandleEnemyDeath;
+                enemy.EnemyDied -= HandleEnemyDeath;
 
         _activeEnemies.Clear();
         _spawnedCount = 0;
