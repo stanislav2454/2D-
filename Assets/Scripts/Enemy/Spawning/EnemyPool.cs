@@ -7,13 +7,8 @@ public class EnemyPool : MonoBehaviour
     [SerializeField] private int _defaultCapacity = 10;
     [SerializeField] [Range(0, 20)] private int _maxSize = 20;
     [SerializeField] private bool _collectionCheck = true;
-    //[SerializeField] private Enemy _enemyPrefab;
     [SerializeField] private BaseHealth _enemyPrefab;
 
-    //private IObjectPool<Enemy> _pool;
-    //private HashSet<Enemy> _activeEnemies = new HashSet<Enemy>();
-
-    //public IObjectPool<Enemy> Pool => _pool;
     private IObjectPool<BaseHealth> _pool;
     public int MaxSize => _maxSize;
     public IObjectPool<BaseHealth> Pool => _pool;
@@ -21,7 +16,6 @@ public class EnemyPool : MonoBehaviour
     private void Awake()
     {
         _pool = new ObjectPool<BaseHealth>(
-        //_pool = new ObjectPool<Enemy>(
             CreatePooledObject,
             OnGetFromPool,
             OnReturnedToPool,
@@ -31,34 +25,58 @@ public class EnemyPool : MonoBehaviour
             _maxSize);
     }
 
+    private void OnDestroy()
+    {
+        _pool?.Clear();
+    }
+
     public BaseHealth GetEnemy() =>
-         // public Enemy GetEnemy() =>
          _pool.Get();
 
     public void ReleaseEnemy(BaseHealth enemy) =>
-    //public void ReleaseEnemy(Enemy enemy) =>
         _pool.Release(enemy);
 
     private BaseHealth CreatePooledObject()
     {
         BaseHealth enemy = Instantiate(_enemyPrefab, transform);
         enemy.gameObject.SetActive(false);
-        enemy.GetComponent<Enemy>().SetPool(this);
-        //enemy.Died += HandleEnemyDeath;
+
+        enemy.Died += OnEnemyDied;
 
         return enemy;
+    }
+
+    private void OnEnemyDied(BaseHealth enemy)
+    {
+        if (enemy == null || enemy.gameObject.activeInHierarchy == false)
+            return;
+
+        enemy.Died -= OnEnemyDied;
+
+        ReleaseEnemy(enemy);
     }
 
     private void OnGetFromPool(BaseHealth enemy)
     {
         enemy.gameObject.SetActive(true);
-        enemy.GetComponent<Enemy>().ResetEnemy();
-        //enemy.ResetEnemy();
+
+        enemy.Died += OnEnemyDied;
+        enemy.GetComponent<Enemy>()?.ResetEnemy();
     }
 
-    private void OnReturnedToPool(BaseHealth enemy) =>
-        enemy.gameObject.SetActive(false);
 
-    private void OnDestroyPooledObject(BaseHealth enemy) =>
-        Destroy(enemy);
+    private void OnReturnedToPool(BaseHealth enemy)
+    {
+        if (enemy != null)
+        {
+            enemy.Died -= OnEnemyDied;
+            enemy.gameObject.SetActive(false);
+        }
+    }
+
+    private void OnDestroyPooledObject(BaseHealth enemy)
+    {
+        enemy.Died -= OnEnemyDied;
+        Destroy(enemy.gameObject);
+    }
 }

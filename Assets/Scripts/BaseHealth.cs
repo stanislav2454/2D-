@@ -7,9 +7,9 @@ public class BaseHealth : MonoBehaviour, IDamageable
     protected const int MaxHealth = 100;
 
     [field: SerializeField] public int CurrentHealth { get; protected set; }
+    public bool IsDead { get; private set; }
 
-    public event Action <BaseHealth>Died;
-    //public event Action Died;
+    public event Action<BaseHealth> Died;
     public event Action<int> HealthChanged;
 
     private void Awake()
@@ -19,12 +19,19 @@ public class BaseHealth : MonoBehaviour, IDamageable
 
     public virtual void Die()
     {
-        Died?.Invoke(this); 
+        if (IsDead)
+            return;
+
         ResetHealth();
+        IsDead = true;
+        Died?.Invoke(this);
     }
 
     public virtual int TakeDamage(int damage)
     {
+        if (IsDead)
+            return 0;
+
         int actualDamage = Mathf.Min(CurrentHealth, damage);
         CurrentHealth -= actualDamage;
         LimitHealth();
@@ -39,7 +46,7 @@ public class BaseHealth : MonoBehaviour, IDamageable
 
     public virtual void Heal(int amount)
     {
-        if (amount <= 0)
+        if (amount <= 0 || IsDead)
             return;
 
         CurrentHealth += amount;
@@ -50,6 +57,7 @@ public class BaseHealth : MonoBehaviour, IDamageable
     public void ResetHealth()
     {
         CurrentHealth = MaxHealth;
+        IsDead = false;
         HealthChanged?.Invoke(CurrentHealth);
     }
 
@@ -58,7 +66,7 @@ public class BaseHealth : MonoBehaviour, IDamageable
 
 #if UNITY_EDITOR
     [Header("Debug Settings")]
-    [SerializeField] private int _testDamageAmount = 10;
+    [SerializeField] private int _testDamageAmount = 20;
     [SerializeField] private int _testHealAmount = 10;
 
     [ContextMenu("Take Test Damage")]

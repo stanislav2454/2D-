@@ -7,7 +7,6 @@ public class EnemySpawner : MonoBehaviour
 {
     private const int NumberEnemyToSpawn = 1;
 
-    //private readonly HashSet<Enemy> _activeEnemies = new HashSet<Enemy>();
     private readonly HashSet<BaseHealth> _activeEnemies = new HashSet<BaseHealth>();
 
     [SerializeField] private float _spawnInterval = 2f;
@@ -105,8 +104,7 @@ public class EnemySpawner : MonoBehaviour
         if (spawnData.SpawnPoint == null)
             return;
 
-        //Enemy enemy = _enemyPool.GetEnemy();
-        BaseHealth enemy = _enemyPool.GetEnemy();
+        BaseHealth enemy = _enemyPool.GetEnemy(); 
 
         if (enemy != null && _activeEnemies.Contains(enemy) == false)
         {
@@ -121,12 +119,11 @@ public class EnemySpawner : MonoBehaviour
                 enemyComponent.Initialize(spawnData.RandomPath);
 
             enemy.gameObject.SetActive(true);
-            enemy.GetComponent<Enemy>().ResetEnemy();
+            enemy.GetComponent<Enemy>().ResetEnemy(); 
         }
     }
 
     private void HandleEnemyDeath(BaseHealth enemy)
-    //private void HandleEnemyDeath(Enemy enemy)
     {
         if (enemy != null && _activeEnemies.Contains(enemy))
         {
@@ -139,7 +136,6 @@ public class EnemySpawner : MonoBehaviour
 
     private void UnsubscribeFromAllEnemies()
     {
-        //foreach (Enemy enemy in _activeEnemies)
         foreach (BaseHealth enemy in _activeEnemies)
             if (enemy != null)
                 enemy.Died -= HandleEnemyDeath;

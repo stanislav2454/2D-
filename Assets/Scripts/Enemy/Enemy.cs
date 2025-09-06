@@ -9,21 +9,12 @@ public class Enemy : MonoBehaviour
 
     public EnemyMover Movement => _mover;
 
-    //public event Action<Enemy> Died;
-    //private EnemyPool _pool;
-
     private void Awake()
     {
         _mover = GetComponent<EnemyMover>();
         _health = GetComponent<EnemyHealth>();
         _ai = GetComponent<EnemyAI>();
     }
-
-    private void OnEnable() =>
-            _health.Died += OnDead;
-
-    private void OnDisable() =>
-            _health.Died -= OnDead;
 
     public void ResetEnemy()
     {
@@ -39,16 +30,5 @@ public class Enemy : MonoBehaviour
             _mover.Initialize(path);
             _ai.SetPatrolPath(path);
         }
-    }
-
-    private EnemyPool _pool;// Сделать: перенести поле
-
-    public void SetPool(EnemyPool pool) =>
-        _pool = pool;
-
-    private void OnDead(BaseHealth health) 
-    {
-        _pool?.ReleaseEnemy(health); 
-        gameObject.SetActive(false);
     }
 }
