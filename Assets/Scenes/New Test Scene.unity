@@ -245,6 +245,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1624513770}
     - target: {fileID: 1435135018029510084, guid: 1b7023eab37354d4ca4135daa923da5a, type: 3}
+      propertyPath: _settings
+      value: 
+      objectReference: {fileID: 11400000, guid: 286c5f9604da4e844a72b23daa40a285, type: 2}
+    - target: {fileID: 1435135018029510084, guid: 1b7023eab37354d4ca4135daa923da5a, type: 3}
       propertyPath: _enemyPrefab
       value: 
       objectReference: {fileID: 735806534406604488, guid: 87da2c4491d69bc4c8efbfd507ed8f41, type: 3}
@@ -256,6 +260,10 @@ PrefabInstance:
       propertyPath: parent
       value: 
       objectReference: {fileID: 455318810}
+    - target: {fileID: 8589926039851905716, guid: 1b7023eab37354d4ca4135daa923da5a, type: 3}
+      propertyPath: _settings
+      value: 
+      objectReference: {fileID: 11400000, guid: 286c5f9604da4e844a72b23daa40a285, type: 2}
     - target: {fileID: 8589926039851905716, guid: 1b7023eab37354d4ca4135daa923da5a, type: 3}
       propertyPath: _enemyCounterUI
       value: 
