@@ -19,13 +19,13 @@ public class Detector : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.GetComponent<UserInputReader>())
+        if (collision.GetComponent<PlayerHealth>())
             TargetDetected?.Invoke(collision.transform);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.GetComponent<UserInputReader>())
+        if (collision.GetComponent<PlayerHealth>())
             TargetLost?.Invoke();
     }
 

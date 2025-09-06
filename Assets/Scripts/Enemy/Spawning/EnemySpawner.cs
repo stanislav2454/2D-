@@ -7,7 +7,8 @@ public class EnemySpawner : MonoBehaviour
 {
     private const int NumberEnemyToSpawn = 1;
 
-    private readonly HashSet<Enemy> _activeEnemies = new HashSet<Enemy>();
+    //private readonly HashSet<Enemy> _activeEnemies = new HashSet<Enemy>();
+    private readonly HashSet<BaseHealth> _activeEnemies = new HashSet<BaseHealth>();
 
     [SerializeField] private float _spawnInterval = 2f;
     [SerializeField] [Range(0, 20)] private int _numberEnemiesToSpawn = 10;
@@ -96,54 +97,56 @@ public class EnemySpawner : MonoBehaviour
         SpawnEnemyAtPoint(spawnData);
     }
 
-    private EnemySpawnData GetRandomSpawnData()
-    {
-        int randomIndex = Random.Range(0, _spawnData.Length);
-        return _spawnData[randomIndex];
-    }
+    private EnemySpawnData GetRandomSpawnData() =>
+         _spawnData[Random.Range(0, _spawnData.Length)];
 
     private void SpawnEnemyAtPoint(EnemySpawnData spawnData)
     {
         if (spawnData.SpawnPoint == null)
             return;
 
-        Enemy enemy = _enemyPool.GetEnemy();
+        //Enemy enemy = _enemyPool.GetEnemy();
+        BaseHealth enemy = _enemyPool.GetEnemy();
 
-        if (enemy != null)
+        if (enemy != null && _activeEnemies.Contains(enemy) == false)
         {
             enemy.transform.SetPositionAndRotation(spawnData.SpawnPoint.Position, Quaternion.identity);
             enemy.transform.SetParent(parent);
-            enemy.EnemyDied += HandleEnemyDeath;
+            enemy.Died += HandleEnemyDeath;
             _activeEnemies.Add(enemy);
 
-            EnemyPath randomPath = spawnData.RandomPath;
+            Enemy enemyComponent = enemy.GetComponent<Enemy>();
 
-            if (spawnData.RandomPath != null && enemy.Movement != null)
-                enemy.Initialize(randomPath);
+            if (spawnData.RandomPath != null && enemyComponent.Movement != null)
+                enemyComponent.Initialize(spawnData.RandomPath);
+
+            enemy.gameObject.SetActive(true);
+            enemy.GetComponent<Enemy>().ResetEnemy();
         }
     }
 
-    private void HandleEnemyDeath(Enemy enemy)
+    private void HandleEnemyDeath(BaseHealth enemy)
+    //private void HandleEnemyDeath(Enemy enemy)
     {
-        if (enemy != null)
+        if (enemy != null && _activeEnemies.Contains(enemy))
         {
-            enemy.EnemyDied -= HandleEnemyDeath;
+            enemy.Died -= HandleEnemyDeath;
             _activeEnemies.Remove(enemy);
             _spawnedCount -= NumberEnemyToSpawn;
-            _enemyCounterUI.RemoveEnemy(NumberEnemyToSpawn);
+            _enemyCounterUI?.RemoveEnemy(NumberEnemyToSpawn);
         }
     }
 
     private void UnsubscribeFromAllEnemies()
     {
-        foreach (Enemy enemy in _activeEnemies)
+        //foreach (Enemy enemy in _activeEnemies)
+        foreach (BaseHealth enemy in _activeEnemies)
             if (enemy != null)
-                enemy.EnemyDied -= HandleEnemyDeath;
+                enemy.Died -= HandleEnemyDeath;
 
         _activeEnemies.Clear();
         _spawnedCount = 0;
 
-        if (_enemyCounterUI != null)
-            _enemyCounterUI.ResetCounter();
+        _enemyCounterUI?.ResetCounter();
     }
 }

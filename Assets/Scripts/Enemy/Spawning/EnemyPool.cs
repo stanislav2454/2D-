@@ -5,19 +5,23 @@ public class EnemyPool : MonoBehaviour
 {
     [Header("Pool Settings")]
     [SerializeField] private int _defaultCapacity = 10;
-    [Range(0, 20)]
-    [SerializeField] private int _maxSize = 20;
+    [SerializeField] [Range(0, 20)] private int _maxSize = 20;
     [SerializeField] private bool _collectionCheck = true;
-    [SerializeField] private Enemy _enemyPrefab;
+    //[SerializeField] private Enemy _enemyPrefab;
+    [SerializeField] private BaseHealth _enemyPrefab;
 
-    private IObjectPool<Enemy> _pool;
+    //private IObjectPool<Enemy> _pool;
+    //private HashSet<Enemy> _activeEnemies = new HashSet<Enemy>();
 
+    //public IObjectPool<Enemy> Pool => _pool;
+    private IObjectPool<BaseHealth> _pool;
     public int MaxSize => _maxSize;
-    public IObjectPool<Enemy> Pool => _pool;
+    public IObjectPool<BaseHealth> Pool => _pool;
 
     private void Awake()
     {
-        _pool = new ObjectPool<Enemy>(
+        _pool = new ObjectPool<BaseHealth>(
+        //_pool = new ObjectPool<Enemy>(
             CreatePooledObject,
             OnGetFromPool,
             OnReturnedToPool,
@@ -27,29 +31,34 @@ public class EnemyPool : MonoBehaviour
             _maxSize);
     }
 
-    public Enemy GetEnemy() =>
+    public BaseHealth GetEnemy() =>
+         // public Enemy GetEnemy() =>
          _pool.Get();
 
-    public void ReleaseEnemy(Enemy enemy) =>
+    public void ReleaseEnemy(BaseHealth enemy) =>
+    //public void ReleaseEnemy(Enemy enemy) =>
         _pool.Release(enemy);
 
-    private Enemy CreatePooledObject()
+    private BaseHealth CreatePooledObject()
     {
-        Enemy enemy = Instantiate(_enemyPrefab, transform);
+        BaseHealth enemy = Instantiate(_enemyPrefab, transform);
         enemy.gameObject.SetActive(false);
-        enemy.SetPool(this);
+        enemy.GetComponent<Enemy>().SetPool(this);
+        //enemy.Died += HandleEnemyDeath;
+
         return enemy;
     }
 
-    private void OnGetFromPool(Enemy enemy)
+    private void OnGetFromPool(BaseHealth enemy)
     {
         enemy.gameObject.SetActive(true);
         enemy.GetComponent<Enemy>().ResetEnemy();
+        //enemy.ResetEnemy();
     }
 
-    private void OnReturnedToPool(Enemy enemy) =>
+    private void OnReturnedToPool(BaseHealth enemy) =>
         enemy.gameObject.SetActive(false);
 
-    private void OnDestroyPooledObject(Enemy enemy) =>
+    private void OnDestroyPooledObject(BaseHealth enemy) =>
         Destroy(enemy);
 }

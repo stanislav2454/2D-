@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 [DisallowMultipleComponent, RequireComponent(typeof(EnemyMover), typeof(EnemyHealth), typeof(EnemyAI))]
 public class Enemy : MonoBehaviour
@@ -8,23 +7,23 @@ public class Enemy : MonoBehaviour
     private EnemyHealth _health;
     private EnemyAI _ai;
 
-    public EnemyMover Movement { get; private set; }
+    public EnemyMover Movement => _mover;
 
-    public event Action<Enemy> EnemyDied;
+    //public event Action<Enemy> Died;
+    //private EnemyPool _pool;
 
     private void Awake()
     {
         _mover = GetComponent<EnemyMover>();
-        Movement = _mover;
         _health = GetComponent<EnemyHealth>();
         _ai = GetComponent<EnemyAI>();
     }
 
     private void OnEnable() =>
-        _health.Died += HandleDeath;
+            _health.Died += OnDead;
 
     private void OnDisable() =>
-        _health.Died -= HandleDeath;
+            _health.Died -= OnDead;
 
     public void ResetEnemy()
     {
@@ -42,9 +41,14 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void SetPool(EnemyPool pool) =>
-        _health.SetPool(pool);
+    private EnemyPool _pool;// Сделать: перенести поле
 
-    private void HandleDeath() =>
-        EnemyDied?.Invoke(this);
+    public void SetPool(EnemyPool pool) =>
+        _pool = pool;
+
+    private void OnDead(BaseHealth health) 
+    {
+        _pool?.ReleaseEnemy(health); 
+        gameObject.SetActive(false);
+    }
 }

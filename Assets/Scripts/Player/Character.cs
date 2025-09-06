@@ -68,7 +68,8 @@ public class Character : MonoBehaviour
         _animator.PlayAttackAnimation();
     }
 
-    private void OnDead() =>
+    private void OnDead(BaseHealth health) =>
+    //private void OnDead() =>
         gameObject.SetActive(false);
 
     private void HandleMovement()
