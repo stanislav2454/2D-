@@ -9,8 +9,7 @@ public class EnemySpawner : MonoBehaviour
 
     private readonly HashSet<BaseHealth> _activeEnemies = new HashSet<BaseHealth>();
 
-    [SerializeField] private float _spawnInterval = 2f;
-    [SerializeField] [Range(0, 20)] private int _numberEnemiesToSpawn = 10;
+    [SerializeField] private EnemySpawnSettings _settings;
     [SerializeField] private EnemySpawnData[] _spawnData;
     [SerializeField] private EnemyPool _enemyPool;
     [SerializeField] private Transform parent;
@@ -22,15 +21,26 @@ public class EnemySpawner : MonoBehaviour
 
     private void Awake()
     {
-        _spawnWait = new WaitForSeconds(_spawnInterval);
+        if (_settings == null)
+        {
+            Debug.LogError("EnemySpawnSettings not set! Using default values.", this);
+            _settings = ScriptableObject.CreateInstance<EnemySpawnSettings>();
+        }
 
-        if (TryGetComponent(out _enemyPool)) ;
+        if (_enemyPool != null)
+            _enemyPool.ApplySettings(_settings);
 
-        _numberEnemiesToSpawn = Mathf.Min(_numberEnemiesToSpawn, _enemyPool.MaxSize);
+        _spawnWait = new WaitForSeconds(_settings.spawnInterval);
+
+        if (_enemyPool != null)
+            _enemyPool.Initialize();
     }
 
     private void OnValidate()
     {
+        if (_settings != null)
+            _settings.numberEnemiesToSpawn = Mathf.Min(_settings.numberEnemiesToSpawn, _settings.maxPoolSize);
+
         if (_enemyPool == null)
             Debug.LogWarning("Enemy pool is not set!", this);
 
@@ -46,7 +56,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_enemyPool != null)
+        if (_enemyPool != null && _settings != null)
             _spawningCoroutine = StartCoroutine(SpawnRoutine());
     }
 
@@ -73,7 +83,7 @@ public class EnemySpawner : MonoBehaviour
     {
         while (enabled)
         {
-            if (_spawnedCount < _numberEnemiesToSpawn)
+            if (_spawnedCount < _settings.numberEnemiesToSpawn)
             {
                 yield return _spawnWait;
                 SpawnEnemy();
@@ -104,7 +114,7 @@ public class EnemySpawner : MonoBehaviour
         if (spawnData.SpawnPoint == null)
             return;
 
-        BaseHealth enemy = _enemyPool.GetEnemy(); 
+        BaseHealth enemy = _enemyPool.GetEnemy();
 
         if (enemy != null && _activeEnemies.Contains(enemy) == false)
         {
@@ -119,7 +129,7 @@ public class EnemySpawner : MonoBehaviour
                 enemyComponent.Initialize(spawnData.RandomPath);
 
             enemy.gameObject.SetActive(true);
-            enemy.GetComponent<Enemy>().ResetEnemy(); 
+            enemy.GetComponent<Enemy>().ResetEnemy();
         }
     }
 
