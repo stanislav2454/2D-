@@ -7,13 +7,16 @@ public class EnemySpawner : MonoBehaviour
 {
     private const int NumberEnemyToSpawn = 1;
 
-    private readonly HashSet<BaseHealth> _activeEnemies = new HashSet<BaseHealth>();
+    // ИЗМЕНЕНО: BaseHealth на Enemy
+    private readonly HashSet<Enemy> _activeEnemies = new HashSet<Enemy>();
+    //private readonly HashSet<BaseHealth> _activeEnemies = new HashSet<BaseHealth>();
 
     [SerializeField] private EnemySpawnSettings _settings;
+    [Space(15)]
     [SerializeField] private EnemySpawnData[] _spawnData;
     [SerializeField] private EnemyPool _enemyPool;
     [SerializeField] private Transform parent;
-    [SerializeField] private EnemyCounterUI _enemyCounterUI;
+    [SerializeField] private EnemyCounterUI _enemyCounterUI;[Space(10)]
 
     private int _spawnedCount = 0;
     private WaitForSeconds _spawnWait;
@@ -114,30 +117,40 @@ public class EnemySpawner : MonoBehaviour
         if (spawnData.SpawnPoint == null)
             return;
 
-        BaseHealth enemy = _enemyPool.GetEnemy();
+        // теперь возвращает Enemy 
+        Enemy enemy = _enemyPool.GetEnemy();
 
         if (enemy != null && _activeEnemies.Contains(enemy) == false)
         {
             enemy.transform.SetPositionAndRotation(spawnData.SpawnPoint.Position, Quaternion.identity);
             enemy.transform.SetParent(parent);
-            enemy.Died += HandleEnemyDeath;
+            // EnemyDied вместо BaseHealth.Died
+            enemy.EnemyDied += HandleEnemyDeath;
+            //enemy.Died += HandleEnemyDeath;
             _activeEnemies.Add(enemy);
 
-            Enemy enemyComponent = enemy.GetComponent<Enemy>();
+            //Enemy enemyComponent = enemy.GetComponent<Enemy>();
 
-            if (spawnData.RandomPath != null && enemyComponent.Movement != null)
-                enemyComponent.Initialize(spawnData.RandomPath);
+            //if (spawnData.RandomPath != null && enemyComponent.Movement != null)
+            //доступ к Movement без GetComponent
+            if (spawnData.RandomPath != null && enemy.Movement != null)
+                enemy.Initialize(spawnData.RandomPath);
 
             enemy.gameObject.SetActive(true);
-            enemy.GetComponent<Enemy>().ResetEnemy();
+            //enemy.GetComponent<Enemy>().ResetEnemy();
+            enemy.ResetEnemy();
         }
     }
 
-    private void HandleEnemyDeath(BaseHealth enemy)
+    // Enemy вместо BaseHealth
+    private void HandleEnemyDeath(Enemy enemy)
+    //private void HandleEnemyDeath(BaseHealth enemy)
     {
         if (enemy != null && _activeEnemies.Contains(enemy))
         {
-            enemy.Died -= HandleEnemyDeath;
+            enemy.EnemyDied -= HandleEnemyDeath;
+            //enemy.Died -= HandleEnemyDeath;
+
             _activeEnemies.Remove(enemy);
             _spawnedCount -= NumberEnemyToSpawn;
             _enemyCounterUI?.RemoveEnemy(NumberEnemyToSpawn);
@@ -146,9 +159,12 @@ public class EnemySpawner : MonoBehaviour
 
     private void UnsubscribeFromAllEnemies()
     {
-        foreach (BaseHealth enemy in _activeEnemies)
+        foreach (Enemy enemy in _activeEnemies)
             if (enemy != null)
-                enemy.Died -= HandleEnemyDeath;
+                enemy.EnemyDied -= HandleEnemyDeath;
+        //foreach (BaseHealth enemy in _activeEnemies)
+        //    if (enemy != null)
+        //        enemy.Died -= HandleEnemyDeath;
 
         _activeEnemies.Clear();
         _spawnedCount = 0;

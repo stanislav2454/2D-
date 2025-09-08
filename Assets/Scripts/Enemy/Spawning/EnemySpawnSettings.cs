@@ -9,7 +9,7 @@ public class EnemySpawnSettings : ScriptableObject
 
     [Header("Pool Settings")]
     public int defaultCapacity = 10;
-    [Range(0, 20)] public int maxPoolSize = 20;
+    [Range(1, 20)] public int maxPoolSize = 20;
     public bool collectionCheck = true;
 
     [Header("Validation")]

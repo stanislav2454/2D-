@@ -22,9 +22,9 @@ public class BaseHealth : MonoBehaviour, IDamageable
         if (IsDead)
             return;
 
-        ResetHealth();
         IsDead = true;
         Died?.Invoke(this);
+        ResetHealth();
     }
 
     public virtual int TakeDamage(int damage)
@@ -69,11 +69,11 @@ public class BaseHealth : MonoBehaviour, IDamageable
     [SerializeField] private int _testDamageAmount = 20;
     [SerializeField] private int _testHealAmount = 10;
 
-    [ContextMenu("Take Test Damage")]
+    [ContextMenu(nameof(TakeTestDamage))]
     public void TakeTestDamage() =>
         TakeDamage(_testDamageAmount);
 
-    [ContextMenu("Test Heal")]
+    [ContextMenu(nameof(TestHeal))]
     public void TestHeal() =>
         Heal(_testHealAmount);
 

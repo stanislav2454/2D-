@@ -3,17 +3,18 @@ using UnityEngine.Pool;
 
 public class EnemyPool : MonoBehaviour
 {
-    [Header("Pool Settings")]
+    [Header("Pool Settings reference")]
     [SerializeField] private EnemySpawnSettings _settings;
 
+    [Space(3)]
     [Header("Prefab")]
-    [SerializeField] private BaseHealth _enemyPrefab;
+    [SerializeField] private Enemy _enemyPrefab;
 
-    private IObjectPool<BaseHealth> _pool;
+    private IObjectPool<Enemy> _pool;
     private int _maxSize;
 
     public int MaxSize => _maxSize;
-    public IObjectPool<BaseHealth> Pool => _pool;
+    public IObjectPool<Enemy> Pool => _pool;
 
     private void Awake()
     {
@@ -55,71 +56,91 @@ public class EnemyPool : MonoBehaviour
             CreatePool();
     }
 
-    public BaseHealth GetEnemy() =>
+    public Enemy GetEnemy() =>
          _pool?.Get();
 
-    public void ReleaseEnemy(BaseHealth enemy) =>
+    public void ReleaseEnemy(Enemy enemy) =>
         _pool?.Release(enemy);
 
     private void CreatePool()
     {
         int capacity = _settings?.defaultCapacity ?? 10;
-        int maxSize = _settings?.maxPoolSize ?? 20;
+        _maxSize = _settings?.maxPoolSize ?? 20;
         bool check = _settings?.collectionCheck ?? true;
 
-        _pool = new ObjectPool<BaseHealth>(
+        _pool = new ObjectPool<Enemy>(
             CreatePooledObject,
             OnGetFromPool,
             OnReturnedToPool,
             OnDestroyPooledObject,
             check,
             capacity,
-            maxSize);
+            _maxSize);
     }
 
-    private BaseHealth CreatePooledObject()
+    private Enemy CreatePooledObject()
     {
-        BaseHealth enemy = Instantiate(_enemyPrefab, transform);
+        Enemy enemy = Instantiate(_enemyPrefab, transform);
         enemy.gameObject.SetActive(false);
 
-        enemy.Died += OnEnemyDied;
+        enemy.EnemyDied += OnEnemyDied;
+        //Enemy enemyComponent = enemy.GetComponent<Enemy>();
+        //if (enemyComponent != null)
+        //    enemyComponent.EnemyDied += OnEnemyDied;
 
         return enemy;
     }
 
-    private void OnEnemyDied(BaseHealth enemy)
+    private void OnEnemyDied(Enemy enemy)
+    //private void OnEnemyDied(BaseHealth enemy)
     {
         if (enemy == null || enemy.gameObject.activeInHierarchy == false)
             return;
 
-        enemy.Died -= OnEnemyDied;
-
-        ReleaseEnemy(enemy);
+        //enemy.Died -= OnEnemyDied;
+        //ReleaseEnemy(enemy);
+        enemy.EnemyDied -= OnEnemyDied;
+        ReleaseEnemy(enemy.GetComponent<Enemy>());
     }
 
-    private void OnGetFromPool(BaseHealth enemy)
+    private void OnGetFromPool(Enemy enemy)
     {
         enemy.gameObject.SetActive(true);
 
-        enemy.Died += OnEnemyDied;
-        enemy.GetComponent<Enemy>()?.ResetEnemy();
+        //enemy.Died += OnEnemyDied;
+        //enemy.GetComponent<Enemy>()?.ResetEnemy();
+        enemy.EnemyDied += OnEnemyDied;
+        enemy.ResetEnemy();
+        // Enemy enemyComponent = enemy.GetComponent<Enemy>();
+        //if (enemyComponent != null)
+        //{
+        //    enemyComponent.EnemyDied += OnEnemyDied;
+        //    enemyComponent.ResetEnemy(); 
+        //}
     }
 
 
-    private void OnReturnedToPool(BaseHealth enemy)
+    private void OnReturnedToPool(Enemy enemy)
     {
         if (enemy != null)
         {
-            enemy.Died -= OnEnemyDied;
+            enemy.EnemyDied -= OnEnemyDied;
+            //Enemy enemyComponent = enemy.GetComponent<Enemy>();
+            //if (enemyComponent != null)
+            //    enemyComponent.EnemyDied -= OnEnemyDied;
+
             enemy.gameObject.SetActive(false);
         }
     }
 
-    private void OnDestroyPooledObject(BaseHealth enemy)
+    private void OnDestroyPooledObject(Enemy enemy)
     {
         if (enemy != null)
-        {
-            enemy.Died -= OnEnemyDied;
+        {           
+            enemy.EnemyDied -= OnEnemyDied;
+            //Enemy enemyComponent = enemy.GetComponent<Enemy>();
+            //if (enemyComponent != null)            
+            //    enemyComponent.EnemyDied -= OnEnemyDied;            
             Destroy(enemy.gameObject);
         }
     }

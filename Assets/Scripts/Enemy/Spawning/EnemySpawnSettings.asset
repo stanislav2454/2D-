@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemySpawnSettings
   m_EditorClassIdentifier: 
   spawnInterval: 2
-  numberEnemiesToSpawn: 3
+  numberEnemiesToSpawn: 8
   defaultCapacity: 10
   maxPoolSize: 20
   collectionCheck: 1

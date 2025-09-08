@@ -7,6 +7,8 @@ public class Enemy : MonoBehaviour
     private EnemyHealth _health;
     private EnemyAI _ai;
 
+    public event System.Action<Enemy> EnemyDied; //  Событие смерти врага
+                                                 // и спецом название с EnemyDied, для наглядности - потом уберу
     public EnemyMover Movement => _mover;
 
     private void Awake()
@@ -14,6 +16,20 @@ public class Enemy : MonoBehaviour
         _mover = GetComponent<EnemyMover>();
         _health = GetComponent<EnemyHealth>();
         _ai = GetComponent<EnemyAI>();
+
+        _health.Died += OnHealthDied;
+    }
+
+    private void OnDestroy()
+    {
+        if (_health != null)
+            _health.Died -= OnHealthDied;
+    }
+
+    private void OnHealthDied(BaseHealth health)
+    {
+        // Преобразуем событие смерти здоровья в событие смерти врага
+        EnemyDied?.Invoke(this);
     }
 
     public void ResetEnemy()

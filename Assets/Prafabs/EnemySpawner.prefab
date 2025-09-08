@@ -70,7 +70,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3560221198950260244}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -91,12 +91,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45a245321d13ee5438767eeccb541adc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnInterval: 1.2
-  _numberEnemiesToSpawn: 3
+  _settings: {fileID: 11400000, guid: 286c5f9604da4e844a72b23daa40a285, type: 2}
   _spawnData:
   - {fileID: 879716794423804212}
   _enemyPool: {fileID: 1435135018029510084}
-  parent: {fileID: 2593045698768603268, guid: 015dc90d7ee567f49bb4a3fcfa0d1b1f, type: 3}
+  parent: {fileID: 0}
   _enemyCounterUI: {fileID: 0}
 --- !u!114 &1435135018029510084
 MonoBehaviour:
@@ -110,10 +109,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bc75ec8c61ee9c47bfdf3befff40a2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _defaultCapacity: 10
-  _maxSize: 15
-  _collectionCheck: 1
-  _enemyPrefab: {fileID: 6444266711952923196, guid: 87da2c4491d69bc4c8efbfd507ed8f41, type: 3}
+  _settings: {fileID: 11400000, guid: 286c5f9604da4e844a72b23daa40a285, type: 2}
+  _enemyPrefab: {fileID: 735806534406604488, guid: 87da2c4491d69bc4c8efbfd507ed8f41, type: 3}
 --- !u!1 &5725117745391612224
 GameObject:
   m_ObjectHideFlags: 0
