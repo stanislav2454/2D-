@@ -9,12 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03697478acf015f438d8beaf9c3b2efe, type: 3}
-  m_Name: EnemySpawnSettings
+  m_Script: {fileID: 11500000, guid: 3e10695571730404eb6db138ac60b6d3, type: 3}
+  m_Name: EnemySettings
   m_EditorClassIdentifier: 
-  spawnInterval: 2
-  numberEnemiesToSpawn: 3
-  defaultCapacity: 10
-  maxPoolSize: 20
-  collectionCheck: 1
-  autoValidate: 1
+  _walkSpeed: 0.4
+  _chaseSpeed: 1.1
+  _acceleration: 12
+  _detectionRadius: 1.9
+  _attackRange: 0.12
+  _attackCooldown: 3
+  _attackDamage: 2
+  _maxHealth: 80
+  _enemyScale: 1

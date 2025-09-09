@@ -3,12 +3,13 @@
 [DisallowMultipleComponent, RequireComponent(typeof(EnemyMover), typeof(EnemyHealth), typeof(EnemyAI))]
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] private EnemySettings _settings;
+
     private EnemyMover _mover;
     private EnemyHealth _health;
     private EnemyAI _ai;
 
-    public event System.Action<Enemy> EnemyDied; //  Событие смерти врага
-                                                 // и спецом название с EnemyDied, для наглядности - потом уберу
+    public event System.Action<Enemy> Died; 
     public EnemyMover Movement => _mover;
 
     private void Awake()
@@ -18,6 +19,8 @@ public class Enemy : MonoBehaviour
         _ai = GetComponent<EnemyAI>();
 
         _health.Died += OnHealthDied;
+
+        ApplyEnemySettings();
     }
 
     private void OnDestroy()
@@ -28,14 +31,13 @@ public class Enemy : MonoBehaviour
 
     private void OnHealthDied(BaseHealth health)
     {
-        // Преобразуем событие смерти здоровья в событие смерти врага
-        EnemyDied?.Invoke(this);
+        Died?.Invoke(this);
     }
 
     public void ResetEnemy()
     {
         transform.rotation = Quaternion.identity;
-        _health.ResetHealth();
+        _health.Init(); // Заменил ResetHealth() на Init()
         _ai.ResetAI();
     }
 
@@ -45,6 +47,24 @@ public class Enemy : MonoBehaviour
         {
             _mover.Initialize(path);
             _ai.SetPatrolPath(path);
+        }
+    }
+
+    public void ApplySettings(EnemySettings settings)
+    {
+        _settings = settings;
+        ApplyEnemySettings();
+    }
+
+    private void ApplyEnemySettings()
+    {
+        if (_settings != null)
+        {
+            _mover?.ApplySettings(_settings);
+            _health?.ApplySettings(_settings);
+            _ai?.ApplySettings(_settings);
+
+            transform.localScale = Vector3.one * _settings.EnemyScale;
         }
     }
 }

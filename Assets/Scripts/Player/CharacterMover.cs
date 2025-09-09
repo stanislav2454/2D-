@@ -4,7 +4,7 @@
 public class CharacterMover : MonoBehaviour
 {
     [SerializeField] private float _acceleration = 15f;
-    [SerializeField] private MovementSettings _settings;
+    [SerializeField] private PlayerSettings _settings;
     [SerializeField] private Transform _playerView;
     [SerializeField] private Flipper _flipper;
 

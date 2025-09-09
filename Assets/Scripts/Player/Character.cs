@@ -3,7 +3,7 @@
 [DisallowMultipleComponent]
 [RequireComponent(typeof(UserInputReader), typeof(CharacterMover))]
 [RequireComponent(typeof(Jumper), typeof(Crawler), typeof(PlayerHealth))]
-[RequireComponent(typeof(Attacker), typeof(Rigidbody2D), typeof(GroundDetector))]
+[RequireComponent(typeof(PlayerAttacker), typeof(Rigidbody2D), typeof(GroundDetector))]
 public class Character : MonoBehaviour
 {
     [Header("References")]
@@ -11,12 +11,15 @@ public class Character : MonoBehaviour
     [SerializeField] private CharacterMover _movement;
     [SerializeField] private Jumper _jumper;
     [SerializeField] private Crawler _crawler;
-    [SerializeField] private Attacker _attacker;
+    [SerializeField] private PlayerAttacker _attacker;
     [SerializeField] private CharacterAnimator _animator;
+    [SerializeField] private PlayerSettings _playerSettings;
 
     private PlayerHealth _playerHealth;
     private Rigidbody2D _rigidbody;
     private GroundDetector _groundDetector;
+
+    private bool _wasAttacking;
 
     private void Awake()
     {
@@ -24,7 +27,7 @@ public class Character : MonoBehaviour
         _movement = GetComponent<CharacterMover>();
         _jumper = GetComponent<Jumper>();
         _crawler = GetComponent<Crawler>();
-        _attacker = GetComponent<Attacker>();
+        _attacker = GetComponent<PlayerAttacker>();
         _playerHealth = GetComponent<PlayerHealth>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _groundDetector = GetComponent<GroundDetector>();
@@ -33,7 +36,9 @@ public class Character : MonoBehaviour
             _animator = GetComponentInChildren<CharacterAnimator>();
 
         _playerHealth.Died += OnDead; 
-        _attacker.Attacked += OnAttackPerformed;
+        _attacker.AttackPerformed += OnAttackPerformed;
+        
+        ApplyPlayerSettings();
     }
 
     private void Update()
@@ -52,7 +57,18 @@ public class Character : MonoBehaviour
     private void OnDestroy()
     {
         _playerHealth.Died -= OnDead;
-        _attacker.Attacked -= OnAttackPerformed;
+        _attacker.AttackPerformed -= OnAttackPerformed;
+    }
+
+    private void ApplyPlayerSettings()
+    {
+        if (_playerSettings != null)
+        {
+           // _movement.ApplySettings(_playerSettings);
+           // _jumper.ApplySettings(_playerSettings);
+            _attacker.ApplySettings(_playerSettings);
+            //_playerHealth.ApplySettings(_playerSettings);
+        }
     }
 
     private void HandleAttack()

@@ -3,8 +3,9 @@
 [DisallowMultipleComponent, RequireComponent(typeof(Enemy))]
 public class EnemyMover : MonoBehaviour
 {
-    [SerializeField] private float _patrolSpeed = 2f;
-    [SerializeField] private float _chaseSpeed = 5f;
+    [SerializeField] private EnemySettings _settings;
+    //[SerializeField] private float _patrolSpeed = 2f;
+    //[SerializeField] private float _chaseSpeed = 5f;
     [SerializeField] private float _reachThreshold = 0.2f;
     [SerializeField] private Flipper _flipper;
 
@@ -17,7 +18,10 @@ public class EnemyMover : MonoBehaviour
 
     private void Start()
     {
-        _currentSpeed = _patrolSpeed;
+        if (_settings != null)
+            _currentSpeed = _settings.WalkSpeed;
+        else
+            Debug.LogWarning("EnemySettings not assigned!", this);
     }
 
     private void Update()
@@ -30,7 +34,8 @@ public class EnemyMover : MonoBehaviour
 
     public void SetChasingSpeed(bool isChasing)
     {
-        _currentSpeed = isChasing ? _chaseSpeed : _patrolSpeed;
+        if (_settings != null)
+            _currentSpeed = isChasing ? _settings.ChaseSpeed : _settings.WalkSpeed;
     }
 
     public void MoveToTarget(Vector2 target)
@@ -65,6 +70,12 @@ public class EnemyMover : MonoBehaviour
         _currentWaypointIndex = 0;
         _currentWaypoint = _path.GetWaypoint(_currentWaypointIndex);
         _isMoving = true;
+    }
+
+    public void ApplySettings(EnemySettings settings)//
+    {
+        _settings = settings;
+        _currentSpeed = _settings.WalkSpeed;
     }
 
     private void PatrolUpdate()

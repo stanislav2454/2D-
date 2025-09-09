@@ -7,9 +7,7 @@ public class EnemySpawner : MonoBehaviour
 {
     private const int NumberEnemyToSpawn = 1;
 
-    // ИЗМЕНЕНО: BaseHealth на Enemy
     private readonly HashSet<Enemy> _activeEnemies = new HashSet<Enemy>();
-    //private readonly HashSet<BaseHealth> _activeEnemies = new HashSet<BaseHealth>();
 
     [SerializeField] private EnemySpawnSettings _settings;
     [Space(15)]
@@ -117,39 +115,30 @@ public class EnemySpawner : MonoBehaviour
         if (spawnData.SpawnPoint == null)
             return;
 
-        // теперь возвращает Enemy 
         Enemy enemy = _enemyPool.GetEnemy();
 
         if (enemy != null && _activeEnemies.Contains(enemy) == false)
         {
             enemy.transform.SetPositionAndRotation(spawnData.SpawnPoint.Position, Quaternion.identity);
             enemy.transform.SetParent(parent);
-            // EnemyDied вместо BaseHealth.Died
-            enemy.EnemyDied += HandleEnemyDeath;
-            //enemy.Died += HandleEnemyDeath;
+
+            enemy.Died += HandleEnemyDeath;
+
             _activeEnemies.Add(enemy);
 
-            //Enemy enemyComponent = enemy.GetComponent<Enemy>();
-
-            //if (spawnData.RandomPath != null && enemyComponent.Movement != null)
-            //доступ к Movement без GetComponent
             if (spawnData.RandomPath != null && enemy.Movement != null)
                 enemy.Initialize(spawnData.RandomPath);
 
             enemy.gameObject.SetActive(true);
-            //enemy.GetComponent<Enemy>().ResetEnemy();
             enemy.ResetEnemy();
         }
     }
 
-    // Enemy вместо BaseHealth
     private void HandleEnemyDeath(Enemy enemy)
-    //private void HandleEnemyDeath(BaseHealth enemy)
     {
         if (enemy != null && _activeEnemies.Contains(enemy))
         {
-            enemy.EnemyDied -= HandleEnemyDeath;
-            //enemy.Died -= HandleEnemyDeath;
+            enemy.Died -= HandleEnemyDeath;
 
             _activeEnemies.Remove(enemy);
             _spawnedCount -= NumberEnemyToSpawn;
@@ -161,10 +150,7 @@ public class EnemySpawner : MonoBehaviour
     {
         foreach (Enemy enemy in _activeEnemies)
             if (enemy != null)
-                enemy.EnemyDied -= HandleEnemyDeath;
-        //foreach (BaseHealth enemy in _activeEnemies)
-        //    if (enemy != null)
-        //        enemy.Died -= HandleEnemyDeath;
+                enemy.Died -= HandleEnemyDeath;
 
         _activeEnemies.Clear();
         _spawnedCount = 0;

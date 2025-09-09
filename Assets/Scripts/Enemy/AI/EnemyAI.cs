@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
-[RequireComponent(typeof(EnemyMover))]
+[RequireComponent(typeof(EnemyMover), typeof(EnemyAttacker))]
 public class EnemyAI : MonoBehaviour
 {
     private const float WaypointReachThreshold = 0.5f;
@@ -9,14 +8,11 @@ public class EnemyAI : MonoBehaviour
 
     public enum EnemyState { Patrolling, Chasing, Attacking }
 
-    [Header("AI Settings")]
-    [SerializeField] private float _attackRange = 0.12f;
-    [SerializeField] private float _attackCooldown = 3f;
-    [SerializeField] private int _attackDamage = 2;
-
     [Header("References")]
+    [SerializeField] private EnemySettings _settings;
     [SerializeField] private EnemyMover _mover;
     [SerializeField] private Detector _detector;
+    [SerializeField] private EnemyAttacker _attacker;
 
     private EnemyPath _patrolPath;
     private Transform _player;
@@ -29,6 +25,7 @@ public class EnemyAI : MonoBehaviour
     private void Awake()
     {
         _mover = GetComponent<EnemyMover>();
+        _attacker = GetComponent<EnemyAttacker>();
 
         CalculateSquaredRanges();
     }
@@ -36,7 +33,8 @@ public class EnemyAI : MonoBehaviour
     private void OnEnable()
     {
         _detector.TargetDetected += OnTargetDetected;
-        _detector.TargetLost += OnTargetLost; ResetAI();
+        _detector.TargetLost += OnTargetLost;
+        ResetAI();
     }
 
     private void OnDisable()
@@ -64,9 +62,9 @@ public class EnemyAI : MonoBehaviour
     public void ResetAI()
     {
         _currentState = EnemyState.Patrolling;
-        _canAttack = true;
+        _canAttack = true;//
         _currentWaypointIndex = 0;
-        StopAllCoroutines();
+        StopAllCoroutines();//
     }
 
     public void SetPatrolPath(EnemyPath path)
@@ -77,13 +75,16 @@ public class EnemyAI : MonoBehaviour
 
     private void CalculateSquaredRanges()
     {
-        _sqrAttackRange = _attackRange * _attackRange;
+        if (_settings != null)
+            _sqrAttackRange = _settings.AttackRange * _settings.AttackRange;
+
         _sqrWaypointReachThreshold = WaypointReachThreshold * WaypointReachThreshold;
     }
 
     private void OnTargetDetected(Transform playerTransform)
     {
         _player = playerTransform;
+        _attacker.Initialize(_player);
         _currentState = EnemyState.Chasing;
     }
 
@@ -102,9 +103,7 @@ public class EnemyAI : MonoBehaviour
             _mover.MoveToTarget(waypoint.position);
 
             if (Vector2.SqrMagnitude(transform.position - waypoint.position) < _sqrWaypointReachThreshold)
-            {
                 _currentWaypointIndex = (_currentWaypointIndex + WaypointIncrement) % _patrolPath.Count;
-            }
         }
     }
 
@@ -116,10 +115,8 @@ public class EnemyAI : MonoBehaviour
         _mover.SetChasingSpeed(true);
         _mover.MoveToTarget(_player.position);
 
-        if (Vector2.SqrMagnitude(_player.position - transform.position) <= _sqrAttackRange)
-        {
+        if (_attacker.CanAttackPlayer())
             _currentState = EnemyState.Attacking;
-        }
     }
 
     private void AttackBehavior()
@@ -127,37 +124,26 @@ public class EnemyAI : MonoBehaviour
         _mover.SetChasingSpeed(false);
         _mover.StopMovement();
 
-        if (_canAttack && _player != null)
-        {
-            AttackPlayer();
-            StartCoroutine(AttackCooldown());
-        }
+        _attacker.PerformAttack();
 
-        if (_player == null || Vector2.SqrMagnitude(_player.position - transform.position) > _sqrAttackRange)
-        {
+        if (_player == null || _attacker.CanAttackPlayer() == false)
             _currentState = EnemyState.Chasing;
-        }
     }
 
-    private void AttackPlayer()
-    {
-        if (_player == null)
-            return;
 
-        PlayerHealth playerHealth = _player.GetComponent<PlayerHealth>();
-        playerHealth?.TakeDamage(_attackDamage);
-    }
 
-    private IEnumerator AttackCooldown()
+    public void ApplySettings(EnemySettings settings)
     {
-        _canAttack = false;
-        yield return new WaitForSeconds(_attackCooldown);
-        _canAttack = true;
+        _settings = settings;
+        _attacker.ApplySettings(settings);
+
+        if (_detector != null)
+            _detector.SetDetectionRadius(_settings.DetectionRadius);
     }
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _attackRange);
+        Gizmos.DrawWireSphere(transform.position, _settings.AttackRange);
     }
 }

@@ -83,23 +83,17 @@ public class EnemyPool : MonoBehaviour
         Enemy enemy = Instantiate(_enemyPrefab, transform);
         enemy.gameObject.SetActive(false);
 
-        enemy.EnemyDied += OnEnemyDied;
-        //Enemy enemyComponent = enemy.GetComponent<Enemy>();
-        //if (enemyComponent != null)
-        //    enemyComponent.EnemyDied += OnEnemyDied;
+        enemy.Died += OnEnemyDied;
 
         return enemy;
     }
 
     private void OnEnemyDied(Enemy enemy)
-    //private void OnEnemyDied(BaseHealth enemy)
     {
         if (enemy == null || enemy.gameObject.activeInHierarchy == false)
             return;
 
-        //enemy.Died -= OnEnemyDied;
-        //ReleaseEnemy(enemy);
-        enemy.EnemyDied -= OnEnemyDied;
+        enemy.Died -= OnEnemyDied;
         ReleaseEnemy(enemy.GetComponent<Enemy>());
     }
 
@@ -107,16 +101,9 @@ public class EnemyPool : MonoBehaviour
     {
         enemy.gameObject.SetActive(true);
 
-        //enemy.Died += OnEnemyDied;
-        //enemy.GetComponent<Enemy>()?.ResetEnemy();
-        enemy.EnemyDied += OnEnemyDied;
-        enemy.ResetEnemy();
-        // Enemy enemyComponent = enemy.GetComponent<Enemy>();
-        //if (enemyComponent != null)
-        //{
-        //    enemyComponent.EnemyDied += OnEnemyDied;
-        //    enemyComponent.ResetEnemy(); 
-        //}
+        enemy.Died += OnEnemyDied;
+
+        enemy.ResetEnemy(); // ResetEnemy() вызовет Init() на здоровье
     }
 
 
@@ -124,10 +111,7 @@ public class EnemyPool : MonoBehaviour
     {
         if (enemy != null)
         {
-            enemy.EnemyDied -= OnEnemyDied;
-            //Enemy enemyComponent = enemy.GetComponent<Enemy>();
-            //if (enemyComponent != null)
-            //    enemyComponent.EnemyDied -= OnEnemyDied;
+            enemy.Died -= OnEnemyDied;
 
             enemy.gameObject.SetActive(false);
         }
@@ -137,10 +121,8 @@ public class EnemyPool : MonoBehaviour
     {
         if (enemy != null)
         {           
-            enemy.EnemyDied -= OnEnemyDied;
-            //Enemy enemyComponent = enemy.GetComponent<Enemy>();
-            //if (enemyComponent != null)            
-            //    enemyComponent.EnemyDied -= OnEnemyDied;            
+            enemy.Died -= OnEnemyDied;
+
             Destroy(enemy.gameObject);
         }
     }

@@ -121,6 +121,7 @@ GameObject:
   - component: {fileID: 3173911537804891273}
   - component: {fileID: 735806534406604488}
   - component: {fileID: 4749829732613251369}
+  - component: {fileID: 9173386998207328779}
   m_Layer: 11
   m_Name: Enemy
   m_TagString: Untagged
@@ -158,6 +159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f16dd3fb0bc1a44b90bf14108fc6134, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _settings: {fileID: 11400000, guid: 977ec2b879843d345aa0a65d731fe970, type: 2}
 --- !u!114 &4384223661077093049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,8 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9f898b51a5c9b340b5b667e03e5da8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _patrolSpeed: 0.4
-  _chaseSpeed: 1.1
+  _settings: {fileID: 11400000, guid: 977ec2b879843d345aa0a65d731fe970, type: 2}
   _reachThreshold: 0.2
   _flipper: {fileID: 4759575615336845129}
 --- !u!114 &4759575615336845129
@@ -234,9 +235,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0f9d28c8a789d74693605ab3e5d8e17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <CurrentHealth>k__BackingField: 150
+  <CurrentHealth>k__BackingField: 80
   _testDamageAmount: 10
   _testHealAmount: 10
+  _settings: {fileID: 11400000, guid: 977ec2b879843d345aa0a65d731fe970, type: 2}
 --- !u!114 &4749829732613251369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,11 +251,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77619c67efa1b544e988a4147752e3cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attackRange: 0.12
-  _attackCooldown: 3
-  _attackDamage: 2
+  _settings: {fileID: 11400000, guid: 977ec2b879843d345aa0a65d731fe970, type: 2}
   _mover: {fileID: 4384223661077093049}
   _detector: {fileID: 6496648398486069131}
+  _attacker: {fileID: 9173386998207328779}
+--- !u!114 &9173386998207328779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 405097933647780676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 025fafe78b2950c4ba33db95359d6335, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _settings: {fileID: 11400000, guid: 977ec2b879843d345aa0a65d731fe970, type: 2}
 --- !u!1 &1341510996039993850
 GameObject:
   m_ObjectHideFlags: 0
@@ -586,4 +600,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b34f3b0a338a354ab562bc864d29a87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectionRadius: 2.2
+  detectionRadius: 1.9

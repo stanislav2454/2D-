@@ -12,10 +12,11 @@ public class BaseHealth : MonoBehaviour, IDamageable
     public event Action<BaseHealth> Died;
     public event Action<int> HealthChanged;
 
-    private void Awake()
-    {
-        ResetHealth();
-    }
+    // Убрали Awake - инициализация теперь через Init
+    // private void Awake()
+    // {
+    //     ResetHealth();
+    // }
 
     public virtual void Die()
     {
@@ -24,7 +25,7 @@ public class BaseHealth : MonoBehaviour, IDamageable
 
         IsDead = true;
         Died?.Invoke(this);
-        ResetHealth();
+        // Убрали ResetHealth() - это не место для восстановления здоровья
     }
 
     public virtual int TakeDamage(int damage)
@@ -54,7 +55,7 @@ public class BaseHealth : MonoBehaviour, IDamageable
         HealthChanged?.Invoke(CurrentHealth);
     }
 
-    public void ResetHealth()
+    public virtual void Init()
     {
         CurrentHealth = MaxHealth;
         IsDead = false;
@@ -79,6 +80,6 @@ public class BaseHealth : MonoBehaviour, IDamageable
 
     [ContextMenu("Reset Health")]
     public void EditorResetHealth() =>
-        ResetHealth();
+        Init();
 #endif
 }

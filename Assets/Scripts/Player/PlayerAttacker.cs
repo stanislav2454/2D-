@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class Attacker : MonoBehaviour
+public class PlayerAttacker : MonoBehaviour
 {
-    [Header("Attack Settings")]
-    [SerializeField] private float _damageInterval = 0.5f;
-    [SerializeField] private int _damage = 1;
+    [Header("References")]
+    [SerializeField] private PlayerSettings _settings;
     [SerializeField] private AttackZone _attackZone;
     [SerializeField] private CharacterAnimator _animator;
 
     private Coroutine _attackCoroutine;
     private bool _isAttacking;
+    private bool _canAttack = true;
 
-    public event System.Action Attacked;
+    public event System.Action AttackPerformed;
 
     private void Awake()
     {
@@ -32,7 +32,7 @@ public class Attacker : MonoBehaviour
 
     public void StartAttacking()
     {
-        if (_isAttacking)
+        if (_isAttacking || _canAttack == false)
             return;
 
         _isAttacking = true;
@@ -59,10 +59,20 @@ public class Attacker : MonoBehaviour
             if (_attackZone != null)
             {
                 _attackZone.CleanDestroyedTargets();
-                yield return new WaitForSeconds(_damageInterval);
 
                 if (_attackZone.TargetsInZoneCount > 0)
-                    Attack();
+                {
+                    PerformAttack();
+                    yield return StartCoroutine(AttackCooldown());
+                }
+                else
+                {
+                    yield return new WaitForSeconds(0.1f);//
+                }
+                //yield return new WaitForSeconds(_damageInterval);
+
+                //if (_attackZone.TargetsInZoneCount > 0)
+                //    Attack();
             }
             else
             {
@@ -71,13 +81,14 @@ public class Attacker : MonoBehaviour
         }
     }
 
-    private void Attack()
+    private void PerformAttack()
     {
-        if (_attackZone == null || _attackZone.TargetsInZoneCount == 0)
+        if (_attackZone == null || _attackZone.TargetsInZoneCount == 0 || _settings == null)
             return;
 
-        int totalDamageDealt = CalculateDamageToTargets(_attackZone, _damage);
-        Attacked?.Invoke();
+        int totalDamageDealt = CalculateDamageToTargets(_attackZone, _settings.AttackDamage);
+        AttackPerformed?.Invoke();
+        _animator?.PlayAttackAnimation();
     }
 
     private int CalculateDamageToTargets(AttackZone attackZone, int damage)
@@ -95,5 +106,17 @@ public class Attacker : MonoBehaviour
         }
 
         return totalDamageDealt;
+    }
+
+    private IEnumerator AttackCooldown()
+    {
+        _canAttack = false;
+        yield return new WaitForSeconds(_settings.AttackCooldown);
+        _canAttack = true;
+    }
+
+    public void ApplySettings(PlayerSettings settings)
+    {
+        _settings = settings;
     }
 }

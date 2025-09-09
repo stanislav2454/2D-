@@ -35,6 +35,13 @@ public class Detector : MonoBehaviour
             _detectZone.radius = detectionRadius;
     }
 
+    public void SetDetectionRadius(float radius)
+    {
+        detectionRadius = radius;
+        if (_detectZone != null)
+            _detectZone.radius = detectionRadius;
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
