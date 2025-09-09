@@ -1007,18 +1007,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2182035369824937794, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
-      propertyPath: m_ExcludeLayers.m_Bits
-      value: 64
-      objectReference: {fileID: 0}
-    - target: {fileID: 3353201999493121068, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
-      propertyPath: _playerSettings
-      value: 
-      objectReference: {fileID: 11400000, guid: f1b91bdfa4633994caa0b46c07e2a650, type: 2}
-    - target: {fileID: 3409126156442593634, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
-      propertyPath: _settings
-      value: 
-      objectReference: {fileID: 11400000, guid: f1b91bdfa4633994caa0b46c07e2a650, type: 2}
     - target: {fileID: 4837384122218112796, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.5
@@ -1059,18 +1047,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5333696821135983268, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5704735201354132509, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
       propertyPath: _coinUI
       value: 
       objectReference: {fileID: 941138851}
-    - target: {fileID: 6776721935901609013, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
-      propertyPath: _settings
-      value: 
-      objectReference: {fileID: 11400000, guid: f1b91bdfa4633994caa0b46c07e2a650, type: 2}
     - target: {fileID: 6785936280359399190, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
       propertyPath: m_Name
       value: Player

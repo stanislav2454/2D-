@@ -1,23 +1,24 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class PlayerAttacker : MonoBehaviour
+public class PlayerAttacker : BaseAttacker
 {
-    [Header("References")]
-    [SerializeField] private PlayerSettings _settings;
+    [SerializeField] private PlayerSettings _playerSettings;
     [SerializeField] private AttackZone _attackZone;
     [SerializeField] private CharacterAnimator _animator;
 
     private Coroutine _attackCoroutine;
     private bool _isAttacking;
-    private bool _canAttack = true;
 
-    public event System.Action AttackPerformed;
+    protected override int AttackDamage => _playerSettings?.AttackDamage ?? 1;
+    protected override float AttackCooldown => _playerSettings?.AttackCooldown ?? 0.5f;
+    protected override float AttackRange => 0f;
 
-    private void Awake()
+    private new void Awake()
     {
+        base.Awake();
+
         if (_attackZone == null)
             _attackZone = GetComponentInChildren<AttackZone>();
 
@@ -25,10 +26,8 @@ public class PlayerAttacker : MonoBehaviour
             _animator = GetComponentInChildren<CharacterAnimator>();
     }
 
-    private void OnDisable()
-    {
+    private void OnDisable() =>
         StopAttacking();
-    }
 
     public void StartAttacking()
     {
@@ -42,13 +41,11 @@ public class PlayerAttacker : MonoBehaviour
     public void StopAttacking()
     {
         _isAttacking = false;
-
         if (_attackCoroutine != null)
         {
             StopCoroutine(_attackCoroutine);
             _attackCoroutine = null;
         }
-
         _animator?.StopAttackAnimation();
     }
 
@@ -58,21 +55,17 @@ public class PlayerAttacker : MonoBehaviour
         {
             if (_attackZone != null)
             {
-                _attackZone.CleanDestroyedTargets();
+                _attackZone.CleanDestroyedTargets(); 
 
                 if (_attackZone.TargetsInZoneCount > 0)
                 {
                     PerformAttack();
-                    yield return StartCoroutine(AttackCooldown());
+                    yield return StartCoroutine(AttackCooldownRoutine());
                 }
                 else
                 {
-                    yield return new WaitForSeconds(0.1f);//
+                    yield return new WaitForSeconds(TARGET_CHECK_INTERVAL);
                 }
-                //yield return new WaitForSeconds(_damageInterval);
-
-                //if (_attackZone.TargetsInZoneCount > 0)
-                //    Attack();
             }
             else
             {
@@ -81,42 +74,25 @@ public class PlayerAttacker : MonoBehaviour
         }
     }
 
-    private void PerformAttack()
+    public override void PerformAttack()
     {
-        if (_attackZone == null || _attackZone.TargetsInZoneCount == 0 || _settings == null)
-            return;
-
-        int totalDamageDealt = CalculateDamageToTargets(_attackZone, _settings.AttackDamage);
-        AttackPerformed?.Invoke();
+        CalculateDamageToTargets(_attackZone, AttackDamage);
+        OnAttackPerformed();
         _animator?.PlayAttackAnimation();
     }
 
-    private int CalculateDamageToTargets(AttackZone attackZone, int damage)
+    private void CalculateDamageToTargets(AttackZone attackZone, int damage)
     {
-        int totalDamageDealt = 0;
-        IReadOnlyCollection<IDamageable> targets = attackZone.Targets;
-
-        foreach (var target in targets)
+        foreach (var target in attackZone.Targets)
         {
             if (target != null)
-            {
-                int damageDealt = target.TakeDamage(damage);
-                totalDamageDealt += damageDealt;
-            }
+                target.TakeDamage(damage);
         }
-
-        return totalDamageDealt;
     }
 
-    private IEnumerator AttackCooldown()
-    {
-        _canAttack = false;
-        yield return new WaitForSeconds(_settings.AttackCooldown);
-        _canAttack = true;
-    }
+    public override bool CanAttack() =>
+        _canAttack && _attackZone != null && _attackZone.TargetsInZoneCount > 0;
 
-    public void ApplySettings(PlayerSettings settings)
-    {
-        _settings = settings;
-    }
+    public void ApplyPlayerSettings(PlayerSettings settings) =>
+        _playerSettings = settings;
 }

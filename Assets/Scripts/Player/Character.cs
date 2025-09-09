@@ -66,7 +66,7 @@ public class Character : MonoBehaviour
         {
            // _movement.ApplySettings(_playerSettings);
            // _jumper.ApplySettings(_playerSettings);
-            _attacker.ApplySettings(_playerSettings);
+            _attacker.ApplyPlayerSettings(_playerSettings);
             //_playerHealth.ApplySettings(_playerSettings);
         }
     }

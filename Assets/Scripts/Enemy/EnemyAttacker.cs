@@ -1,71 +1,58 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class EnemyAttacker : MonoBehaviour
+public class EnemyAttacker : BaseAttacker
 {
-    [Header("References")]
-    [SerializeField] private EnemySettings _settings;
-
+    [SerializeField] private EnemySettings _enemySettings;
     private Transform _player;
-    private bool _canAttack = true;
-    private float _sqrAttackRange;
 
-    public event System.Action AttackPerformed;
+    protected override int AttackDamage => _enemySettings?.AttackDamage ?? 2;
+    protected override float AttackCooldown => _enemySettings?.AttackCooldown ?? 3f;
+    protected override float AttackRange => _enemySettings?.AttackRange ?? 0.12f;
 
-    private void Awake()
+    private void OnEnable()
     {
-        CalculateSquaredRanges();
+        _canAttack = true;
+        StopAllCoroutines(); 
     }
 
-    public void Initialize(Transform player)
+    private void OnDisable()
     {
+        StopAllCoroutines(); 
+    }
+
+    public void Initialize(Transform player) => 
         _player = player;
-    }
 
-    public bool CanAttackPlayer()
+    public override bool CanAttack()
     {
-        if (_player == null || _settings == null)
+        if (_player == null) 
             return false;
 
         return Vector2.SqrMagnitude(_player.position - transform.position) <= _sqrAttackRange;
     }
 
-    public void PerformAttack()
+    public override void PerformAttack()
     {
-        if (_canAttack && _player != null)
+        if (_canAttack && _player != null && _enemySettings != null) 
         {
             AttackPlayer();
-            StartCoroutine(AttackCooldown());
+            StartCoroutine(AttackCooldownRoutine());
         }
     }
 
     private void AttackPlayer()
     {
-        if (_player == null || _settings == null)
-            return;
+        if (_player == null || _enemySettings == null) 
+            return; 
 
         PlayerHealth playerHealth = _player.GetComponent<PlayerHealth>();
-        playerHealth?.TakeDamage(_settings.AttackDamage);
-
-        AttackPerformed?.Invoke();
+        playerHealth?.TakeDamage(AttackDamage);
+        OnAttackPerformed();
     }
 
-    private IEnumerator AttackCooldown()
+    public void ApplyEnemySettings(EnemySettings settings)
     {
-        _canAttack = false;
-        yield return new WaitForSeconds(_settings.AttackCooldown);
-        _canAttack = true;
-    }
-
-    public void ApplySettings(EnemySettings settings)
-    {
-        _settings = settings;
-        CalculateSquaredRanges();
-    }
-
-    private void CalculateSquaredRanges()
-    {
-        if (_settings != null)
-            _sqrAttackRange = _settings.AttackRange * _settings.AttackRange;
+        _enemySettings = settings;
+        CalculateSqrAttackRange();
     }
 }

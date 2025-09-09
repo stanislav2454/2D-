@@ -15,6 +15,6 @@ MonoBehaviour:
   <WalkSpeed>k__BackingField: 6
   <CrawlSpeed>k__BackingField: 3
   <JumpForce>k__BackingField: 12
-  <MaxHealth>k__BackingField: 100
+  <MaxHealth>k__BackingField: 53
   <AttackCooldown>k__BackingField: 0.5
-  <AttackDamage>k__BackingField: 1
+  <AttackDamage>k__BackingField: 10

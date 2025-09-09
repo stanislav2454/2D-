@@ -698,7 +698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d33a96f542dbc449607399e6652542, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _settings: {fileID: 11400000, guid: f1b91bdfa4633994caa0b46c07e2a650, type: 2}
+  _playerSettings: {fileID: 11400000, guid: f1b91bdfa4633994caa0b46c07e2a650, type: 2}
   _attackZone: {fileID: 4912071412223842435}
   _animator: {fileID: 2596255769587532739}
 --- !u!1 &7300484012961744614

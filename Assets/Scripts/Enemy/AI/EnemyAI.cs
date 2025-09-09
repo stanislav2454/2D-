@@ -62,9 +62,9 @@ public class EnemyAI : MonoBehaviour
     public void ResetAI()
     {
         _currentState = EnemyState.Patrolling;
-        _canAttack = true;//
+        _canAttack = true;
         _currentWaypointIndex = 0;
-        StopAllCoroutines();//
+        StopAllCoroutines();
     }
 
     public void SetPatrolPath(EnemyPath path)
@@ -115,7 +115,7 @@ public class EnemyAI : MonoBehaviour
         _mover.SetChasingSpeed(true);
         _mover.MoveToTarget(_player.position);
 
-        if (_attacker.CanAttackPlayer())
+        if (_attacker.CanAttack())
             _currentState = EnemyState.Attacking;
     }
 
@@ -126,7 +126,7 @@ public class EnemyAI : MonoBehaviour
 
         _attacker.PerformAttack();
 
-        if (_player == null || _attacker.CanAttackPlayer() == false)
+        if (_player == null || _attacker.CanAttack() == false)
             _currentState = EnemyState.Chasing;
     }
 
@@ -135,7 +135,7 @@ public class EnemyAI : MonoBehaviour
     public void ApplySettings(EnemySettings settings)
     {
         _settings = settings;
-        _attacker.ApplySettings(settings);
+        _attacker.ApplyEnemySettings(settings);
 
         if (_detector != null)
             _detector.SetDetectionRadius(_settings.DetectionRadius);

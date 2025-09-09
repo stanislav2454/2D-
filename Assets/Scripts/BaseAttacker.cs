@@ -1,81 +1,37 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class BaseAttacker : MonoBehaviour // ← ИЗМЕНЕНО: Базовый класс для атаки
+public abstract class BaseAttacker : MonoBehaviour
 {
-    [SerializeField] protected float _damageInterval = 0.5f;
-    [SerializeField] protected int _damage = 1;
-    [SerializeField] protected AttackZone _attackZone;
+    protected const float TARGET_CHECK_INTERVAL = 0.1f;
+    protected const float MIN_ATTACK_RANGE = 0.01f;
 
-    protected Coroutine _attackCoroutine;
-    protected bool _isAttacking;
+    protected bool _canAttack = true;
+    protected float _sqrAttackRange;
 
-    public event System.Action Attacked;
+    protected abstract int AttackDamage { get; }
+    protected abstract float AttackCooldown { get; }
+    protected abstract float AttackRange { get; }
 
-    protected virtual void Awake()
+    public event System.Action AttackPerformed;
+
+    protected virtual void Awake() => CalculateSqrAttackRange();
+
+    protected void CalculateSqrAttackRange()
     {
-        if (_attackZone == null)
-            _attackZone = GetComponentInChildren<AttackZone>();
+        float range = Mathf.Max(AttackRange, MIN_ATTACK_RANGE);
+        _sqrAttackRange = range * range;
     }
 
-    protected virtual void OnDisable()
+    protected IEnumerator AttackCooldownRoutine()
     {
-        StopAttacking();
+        _canAttack = false;
+        yield return new WaitForSeconds(AttackCooldown);
+        _canAttack = true;
     }
 
-    public virtual void StartAttacking()
-    {
-        if (_isAttacking) return;
-        _isAttacking = true;
-        _attackCoroutine = StartCoroutine(AttackRoutine());
-    }
+    protected virtual void OnAttackPerformed() => AttackPerformed?.Invoke();
 
-    public virtual void StopAttacking()
-    {
-        _isAttacking = false;
-        if (_attackCoroutine != null)
-        {
-            StopCoroutine(_attackCoroutine);
-            _attackCoroutine = null;
-        }
-    }
-
-    protected virtual IEnumerator AttackRoutine()
-    {
-        while (_isAttacking)
-        {
-            if (_attackZone != null)
-            {
-                _attackZone.CleanDestroyedTargets();
-                yield return new WaitForSeconds(_damageInterval);
-
-                if (_attackZone.TargetsInZoneCount > 0)
-                    Attack();
-            }
-            yield return null;
-        }
-    }
-
-    protected virtual void Attack()
-    {
-        if (_attackZone == null) return;
-        CalculateDamageToTargets(_attackZone, _damage);
-        Attacked?.Invoke();
-    }
-
-    protected virtual int CalculateDamageToTargets(AttackZone attackZone, int damage)
-    {
-        int totalDamageDealt = 0;
-        foreach (var target in attackZone.Targets)
-        {
-            if (target != null)
-                totalDamageDealt += target.TakeDamage(damage);
-        }
-        return totalDamageDealt;
-    }
-
-    public virtual void ResetAttacker()
-    {
-        StopAttacking();
-    }
+    public abstract bool CanAttack();
+    public abstract void PerformAttack();
 }
