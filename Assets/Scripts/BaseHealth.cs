@@ -62,9 +62,6 @@ public class BaseHealth : MonoBehaviour, IDamageable, IHealth
         Changed?.Invoke(Current, Max);
     }
 
-    //public float GetHealthNormalized() =>
-    //    (float)Current / Max;
-
     protected void LimitHealth() =>
         Current = Mathf.Clamp(Current, MinHealth, Max);
 

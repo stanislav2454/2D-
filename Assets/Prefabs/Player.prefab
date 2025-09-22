@@ -448,7 +448,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _max: 100
-  <Current>k__BackingField: 0
+  <Current>k__BackingField: 90
   _testDamageAmount: 10
   _testHealAmount: 15
 --- !u!114 &7459444173664275682

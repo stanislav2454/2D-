@@ -214,12 +214,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3e4f6a696b32cb4ab4fc94dd6a8ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _healthComponent: {fileID: 0}
-  _healthSlider: {fileID: 3228977884270411728}
-  _fillImage: {fileID: 4498303235529745881}
+  Health: {fileID: 0}
+  _slider: {fileID: 3228977884270411728}
+  _fill: {fileID: 4498303235529745881}
   _fullHealthColor: {r: 0, g: 1, b: 0, a: 1}
   _lowHealthColor: {r: 1, g: 0, b: 0, a: 1}
-  _lowHealthThreshold: 0.3
   _smoothSpeed: 0.4
 --- !u!1 &4373345845531541401
 GameObject:
@@ -443,7 +442,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e70338c40767cf2468ef02407fcba44c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _healthComponent: {fileID: 0}
+  Health: {fileID: 0}
   _healthText: {fileID: 7207330879652421770}
   _format: '{0}/{1}'
   _showMaxHealth: 1

@@ -1215,10 +1215,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3418192123998198044, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
-      propertyPath: <Current>k__BackingField
-      value: 90
-      objectReference: {fileID: 0}
     - target: {fileID: 6778992438203701194, guid: cbceb33865093b34da7fc4433caf5bde, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1535,11 +1531,11 @@ PrefabInstance:
     m_TransformParent: {fileID: 6435239730807628189}
     m_Modifications:
     - target: {fileID: 2773443332963923122, guid: a1dcf313459a5634582b1d12e963182c, type: 3}
-      propertyPath: _healthComponent
+      propertyPath: Health
       value: 
       objectReference: {fileID: 5855443247385889268}
     - target: {fileID: 5889805211660022938, guid: a1dcf313459a5634582b1d12e963182c, type: 3}
-      propertyPath: _healthComponent
+      propertyPath: Health
       value: 
       objectReference: {fileID: 5855443247385889268}
     - target: {fileID: 6583077707145427794, guid: a1dcf313459a5634582b1d12e963182c, type: 3}
