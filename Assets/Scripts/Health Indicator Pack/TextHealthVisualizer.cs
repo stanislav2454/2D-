@@ -13,16 +13,16 @@ public class TextHealthVisualizer : HealthVisualizer
 
     protected override void UpdateVisualization()
     {
-        if (_healthText == null || _healthComponent == null)
+        if (_healthText == null || Health == null)
             return;
 
         string text = _showMaxHealth
-            ? string.Format(_format, _healthComponent.CurrentHealth, _healthComponent.MaxHealth)
-            : _healthComponent.CurrentHealth.ToString();
+            ? string.Format(_format, Health.Current, Health.Max)
+            : Health.Current.ToString();
 
         _healthText.text = text;
 
-        if (_healthComponent.GetHealthNormalized() <= _lowHealthThreshold)
+        if (Health.Normalized <= _lowHealthThreshold)
             _healthText.color = _lowHealthColor;
         else
             _healthText.color = _normalColor;

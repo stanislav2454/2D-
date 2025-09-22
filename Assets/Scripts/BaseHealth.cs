@@ -1,19 +1,23 @@
 ﻿using UnityEngine;
 using System;
 
-public class BaseHealth : MonoBehaviour, IDamageable, IHealthProvider
+public class BaseHealth : MonoBehaviour, IDamageable, IHealth
 {
+    private const int DefaultValue = 0;
     protected const int MinHealth = 0;
-    [SerializeField] private int _maxHealth = 100;
+    private const int MinAllowedMaxHealth = 1;
+    private const int MinDamageAmount = 0;
 
-    [field: SerializeField] public int CurrentHealth { get; protected set; }
-    public int MaxHealth => _maxHealth;
-    public bool IsDead { get; private set; }
+    [SerializeField] private int _max = 100;
 
     public event Action<BaseHealth> Died;
-    public event Action<int, int> HealthChanged;
-
+    public event Action<int, int> Changed;
     public event Action Revived;
+
+    [field: SerializeField] public int Current { get; protected set; }
+    public int Max => _max;
+    public bool IsDead { get; private set; }
+    public float Normalized => _max > MinAllowedMaxHealth ? (float)Current / _max : DefaultValue;
 
     public virtual void Die()
     {
@@ -26,16 +30,16 @@ public class BaseHealth : MonoBehaviour, IDamageable, IHealthProvider
 
     public virtual int TakeDamage(int damage)
     {
-        if (IsDead)
+        if (IsDead || damage <= MinDamageAmount)
             return 0;
 
-        int actualDamage = Mathf.Min(CurrentHealth, damage);
-        CurrentHealth -= actualDamage;
+        int actualDamage = Mathf.Min(Current, damage);
+        Current -= actualDamage;
         LimitHealth();
 
-        HealthChanged?.Invoke(CurrentHealth, MaxHealth);
+        Changed?.Invoke(Current, Max);
 
-        if (CurrentHealth <= 0)
+        if (Current <= 0)
             Die();
 
         return actualDamage;
@@ -46,23 +50,23 @@ public class BaseHealth : MonoBehaviour, IDamageable, IHealthProvider
         if (amount <= 0 || IsDead)
             return;
 
-        CurrentHealth += amount;
+        Current += amount;
         LimitHealth();
-        HealthChanged?.Invoke(CurrentHealth, MaxHealth);
+        Changed?.Invoke(Current, Max);
     }
 
     public virtual void Init()
     {
-        CurrentHealth = MaxHealth;
+        Current = Max;
         IsDead = false;
-        HealthChanged?.Invoke(CurrentHealth, MaxHealth);
+        Changed?.Invoke(Current, Max);
     }
 
-    public float GetHealthNormalized() =>
-        (float)CurrentHealth / MaxHealth;
+    //public float GetHealthNormalized() =>
+    //    (float)Current / Max;
 
     protected void LimitHealth() =>
-        CurrentHealth = Mathf.Clamp(CurrentHealth, MinHealth, MaxHealth);
+        Current = Mathf.Clamp(Current, MinHealth, Max);
 
 #if UNITY_EDITOR
     [Header("Debug Settings")]

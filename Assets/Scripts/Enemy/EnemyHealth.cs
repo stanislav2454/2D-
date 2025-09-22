@@ -9,7 +9,7 @@ public class EnemyHealth : BaseHealth
         base.Init();
 
         if (_settings != null)
-            CurrentHealth = _settings.MaxHealth;
+            Current = _settings.MaxHealth;
     }
 
     public void ApplySettings(EnemySettings settings)

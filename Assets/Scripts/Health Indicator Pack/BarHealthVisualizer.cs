@@ -7,11 +7,11 @@ public class BarHealthVisualizer : HealthVisualizer
     private const int SliderMaxValue = 1;
 
     [Header("Bar Settings")]
-    [SerializeField] protected Slider _healthSlider;
-    [SerializeField] protected Image _fillImage;
+    [SerializeField] protected Slider _slider;
+    [SerializeField] protected Image _fill;
     [SerializeField] protected Color _fullHealthColor = Color.green;
     [SerializeField] protected Color _lowHealthColor = Color.red;
-    [SerializeField] protected float _lowHealthThreshold = 0.3f;
+    //[SerializeField] protected float _lowHealthThreshold = 0.3f;
 
     protected override void Start()
     {
@@ -21,29 +21,28 @@ public class BarHealthVisualizer : HealthVisualizer
 
     protected void InitializeSlider()
     {
-        if (_healthSlider != null)
+        if (_slider != null)
         {
-            _healthSlider.minValue = SliderMinValue;
-            _healthSlider.maxValue = SliderMaxValue;
-            _healthSlider.wholeNumbers = false;
+            _slider.minValue = SliderMinValue;
+            _slider.maxValue = SliderMaxValue;
+            _slider.wholeNumbers = false;
         }
     }
 
     protected override void UpdateVisualization()
     {
-        if (_healthSlider == null || _healthComponent == null)
+        if (_slider == null || Health == null)
             return;
 
-        _healthSlider.value = _healthComponent.GetHealthNormalized();
+        _slider.value = Health.Normalized;
         UpdateBarColor();
     }
 
     protected void UpdateBarColor()
     {
-        if (_fillImage == null)
+        if (_fill == null)
             return;
 
-        float healthNormalized = _healthComponent.GetHealthNormalized();
-        _fillImage.color = Color.Lerp(_lowHealthColor, _fullHealthColor, healthNormalized);
+        _fill.color = Color.Lerp(_lowHealthColor, _fullHealthColor, Health.Normalized);
     }
 }

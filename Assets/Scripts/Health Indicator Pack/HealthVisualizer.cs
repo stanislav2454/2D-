@@ -3,7 +3,7 @@
 public abstract class HealthVisualizer : MonoBehaviour
 {
     [Header("Health Reference")]
-    [SerializeField] protected BaseHealth _healthComponent;
+    [SerializeField] protected BaseHealth Health;
 
     protected virtual void Start()
     {
@@ -19,31 +19,31 @@ public abstract class HealthVisualizer : MonoBehaviour
 
     protected virtual void TryFindHealthComponent()
     {
-        if (_healthComponent == null)
-            _healthComponent = GetComponentInParent<BaseHealth>();
+        if (Health == null)
+            Health = GetComponentInParent<BaseHealth>();
 
-        if (_healthComponent == null)
+        if (Health == null)
             Debug.LogWarning($"HealthComponent not found for {GetType().Name} on {gameObject.name}", this);
     }
 
     protected virtual void SubscribeToEvents()
     {
-        if (_healthComponent == null) 
+        if (Health == null) 
             return;
 
-        _healthComponent.HealthChanged += HandleHealthChanged;
-        _healthComponent.Died += HandleDeath;
-        _healthComponent.Revived += HandleRevive;
+        Health.Changed += HandleHealthChanged;
+        Health.Died += HandleDeath;
+        Health.Revived += HandleRevive;
     }
 
     protected virtual void UnsubscribeFromEvents()
     {
-        if (_healthComponent == null) 
+        if (Health == null) 
             return;
 
-        _healthComponent.HealthChanged -= HandleHealthChanged;
-        _healthComponent.Died -= HandleDeath;
-        _healthComponent.Revived -= HandleRevive;
+        Health.Changed -= HandleHealthChanged;
+        Health.Died -= HandleDeath;
+        Health.Revived -= HandleRevive;
     }
 
     protected virtual void HandleHealthChanged(int current, int max) => 

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class HealthComponent : MonoBehaviour//, IHealthProvider
+public class HealthComponent : MonoBehaviour
 {
     private const int MinHealth = 0;
     private const int MinHealAmount = 0;
