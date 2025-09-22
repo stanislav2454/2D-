@@ -21,14 +21,14 @@ public class HealthStatusUI : BaseCounterUI
     {
         if (_health != null)
         {
-            _health.HealthChanged += UpdateUI;
+            // _health.HealthChanged += UpdateUI;
             UpdateUI(_health.CurrentHealth);
         }
     }
 
     private void OnDisable()
     {
-        if (_health != null)
-            _health.HealthChanged -= UpdateUI;
+        if (_health != null) { }
+           // _health.HealthChanged -= UpdateUI;
     }
 }

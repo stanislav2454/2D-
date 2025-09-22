@@ -19,5 +19,5 @@ MonoBehaviour:
   _attackRange: 0.12
   _attackCooldown: 3
   _attackDamage: 2
-  _maxHealth: 80
+  _maxHealth: 100
   _enemyScale: 1

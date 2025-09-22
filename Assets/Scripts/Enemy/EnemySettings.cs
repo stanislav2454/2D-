@@ -15,7 +15,7 @@ public class EnemySettings : ScriptableObject
 
     [Header("Combat Settings")]
     [SerializeField, Min(0)] private int _attackDamage = 2;
-    [SerializeField, Min(0)] private int _maxHealth = 30;
+    [SerializeField, Min(0)] private int _maxHealth = 100;
 
     [Header("Visual Settings")]
     [SerializeField, Range(0.1f, 2f)] private float _enemyScale = 1f;

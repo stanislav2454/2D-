@@ -4,10 +4,9 @@
 public class EnemyMover : MonoBehaviour
 {
     [SerializeField] private EnemySettings _settings;
-    //[SerializeField] private float _patrolSpeed = 2f;
-    //[SerializeField] private float _chaseSpeed = 5f;
-    [SerializeField] private float _reachThreshold = 0.2f;
     [SerializeField] private Flipper _flipper;
+
+    private float _reachThreshold = 0.2f;
 
     private float _currentSpeed;
     private int _currentWaypointIndex;

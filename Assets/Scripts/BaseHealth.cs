@@ -1,17 +1,21 @@
 ﻿using UnityEngine;
 using System;
 
-public class BaseHealth : MonoBehaviour, IDamageable
+public class BaseHealth : MonoBehaviour, IDamageable, IHealthProvider
 {
     protected const int MinHealth = 0;
-    protected const int MaxHealth = 100;
+    //protected  int MaxHealth = 100;
+    [SerializeField] private int _maxHealth = 100;
 
     [field: SerializeField] public int CurrentHealth { get; protected set; }
+    public int MaxHealth => _maxHealth;
     public bool IsDead { get; private set; }
 
     public event Action<BaseHealth> Died;
-    public event Action<int> HealthChanged;
+   // public event Action<int> HealthChanged;
+    public event Action<int, int> HealthChanged;
 
+    public event Action Revived;
     // Убрали Awake - инициализация теперь через Init
     // private void Awake()
     // {
@@ -25,6 +29,7 @@ public class BaseHealth : MonoBehaviour, IDamageable
 
         IsDead = true;
         Died?.Invoke(this);
+       // Died?.Invoke(this);
         // Убрали ResetHealth() - это не место для восстановления здоровья
     }
 
@@ -37,7 +42,8 @@ public class BaseHealth : MonoBehaviour, IDamageable
         CurrentHealth -= actualDamage;
         LimitHealth();
 
-        HealthChanged?.Invoke(CurrentHealth);
+        HealthChanged?.Invoke(CurrentHealth, MaxHealth);
+        //HealthChanged?.Invoke(CurrentHealth);
 
         if (CurrentHealth <= 0)
             Die();
@@ -52,14 +58,16 @@ public class BaseHealth : MonoBehaviour, IDamageable
 
         CurrentHealth += amount;
         LimitHealth();
-        HealthChanged?.Invoke(CurrentHealth);
+        //HealthChanged?.Invoke(CurrentHealth);
+        HealthChanged?.Invoke(CurrentHealth, MaxHealth);
     }
 
     public virtual void Init()
     {
         CurrentHealth = MaxHealth;
         IsDead = false;
-        HealthChanged?.Invoke(CurrentHealth);
+        //HealthChanged?.Invoke(CurrentHealth);
+        HealthChanged?.Invoke(CurrentHealth, MaxHealth);
     }
 
     protected void LimitHealth() =>
@@ -82,4 +90,7 @@ public class BaseHealth : MonoBehaviour, IDamageable
     public void EditorResetHealth() =>
         Init();
 #endif
+
+    public float GetHealthNormalized() =>
+        (float)CurrentHealth / MaxHealth;
 }
