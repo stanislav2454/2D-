@@ -30,7 +30,6 @@ public class BarHealthVisualizer : HealthVisualizer
     }
 
     protected override void UpdateVisualization()
-    //protected override void UpdateVisualization(int value)
     {
         if (_healthSlider == null || _healthComponent == null)
             return;
@@ -38,12 +37,7 @@ public class BarHealthVisualizer : HealthVisualizer
         _healthSlider.value = _healthComponent.GetHealthNormalized();
         UpdateBarColor();
     }
-    //protected virtual void UpdateUI(int value)
-    //{
-    //    if (_additionalTextElements != null)
-    //        foreach (var textElement in _additionalTextElements)
-    //            textElement.text = $"{TextPrefix} {value}";
-    //}
+
     protected void UpdateBarColor()
     {
         if (_fillImage == null)

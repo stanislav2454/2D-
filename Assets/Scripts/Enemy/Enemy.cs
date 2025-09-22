@@ -37,7 +37,7 @@ public class Enemy : MonoBehaviour
     public void ResetEnemy()
     {
         transform.rotation = Quaternion.identity;
-        _health.Init(); // Заменил ResetHealth() на Init()
+        _health.Init(); 
         _ai.ResetAI();
     }
 

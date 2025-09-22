@@ -4,7 +4,6 @@ using System;
 public class BaseHealth : MonoBehaviour, IDamageable, IHealthProvider
 {
     protected const int MinHealth = 0;
-    //protected  int MaxHealth = 100;
     [SerializeField] private int _maxHealth = 100;
 
     [field: SerializeField] public int CurrentHealth { get; protected set; }
@@ -12,15 +11,9 @@ public class BaseHealth : MonoBehaviour, IDamageable, IHealthProvider
     public bool IsDead { get; private set; }
 
     public event Action<BaseHealth> Died;
-   // public event Action<int> HealthChanged;
     public event Action<int, int> HealthChanged;
 
     public event Action Revived;
-    // Убрали Awake - инициализация теперь через Init
-    // private void Awake()
-    // {
-    //     ResetHealth();
-    // }
 
     public virtual void Die()
     {
@@ -29,8 +22,6 @@ public class BaseHealth : MonoBehaviour, IDamageable, IHealthProvider
 
         IsDead = true;
         Died?.Invoke(this);
-       // Died?.Invoke(this);
-        // Убрали ResetHealth() - это не место для восстановления здоровья
     }
 
     public virtual int TakeDamage(int damage)
@@ -43,7 +34,6 @@ public class BaseHealth : MonoBehaviour, IDamageable, IHealthProvider
         LimitHealth();
 
         HealthChanged?.Invoke(CurrentHealth, MaxHealth);
-        //HealthChanged?.Invoke(CurrentHealth);
 
         if (CurrentHealth <= 0)
             Die();
@@ -58,7 +48,6 @@ public class BaseHealth : MonoBehaviour, IDamageable, IHealthProvider
 
         CurrentHealth += amount;
         LimitHealth();
-        //HealthChanged?.Invoke(CurrentHealth);
         HealthChanged?.Invoke(CurrentHealth, MaxHealth);
     }
 
@@ -66,9 +55,11 @@ public class BaseHealth : MonoBehaviour, IDamageable, IHealthProvider
     {
         CurrentHealth = MaxHealth;
         IsDead = false;
-        //HealthChanged?.Invoke(CurrentHealth);
         HealthChanged?.Invoke(CurrentHealth, MaxHealth);
     }
+
+    public float GetHealthNormalized() =>
+        (float)CurrentHealth / MaxHealth;
 
     protected void LimitHealth() =>
         CurrentHealth = Mathf.Clamp(CurrentHealth, MinHealth, MaxHealth);
@@ -90,7 +81,4 @@ public class BaseHealth : MonoBehaviour, IDamageable, IHealthProvider
     public void EditorResetHealth() =>
         Init();
 #endif
-
-    public float GetHealthNormalized() =>
-        (float)CurrentHealth / MaxHealth;
 }
