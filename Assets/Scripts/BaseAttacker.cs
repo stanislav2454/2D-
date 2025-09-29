@@ -3,23 +3,37 @@ using UnityEngine;
 
 public abstract class BaseAttacker : MonoBehaviour
 {
-    protected const float TARGET_CHECK_INTERVAL = 0.1f;
-    protected const float MIN_ATTACK_RANGE = 0.01f;
+    protected const float TargetCheckInterval = 0.1f;
+    protected const float MinAttackRange = 0.01f;
 
     protected bool _canAttack = true;
     protected float _sqrAttackRange;
+    protected Coroutine _attackCooldownCoroutine;
 
     protected abstract int AttackDamage { get; }
     protected abstract float AttackCooldown { get; }
     protected abstract float AttackRange { get; }
 
-    public event System.Action AttackPerformed;
+    public event System.Action<int> AttackPerformed;
+    public event System.Action<int> OnDamageDealt;
 
-    protected virtual void Awake() => CalculateSqrAttackRange();
+    protected virtual void Awake()
+    {
+        CalculateSqrAttackRange();
+    }
+
+    private void OnDisable()
+    {
+        if (_attackCooldownCoroutine != null)
+        {
+            StopCoroutine(_attackCooldownCoroutine);
+            _attackCooldownCoroutine = null;
+        }
+    }
 
     protected void CalculateSqrAttackRange()
     {
-        float range = Mathf.Max(AttackRange, MIN_ATTACK_RANGE);
+        float range = Mathf.Max(AttackRange, MinAttackRange);
         _sqrAttackRange = range * range;
     }
 
@@ -30,7 +44,11 @@ public abstract class BaseAttacker : MonoBehaviour
         _canAttack = true;
     }
 
-    protected virtual void OnAttackPerformed() => AttackPerformed?.Invoke();
+    protected virtual void OnAttackPerformed(int damageDealt)
+    {
+        AttackPerformed?.Invoke(damageDealt);
+        OnDamageDealt?.Invoke(damageDealt);
+    }
 
     public abstract bool CanAttack();
     public abstract void PerformAttack();

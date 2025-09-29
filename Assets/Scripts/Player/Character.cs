@@ -3,7 +3,8 @@
 [DisallowMultipleComponent]
 [RequireComponent(typeof(UserInputReader), typeof(CharacterMover))]
 [RequireComponent(typeof(Jumper), typeof(Crawler), typeof(PlayerHealth))]
-[RequireComponent(typeof(PlayerAttacker), typeof(Rigidbody2D), typeof(GroundDetector))]
+[RequireComponent(typeof(PlayerAttacker), typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D), typeof(GroundDetector))]
 public class Character : MonoBehaviour
 {
     [Header("References")]
@@ -12,6 +13,7 @@ public class Character : MonoBehaviour
     [SerializeField] private Jumper _jumper;
     [SerializeField] private Crawler _crawler;
     [SerializeField] private PlayerAttacker _attacker;
+    [SerializeField] private VampirismAbility _vampirismAbility;
     [SerializeField] private CharacterAnimator _animator;
     [SerializeField] private PlayerSettings _playerSettings;
 
@@ -35,9 +37,14 @@ public class Character : MonoBehaviour
         if (_animator == null)
             _animator = GetComponentInChildren<CharacterAnimator>();
 
-        _playerHealth.Died += OnDead; 
+        if (_vampirismAbility == null)
+            _vampirismAbility = GetComponentInChildren<VampirismAbility>();
+
+        _playerHealth.Died += OnDead;
         _attacker.AttackPerformed += OnAttackPerformed;
-        
+        _vampirismAbility.AbilityStarted += OnVampirismStarted;
+        _vampirismAbility.AbilityEnded += OnVampirismEnded;
+
         ApplyPlayerSettings();
     }
 
@@ -46,6 +53,7 @@ public class Character : MonoBehaviour
         HandleJump();
         HandleCrawling();
         HandleAttack();
+        HandleVampirism();
         UpdateAnimations();
     }
 
@@ -58,16 +66,32 @@ public class Character : MonoBehaviour
     {
         _playerHealth.Died -= OnDead;
         _attacker.AttackPerformed -= OnAttackPerformed;
+
+        if (_vampirismAbility != null)
+        {
+            _vampirismAbility.AbilityStarted -= OnVampirismStarted;
+            _vampirismAbility.AbilityEnded -= OnVampirismEnded;
+        }
     }
 
     private void ApplyPlayerSettings()
     {
         if (_playerSettings != null)
         {
-           // _movement.ApplySettings(_playerSettings);
-           // _jumper.ApplySettings(_playerSettings);
+            _movement.ApplyPlayerSettings(_playerSettings);
+            _jumper.ApplyPlayerSettings(_playerSettings);
             _attacker.ApplyPlayerSettings(_playerSettings);
-            //_playerHealth.ApplySettings(_playerSettings);
+            // _playerHealth.ApplySettings(_playerSettings);
+
+            if (_playerSettings.VampirismDuration > 0)
+            {
+                _vampirismAbility.ApplyVampirismSettings(
+                    _playerSettings.VampirismDuration,
+                    _playerSettings.VampirismCooldown,
+                    _playerSettings.VampirismTickInterval,
+                    _playerSettings.VampirismDamagePerTick,
+                    _playerSettings.VampirismHealRatio);
+            }
         }
     }
 
@@ -79,9 +103,27 @@ public class Character : MonoBehaviour
             _attacker.StopAttacking();
     }
 
-    private void OnAttackPerformed()
+    private void HandleVampirism()
+    {
+        if (_input.GetVampirismTrigger() && _vampirismAbility.IsAbilityReady)
+        {
+            _vampirismAbility.StartAbility();
+        }
+    }
+
+    private void OnAttackPerformed(int damage)
     {
         _animator.PlayAttackAnimation();
+    }
+
+    private void OnVampirismStarted()
+    {
+        _animator.PlayVampirismAnimation();
+    }
+
+    private void OnVampirismEnded()
+    {
+        _animator.StopVampirismAnimation();
     }
 
     private void OnDead(BaseHealth health) =>
@@ -106,5 +148,9 @@ public class Character : MonoBehaviour
     {
         _animator.UpdateMovementAnimation(_input.HorizontalDirection, _input.IsCrawlPressed);
         _animator.UpdateJumpFallAnimation(_groundDetector.IsGrounded, _rigidbody.velocity.y);
+
+        // Обновляем анимацию вампиризма
+        _animator.UpdateVampirismAnimation(_vampirismAbility.IsAbilityActive);
+
     }
 }

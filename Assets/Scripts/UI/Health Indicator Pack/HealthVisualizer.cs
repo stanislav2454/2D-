@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public abstract class HealthVisualizer : MonoBehaviour
 {
@@ -7,7 +7,7 @@ public abstract class HealthVisualizer : MonoBehaviour
 
     protected virtual void Start()
     {
-        TryFindHealthComponent();
+        GetHealthComponent();
         SubscribeToEvents();
         UpdateVisualization();
     }
@@ -17,13 +17,13 @@ public abstract class HealthVisualizer : MonoBehaviour
         UnsubscribeFromEvents();
     }
 
-    protected virtual void TryFindHealthComponent()
+    protected virtual void GetHealthComponent()
     {
         if (Health == null)
             Health = GetComponentInParent<BaseHealth>();
 
         if (Health == null)
-            Debug.LogWarning($"HealthComponent not found for {GetType().Name} on {gameObject.name}", this);
+            Debug.LogError($"HealthComponent not found for \"{GetType().Name}.cs\" on \"{gameObject.name}\" GameObject", this);
     }
 
     protected virtual void SubscribeToEvents()
@@ -49,7 +49,7 @@ public abstract class HealthVisualizer : MonoBehaviour
     protected virtual void HandleHealthChanged(int current, int max) => 
         UpdateVisualization();
 
-    protected virtual void HandleDeath(BaseHealth health) => 
+    protected virtual void HandleDeath(BaseHealth health) =>
         UpdateVisualization();
 
     protected virtual void HandleRevive() => 

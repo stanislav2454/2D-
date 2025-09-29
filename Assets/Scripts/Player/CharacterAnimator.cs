@@ -57,4 +57,22 @@ public class CharacterAnimator : MonoBehaviour
         _animator.ResetTrigger(CharacterAnimatorData.Params.AttackTrigger);
         _animator.SetBool(CharacterAnimatorData.Params.IsAttacking, false);
     }
+
+    public void PlayVampirismAnimation()
+    {
+        // Логика запуска анимации вампиризма
+        // Например: animator.SetBool("IsVampirism", true);
+    }
+
+    public void StopVampirismAnimation()
+    {
+        // Логика остановки анимации вампиризма
+        // Например: animator.SetBool("IsVampirism", false);
+    }
+
+    public void UpdateVampirismAnimation(bool isActive)
+    {
+        // Обновление состояния анимации вампиризма
+        // Например: animator.SetBool("IsVampirism", isActive);
+    }
 }

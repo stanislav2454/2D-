@@ -40,4 +40,7 @@ public class CharacterMover : MonoBehaviour
 
     private float GetCurrentSpeed() =>
         _isCrawling ? _settings.CrawlSpeed : _settings.WalkSpeed;
+
+    public void ApplyPlayerSettings(PlayerSettings settings) =>
+        _settings = settings;
 }

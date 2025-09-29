@@ -258,7 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e70338c40767cf2468ef02407fcba44c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _healthComponent: {fileID: 0}
+  Health: {fileID: 0}
   _healthText: {fileID: 5559108496347019873}
   _format: '{0}/{1}'
   _showMaxHealth: 1
@@ -368,12 +368,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3e4f6a696b32cb4ab4fc94dd6a8ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _healthComponent: {fileID: 0}
-  _healthSlider: {fileID: 6891166834564218628}
-  _fillImage: {fileID: 3583649536078007116}
+  Health: {fileID: 0}
+  _slider: {fileID: 0}
+  _fill: {fileID: 0}
   _fullHealthColor: {r: 0, g: 1, b: 0, a: 1}
   _lowHealthColor: {r: 1, g: 0, b: 0, a: 1}
-  _lowHealthThreshold: 0.3
   _smoothSpeed: 0.4
 --- !u!1 &3805435739467633616
 GameObject:
@@ -486,8 +485,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.48}
-  m_SizeDelta: {x: 480, y: 270}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &3463547920797972058
 Canvas:
@@ -534,7 +533,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &6010335928507398911
 MonoBehaviour:
   m_ObjectHideFlags: 0

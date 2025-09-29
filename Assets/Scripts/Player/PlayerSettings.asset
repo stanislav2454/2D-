@@ -14,7 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <WalkSpeed>k__BackingField: 6
   <CrawlSpeed>k__BackingField: 3
-  <JumpForce>k__BackingField: 12
+  <JumpForce>k__BackingField: 7.5
   <MaxHealth>k__BackingField: 53
   <AttackCooldown>k__BackingField: 0.5
   <AttackDamage>k__BackingField: 10
+  <VampirismDuration>k__BackingField: 6
+  <VampirismCooldown>k__BackingField: 4
+  <VampirismTickInterval>k__BackingField: 0.2
+  <VampirismDamagePerTick>k__BackingField: 2
+  <VampirismHealRatio>k__BackingField: 0.5

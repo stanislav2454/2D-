@@ -11,6 +11,7 @@ public class BarHealthVisualizer : HealthVisualizer
     [SerializeField] protected Image _fill;
     [SerializeField] protected Color _fullHealthColor = Color.green;
     [SerializeField] protected Color _lowHealthColor = Color.red;
+   // [SerializeField] protected float _lowHealthThreshold = 0.3f;
 
     protected override void Start()
     {

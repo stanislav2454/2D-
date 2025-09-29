@@ -12,20 +12,14 @@ public class EnemyAttacker : BaseAttacker
     private void OnEnable()
     {
         _canAttack = true;
-        StopAllCoroutines(); 
     }
 
-    private void OnDisable()
-    {
-        StopAllCoroutines(); 
-    }
-
-    public void Initialize(Transform player) => 
+    public void Initialize(Transform player) =>
         _player = player;
 
     public override bool CanAttack()
     {
-        if (_player == null) 
+        if (_player == null)
             return false;
 
         return Vector2.SqrMagnitude(_player.position - transform.position) <= _sqrAttackRange;
@@ -33,21 +27,25 @@ public class EnemyAttacker : BaseAttacker
 
     public override void PerformAttack()
     {
-        if (_canAttack && _player != null && _enemySettings != null) 
+        if (_canAttack && _player != null && _enemySettings != null)
         {
-            AttackPlayer();
-            StartCoroutine(AttackCooldownRoutine());
+            int damageDealt = AttackPlayer();
+            _attackCooldownCoroutine = StartCoroutine(AttackCooldownRoutine());
+            OnAttackPerformed(damageDealt);
         }
     }
 
-    private void AttackPlayer()
+    private int AttackPlayer()
     {
-        if (_player == null || _enemySettings == null) 
-            return; 
+        if (_player == null || _enemySettings == null)
+            return 0;
 
         PlayerHealth playerHealth = _player.GetComponent<PlayerHealth>();
-        playerHealth?.TakeDamage(AttackDamage);
-        OnAttackPerformed();
+
+        if (playerHealth != null)
+            return playerHealth.TakeDamage(AttackDamage);
+
+        return 0;
     }
 
     public void ApplyEnemySettings(EnemySettings settings)

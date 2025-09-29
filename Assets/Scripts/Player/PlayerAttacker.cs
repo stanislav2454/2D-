@@ -8,7 +8,7 @@ public class PlayerAttacker : BaseAttacker
     [SerializeField] private AttackZone _attackZone;
     [SerializeField] private CharacterAnimator _animator;
 
-    private Coroutine _attackCoroutine;
+    //private Coroutine _attackCoroutine;
     private bool _isAttacking;
 
     protected override int AttackDamage => _playerSettings?.AttackDamage ?? 1;
@@ -35,17 +35,25 @@ public class PlayerAttacker : BaseAttacker
             return;
 
         _isAttacking = true;
-        _attackCoroutine = StartCoroutine(AttackRoutine());
+        //_attackCoroutine = StartCoroutine(AttackRoutine());
+        _attackCooldownCoroutine = StartCoroutine(AttackRoutine());
     }
 
     public void StopAttacking()
     {
         _isAttacking = false;
-        if (_attackCoroutine != null)
+
+        if (_attackCooldownCoroutine != null)
         {
-            StopCoroutine(_attackCoroutine);
-            _attackCoroutine = null;
+            StopCoroutine(_attackCooldownCoroutine);
+            _attackCooldownCoroutine = null;
         }
+        //if (_attackCoroutine != null)
+        //{
+        //    StopCoroutine(_attackCoroutine);
+        //    _attackCoroutine = null;
+        //}
+
         _animator?.StopAttackAnimation();
     }
 
@@ -55,7 +63,7 @@ public class PlayerAttacker : BaseAttacker
         {
             if (_attackZone != null)
             {
-                _attackZone.CleanDestroyedTargets(); 
+                _attackZone.CleanDestroyedTargets();
 
                 if (_attackZone.TargetsInZoneCount > 0)
                 {
@@ -64,7 +72,7 @@ public class PlayerAttacker : BaseAttacker
                 }
                 else
                 {
-                    yield return new WaitForSeconds(TARGET_CHECK_INTERVAL);
+                    yield return new WaitForSeconds(TargetCheckInterval);
                 }
             }
             else
@@ -76,18 +84,25 @@ public class PlayerAttacker : BaseAttacker
 
     public override void PerformAttack()
     {
-        CalculateDamageToTargets(_attackZone, AttackDamage);
-        OnAttackPerformed();
+        int totalDamageDealt = CalculateDamageToTargets(_attackZone, AttackDamage);
+        OnAttackPerformed(totalDamageDealt);
         _animator?.PlayAttackAnimation();
     }
 
-    private void CalculateDamageToTargets(AttackZone attackZone, int damage)
+    private int CalculateDamageToTargets(AttackZone attackZone, int damage)
     {
+        int totalDamageDealt = 0;
+
         foreach (var target in attackZone.Targets)
         {
             if (target != null)
-                target.TakeDamage(damage);
+            {
+                int actualDamage = target.TakeDamage(damage);
+                totalDamageDealt += actualDamage;
+            }
         }
+
+        return totalDamageDealt;
     }
 
     public override bool CanAttack() =>

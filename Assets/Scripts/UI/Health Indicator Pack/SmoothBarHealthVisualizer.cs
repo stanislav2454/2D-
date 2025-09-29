@@ -4,7 +4,7 @@ using UnityEngine;
 public class SmoothBarHealthVisualizer : BarHealthVisualizer
 {
     private const float DefaultValue = 0f;
-    private const float ANIMATION_TOLERANCE = 0.001f;
+    private const float AnimationTolerance = 0.001f;
 
     [Header("Smooth Settings")]
     [SerializeField] private float _smoothSpeed = 0.2f;
@@ -50,7 +50,7 @@ public class SmoothBarHealthVisualizer : BarHealthVisualizer
 
         float newTargetValue = Health.Normalized;
 
-        if (Mathf.Abs(newTargetValue - _targetValue) > ANIMATION_TOLERANCE)//
+        if (Mathf.Abs(newTargetValue - _targetValue) > AnimationTolerance)
         {
             _targetValue = newTargetValue;
             UpdateBarColor();

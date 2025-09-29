@@ -13,7 +13,7 @@ public class EnemySpawner : MonoBehaviour
     [Space(15)]
     [SerializeField] private EnemySpawnData[] _spawnData;
     [SerializeField] private EnemyPool _enemyPool;
-    [SerializeField] private Transform parent;
+    [SerializeField] private Transform _parent;
     [SerializeField] private EnemyCounterUI _enemyCounterUI;[Space(10)]
 
     private int _spawnedCount = 0;
@@ -48,7 +48,7 @@ public class EnemySpawner : MonoBehaviour
         if (_spawnData.Length == 0)
             Debug.LogWarning("Spawn data array is empty!", this);
 
-        if (parent == null)
+        if (_parent == null)
             Debug.LogWarning("Transform parent is not set!", this);
 
         if (_enemyCounterUI == null)
@@ -120,7 +120,7 @@ public class EnemySpawner : MonoBehaviour
         if (enemy != null && _activeEnemies.Contains(enemy) == false)
         {
             enemy.transform.SetPositionAndRotation(spawnData.SpawnPoint.Position, Quaternion.identity);
-            enemy.transform.SetParent(parent);
+            enemy.transform.SetParent(_parent);
 
             enemy.Died += HandleEnemyDeath;
 
