@@ -1016,22 +1016,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3374271908544649451, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
-      propertyPath: _cooldownColor.a
-      value: 0.12941177
-      objectReference: {fileID: 0}
-    - target: {fileID: 3374271908544649451, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
-      propertyPath: _cooldownColor.b
-      value: 0.6509434
-      objectReference: {fileID: 0}
-    - target: {fileID: 3374271908544649451, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
-      propertyPath: _cooldownColor.g
-      value: 0.38995194
-      objectReference: {fileID: 0}
-    - target: {fileID: 3374271908544649451, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
-      propertyPath: _cooldownColor.r
-      value: 0.4430349
-      objectReference: {fileID: 0}
     - target: {fileID: 4463028985331598816, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
       propertyPath: m_Name
       value: Player with vampirism

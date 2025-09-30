@@ -95,7 +95,7 @@ MonoBehaviour:
   _spawnData:
   - {fileID: 879716794423804212}
   _enemyPool: {fileID: 1435135018029510084}
-  parent: {fileID: 0}
+  _parent: {fileID: 0}
   _enemyCounterUI: {fileID: 0}
 --- !u!114 &1435135018029510084
 MonoBehaviour:
@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _settings: {fileID: 11400000, guid: 286c5f9604da4e844a72b23daa40a285, type: 2}
-  _enemyPrefab: {fileID: 735806534406604488, guid: 87da2c4491d69bc4c8efbfd507ed8f41, type: 3}
+  _enemyPrefab: {fileID: 6444266711952923196, guid: 87da2c4491d69bc4c8efbfd507ed8f41, type: 3}
 --- !u!1 &5725117745391612224
 GameObject:
   m_ObjectHideFlags: 0

@@ -365,6 +365,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 1845500752091486756}
+  _vampirismAbility: {fileID: 3353719827597856834}
 --- !u!1 &4463028985331598816
 GameObject:
   m_ObjectHideFlags: 0
@@ -505,7 +506,7 @@ MonoBehaviour:
   _jumper: {fileID: 5810974036215117689}
   _crawler: {fileID: 8875209910760001799}
   _attacker: {fileID: 6050235055221990355}
-  _vampirismAbility: {fileID: 0}
+  _vampirismAbility: {fileID: 3353719827597856834}
   _animator: {fileID: 3488464703015555491}
   _playerSettings: {fileID: 11400000, guid: f1b91bdfa4633994caa0b46c07e2a650, type: 2}
 --- !u!114 &6921390616635074050
@@ -998,7 +999,6 @@ MonoBehaviour:
   _abilityRadius: 3
   _vampirismZone: {fileID: 707573487663944210}
   _ownerHealth: {fileID: 3528261988038340837}
-  _animator: {fileID: 3488464703015555491}
 --- !u!114 &4091904683138248031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1028,7 +1028,7 @@ MonoBehaviour:
   _radiusSprite: {fileID: 7568643214765933874}
   _radiusScale: 3.5
   _activeColor: {r: 1, g: 0, b: 0, a: 0.078431375}
-  _cooldownColor: {r: 0.36504477, g: 0.31746173, b: 0.5471698, a: 0.078431375}
+  _cooldownColor: {r: 0.4430349, g: 0.38995194, b: 0.6509434, a: 0.12941177}
 --- !u!114 &2901042694892994746
 MonoBehaviour:
   m_ObjectHideFlags: 0

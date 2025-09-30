@@ -4,7 +4,7 @@
 public class VampirismVisualizer : MonoBehaviour
 {
     [Header("Visualization Components")]
-    [SerializeField] private AbilityTimerUI _timerUI;
+    [SerializeField] private VampirismAbilityTimerUI _timerUI;
     [SerializeField] private AbilityRadiusVisualizer _radiusVisualizer;
 
     private VampirismAbility _vampirismAbility;
@@ -13,15 +13,6 @@ public class VampirismVisualizer : MonoBehaviour
     {
         _vampirismAbility = GetComponent<VampirismAbility>();
         InitializeComponents();
-    }
-
-    private void InitializeComponents()
-    {
-        if (_timerUI != null)
-            _timerUI.Initialize(_vampirismAbility);
-
-        if (_radiusVisualizer != null)
-            _radiusVisualizer.Initialize(_vampirismAbility);
     }
 
     private void OnEnable()
@@ -42,6 +33,15 @@ public class VampirismVisualizer : MonoBehaviour
             _vampirismAbility.AbilityEnded -= OnAbilityEnded;
             _vampirismAbility.AbilityReady -= OnAbilityReady;
         }
+    }
+
+    private void InitializeComponents()
+    {
+        if (_timerUI != null)
+            _timerUI.Initialize(_vampirismAbility);
+
+        if (_radiusVisualizer != null)
+            _radiusVisualizer.Initialize(_vampirismAbility);
     }
 
     private void OnAbilityStarted()

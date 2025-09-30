@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AbilityTimerUI : MonoBehaviour
+public class VampirismAbilityTimerUI : MonoBehaviour
 {
     private const float SliderMinValue = 0f;
     private const float SliderMaxValue = 1f;

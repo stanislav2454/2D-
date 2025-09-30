@@ -6,10 +6,35 @@ public class CharacterAnimator : MonoBehaviour
     private const float MinimalDetectionSpeed = 0.2f;
 
     [SerializeField] private Animator _animator;
+    [SerializeField] private VampirismAbility _vampirismAbility; 
 
     private void Awake()
     {
         _animator = GetComponentInChildren<Animator>();
+    }
+
+    private void OnEnable()
+    {
+        if (_vampirismAbility != null)
+        {
+            _vampirismAbility.AbilityStarted += OnVampirismStarted;
+            _vampirismAbility.AbilityEnded += OnVampirismEnded;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (_vampirismAbility != null)
+        {
+            _vampirismAbility.AbilityStarted -= OnVampirismStarted;
+            _vampirismAbility.AbilityEnded -= OnVampirismEnded;
+        }
+    }
+
+    private void OnValidate()
+    {
+        if (_vampirismAbility == null)
+            Debug.LogError("Vampirism Ability is not set!", this);
     }
 
     public void UpdateMovementAnimation(float horizontalSpeed, bool isCrawling)
@@ -58,21 +83,28 @@ public class CharacterAnimator : MonoBehaviour
         _animator.SetBool(CharacterAnimatorData.Params.IsAttacking, false);
     }
 
-    public void PlayVampirismAnimation()
+    private void OnVampirismStarted()
     {
-        // Логика запуска анимации вампиризма
-        // Например: animator.SetBool("IsVampirism", true);
+        _animator.SetBool(CharacterAnimatorData.Params.IsVampirismActive, true);
     }
 
-    public void StopVampirismAnimation()
+    private void OnVampirismEnded()
     {
-        // Логика остановки анимации вампиризма
-        // Например: animator.SetBool("IsVampirism", false);
+        _animator.SetBool(CharacterAnimatorData.Params.IsVampirismActive, false);
     }
-
-    public void UpdateVampirismAnimation(bool isActive)
-    {
-        // Обновление состояния анимации вампиризма
-        // Например: animator.SetBool("IsVampirism", isActive);
-    }
+    //public void PlayVampirismAnimation()
+    //{
+    //    // Логика запуска анимации вампиризма
+    //    // Например: animator.SetBool("IsVampirism", true);
+    //}
+    //public void StopVampirismAnimation()
+    //{
+    //    // Логика остановки анимации вампиризма
+    //    // Например: animator.SetBool("IsVampirism", false);
+    //}
+    //public void UpdateVampirismAnimation(bool isActive)
+    //{
+    //    // Обновление состояния анимации вампиризма
+    //    // Например: animator.SetBool("IsVampirism", isActive);
+    //}
 }

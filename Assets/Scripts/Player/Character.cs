@@ -21,7 +21,7 @@ public class Character : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private GroundDetector _groundDetector;
 
-    private bool _wasAttacking;
+    //private bool _wasAttacking;
 
     private void Awake()
     {
@@ -42,10 +42,29 @@ public class Character : MonoBehaviour
 
         _playerHealth.Died += OnDead;
         _attacker.AttackPerformed += OnAttackPerformed;
-        _vampirismAbility.AbilityStarted += OnVampirismStarted;
-        _vampirismAbility.AbilityEnded += OnVampirismEnded;
+
+        //_vampirismAbility.AbilityStarted += OnVampirismStarted;
+        //_vampirismAbility.AbilityEnded += OnVampirismEnded;
 
         ApplyPlayerSettings();
+    }
+
+    private void OnValidate()
+    {
+        if (_vampirismAbility == null)
+            Debug.LogError("Vampirism Ability is not set!", this);
+    }
+
+    private void OnDestroy()
+    {
+        _playerHealth.Died -= OnDead;
+        _attacker.AttackPerformed -= OnAttackPerformed;
+
+        //if (_vampirismAbility != null)
+        //{
+        //    _vampirismAbility.AbilityStarted -= OnVampirismStarted;
+        //    _vampirismAbility.AbilityEnded -= OnVampirismEnded;
+        //}
     }
 
     private void Update()
@@ -62,18 +81,6 @@ public class Character : MonoBehaviour
         HandleMovement();
     }
 
-    private void OnDestroy()
-    {
-        _playerHealth.Died -= OnDead;
-        _attacker.AttackPerformed -= OnAttackPerformed;
-
-        if (_vampirismAbility != null)
-        {
-            _vampirismAbility.AbilityStarted -= OnVampirismStarted;
-            _vampirismAbility.AbilityEnded -= OnVampirismEnded;
-        }
-    }
-
     private void ApplyPlayerSettings()
     {
         if (_playerSettings != null)
@@ -81,7 +88,6 @@ public class Character : MonoBehaviour
             _movement.ApplyPlayerSettings(_playerSettings);
             _jumper.ApplyPlayerSettings(_playerSettings);
             _attacker.ApplyPlayerSettings(_playerSettings);
-            // _playerHealth.ApplySettings(_playerSettings);
 
             if (_playerSettings.VampirismDuration > 0)
             {
@@ -106,9 +112,7 @@ public class Character : MonoBehaviour
     private void HandleVampirism()
     {
         if (_input.GetVampirismTrigger() && _vampirismAbility.IsAbilityReady)
-        {
             _vampirismAbility.StartAbility();
-        }
     }
 
     private void OnAttackPerformed(int damage)
@@ -116,15 +120,17 @@ public class Character : MonoBehaviour
         _animator.PlayAttackAnimation();
     }
 
-    private void OnVampirismStarted()
-    {
-        _animator.PlayVampirismAnimation();
-    }
+    //private void OnVampirismStarted()
+    //{   // Анимация вампиризма теперь управляется в CharacterAnimator через события
+    //    // Здесь можно добавить дополнительную логику, если нужно
+    //    //_animator.PlayVampirismAnimation();
+    //}
 
-    private void OnVampirismEnded()
-    {
-        _animator.StopVampirismAnimation();
-    }
+    //private void OnVampirismEnded()
+    //{   // Анимация вампиризма теперь управляется в CharacterAnimator через события
+    //    // Здесь можно добавить дополнительную логику, если нужно
+    //    //_animator.StopVampirismAnimation();
+    //}
 
     private void OnDead(BaseHealth health) =>
         gameObject.SetActive(false);
@@ -145,12 +151,8 @@ public class Character : MonoBehaviour
         _crawler.SetCrawling(_input.IsCrawlPressed, _input.HorizontalDirection);
 
     private void UpdateAnimations()
-    {
+    {//_animator.UpdateVampirismAnimation(_vampirismAbility.IsAbilityActive);
         _animator.UpdateMovementAnimation(_input.HorizontalDirection, _input.IsCrawlPressed);
         _animator.UpdateJumpFallAnimation(_groundDetector.IsGrounded, _rigidbody.velocity.y);
-
-        // Обновляем анимацию вампиризма
-        _animator.UpdateVampirismAnimation(_vampirismAbility.IsAbilityActive);
-
     }
 }

@@ -13,5 +13,6 @@ public static class CharacterAnimatorData
         public static readonly int IsFalling = Animator.StringToHash(nameof(IsFalling));
         public static readonly int AttackTrigger = Animator.StringToHash(nameof(AttackTrigger));
         public static readonly int IsAttacking = Animator.StringToHash(nameof(IsAttacking));
+        public static readonly int IsVampirismActive = Animator.StringToHash(nameof(IsVampirismActive));
     }
 }

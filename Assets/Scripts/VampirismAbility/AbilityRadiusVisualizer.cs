@@ -23,16 +23,6 @@ public class AbilityRadiusVisualizer : MonoBehaviour
         SetupRadiusVisualization();
     }
 
-    private void SetupRadiusVisualization()
-    {
-        if (_radiusSprite != null)
-        {
-            _radiusSprite.transform.localScale = Vector3.one * _radiusScale;
-            _radiusSprite.color = _cooldownColor;
-            _radiusSprite.enabled = false;
-        }
-    }
-
     public void SetActive(bool active)
     {
         _isActive = active;
@@ -52,10 +42,20 @@ public class AbilityRadiusVisualizer : MonoBehaviour
 
     public void UpdateVisualization()
     {
-        if (_isActive == false || _radiusSprite == null || !_ability.IsAbilityActive)
+        if (_isActive == false || _radiusSprite == null || _ability.IsAbilityActive == false)
             return;
 
         float pulse = Mathf.PingPong(Time.time * PulseAnimationSpeed, PulseAnimationAmplitude) + BaseScaleMultiplier;
         _radiusSprite.transform.localScale = Vector3.one * (_radiusScale * pulse);
+    }
+
+    private void SetupRadiusVisualization()
+    {
+        if (_radiusSprite != null)
+        {
+            _radiusSprite.transform.localScale = Vector3.one * _radiusScale;
+            _radiusSprite.color = _cooldownColor;
+            _radiusSprite.enabled = false;
+        }
     }
 }

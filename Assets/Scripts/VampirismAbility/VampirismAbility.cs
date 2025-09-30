@@ -3,6 +3,7 @@ using System.Collections;
 
 public class VampirismAbility : MonoBehaviour
 {
+    #region ConstantsRegion
     private const float MinAbilityDuration = 0.1f;
     private const float MinCooldown = 0.1f;
     private const float MinTickInterval = 0.05f;
@@ -14,7 +15,9 @@ public class VampirismAbility : MonoBehaviour
     private const float NormalizedMax = 1f;
     private const float CooldownCompleteThreshold = 1f;
     private const float TimeRemainingThreshold = 0f;
+    #endregion
 
+    #region FieldsRegion
     [Header("Ability Settings")]
     [SerializeField] private float _abilityDuration = 6f;
     [SerializeField] private float _abilityCooldown = 4f;
@@ -28,25 +31,28 @@ public class VampirismAbility : MonoBehaviour
     [Header("References")]
     [SerializeField] private AttackZone _vampirismZone;
     [SerializeField] private BaseHealth _ownerHealth;
-    [SerializeField] private CharacterAnimator _animator;
 
     private bool _isAbilityActive = false;
     private bool _isAbilityReady = true;
-    private Coroutine _abilityCoroutine;
     private float _sqrAbilityRadius;
-    private Transform _ownerTransform;
-
     private float _abilityTimer;
     private float _cooldownTimer;
+    private Coroutine _abilityCoroutine;
+    private Transform _ownerTransform;
+    #endregion
 
+    #region EventsRegion
     public event System.Action AbilityStarted;
     public event System.Action AbilityEnded;
     public event System.Action AbilityReady;
+    #endregion
 
+    #region PropertiesRegion
     public bool IsAbilityActive => _isAbilityActive;
     public bool IsAbilityReady => _isAbilityReady;
     public float AbilityRadius => _abilityRadius;
     public float SqrAbilityRadius => _sqrAbilityRadius;
+    #endregion
 
     private void Awake()
     {
@@ -76,7 +82,6 @@ public class VampirismAbility : MonoBehaviour
         _cooldownTimer = ZeroDurationThreshold;
 
         AbilityStarted?.Invoke();
-        _animator?.PlayVampirismAnimation();
 
         if (_abilityCoroutine != null)
             StopCoroutine(_abilityCoroutine);
@@ -90,7 +95,6 @@ public class VampirismAbility : MonoBehaviour
         {
             _isAbilityActive = false;
             AbilityEnded?.Invoke();
-            _animator?.StopVampirismAnimation();
         }
 
         if (_abilityCoroutine != null)
@@ -144,16 +148,11 @@ public class VampirismAbility : MonoBehaviour
         if (_ownerHealth == null)
             _ownerHealth = GetComponent<BaseHealth>();
 
-        if (_animator == null)
-            _animator = GetComponentInChildren<CharacterAnimator>();
-
         _ownerTransform = transform;
     }
 
-    private void CalculateSquaredRanges()
-    {
+    private void CalculateSquaredRanges() =>
         _sqrAbilityRadius = _abilityRadius * _abilityRadius;
-    }
 
     private void ValidateSettings()
     {
@@ -167,13 +166,9 @@ public class VampirismAbility : MonoBehaviour
     private void UpdateTimers()
     {
         if (_isAbilityActive)
-        {
             _abilityTimer += Time.deltaTime;
-        }
         else if (_isAbilityReady == false)
-        {
             _cooldownTimer += Time.deltaTime;
-        }
     }
 
     private IEnumerator VampirismRoutine()
@@ -201,7 +196,6 @@ public class VampirismAbility : MonoBehaviour
 
         _isAbilityActive = false;
         AbilityEnded?.Invoke();
-        _animator?.StopVampirismAnimation();
 
         yield return new WaitForSeconds(_abilityCooldown);
         _isAbilityReady = true;
@@ -209,7 +203,8 @@ public class VampirismAbility : MonoBehaviour
     }
 
     private IDamageable FindNearestTarget()
-    {
+    // Сделать: ? перенести логику в отдельный класс или исп.старый атакЗону или Детектор ?
+    {// Поиск ближайшей цели в зоне вампиризма
         if (_vampirismZone == null)
             return null;
 
