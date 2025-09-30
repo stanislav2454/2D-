@@ -8,7 +8,7 @@ public abstract class BaseAttacker : MonoBehaviour
 
     protected bool _canAttack = true;
     protected float _sqrAttackRange;
-    protected Coroutine _attackCooldownCoroutine;
+    protected Coroutine _attackCoroutine;
 
     protected abstract int AttackDamage { get; }
     protected abstract float AttackCooldown { get; }
@@ -24,10 +24,10 @@ public abstract class BaseAttacker : MonoBehaviour
 
     private void OnDisable()
     {
-        if (_attackCooldownCoroutine != null)
+        if (_attackCoroutine != null)
         {
-            StopCoroutine(_attackCooldownCoroutine);
-            _attackCooldownCoroutine = null;
+            StopCoroutine(_attackCoroutine);
+            _attackCoroutine = null;
         }
     }
 

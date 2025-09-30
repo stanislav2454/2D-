@@ -30,7 +30,7 @@ public class EnemyAttacker : BaseAttacker
         if (_canAttack && _player != null && _enemySettings != null)
         {
             int damageDealt = AttackPlayer();
-            _attackCooldownCoroutine = StartCoroutine(AttackCooldownRoutine());
+            _attackCoroutine = StartCoroutine(AttackCooldownRoutine());
             OnAttackPerformed(damageDealt);
         }
     }

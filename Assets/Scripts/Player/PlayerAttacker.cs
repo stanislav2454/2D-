@@ -8,7 +8,6 @@ public class PlayerAttacker : BaseAttacker
     [SerializeField] private AttackZone _attackZone;
     [SerializeField] private CharacterAnimator _animator;
 
-    //private Coroutine _attackCoroutine;
     private bool _isAttacking;
 
     protected override int AttackDamage => _playerSettings?.AttackDamage ?? 1;
@@ -35,26 +34,18 @@ public class PlayerAttacker : BaseAttacker
             return;
 
         _isAttacking = true;
-        //_attackCoroutine = StartCoroutine(AttackRoutine());
-        _attackCooldownCoroutine = StartCoroutine(AttackRoutine());
+        _attackCoroutine = StartCoroutine(AttackRoutine());
     }
 
     public void StopAttacking()
     {
         _isAttacking = false;
 
-        if (_attackCooldownCoroutine != null)
+        if (_attackCoroutine != null)
         {
-            StopCoroutine(_attackCooldownCoroutine);
-            _attackCooldownCoroutine = null;
+            StopCoroutine(_attackCoroutine);
+            _attackCoroutine = null;
         }
-        //if (_attackCoroutine != null)
-        //{
-        //    StopCoroutine(_attackCoroutine);
-        //    _attackCoroutine = null;
-        //}
-
-        _animator?.StopAttackAnimation();
     }
 
     private IEnumerator AttackRoutine()

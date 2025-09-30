@@ -719,6 +719,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65f2f37d75fb0064dbeb8c6da105d511, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &966933572 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 707573487663944210, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
+  m_PrefabInstance: {fileID: 2036544907}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54dcf39a01254ff4bb26d1a128f350b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1482529047
 GameObject:
   m_ObjectHideFlags: 0
@@ -1016,6 +1027,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3353719827597856834, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
+      propertyPath: _vampirismZone
+      value: 
+      objectReference: {fileID: 966933572}
     - target: {fileID: 4463028985331598816, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
       propertyPath: m_Name
       value: Player with vampirism

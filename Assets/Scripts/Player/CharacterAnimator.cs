@@ -16,19 +16,19 @@ public class CharacterAnimator : MonoBehaviour
     private void OnEnable()
     {
         if (_vampirismAbility != null)
-            _vampirismAbility.AbilityStarted += OnVampirismStarted;
+            _vampirismAbility.AbilityStarted += PlayVampirismAnimation;
     }
 
     private void OnDisable()
     {
         if (_vampirismAbility != null)
-            _vampirismAbility.AbilityStarted -= OnVampirismStarted;
+            _vampirismAbility.AbilityStarted -= PlayVampirismAnimation;
     }
 
     private void OnValidate()
     {
         if (_vampirismAbility == null)
-            Debug.LogError("Vampirism Ability is not set!", this);
+            Debug.LogError($"Vampirism Ability Component, not found for \"{GetType().Name}.cs\" on \"{gameObject.name}\" GameObject", this);
     }
 
     public void UpdateMovementAnimation(float horizontalSpeed, bool isCrawling)
@@ -69,12 +69,6 @@ public class CharacterAnimator : MonoBehaviour
     public void PlayAttackAnimation() =>
         _animator.SetTrigger(CharacterAnimatorData.Params.AttackTrigger);
 
-    public void StopAttackAnimation()
-    {
-        _animator.ResetTrigger(CharacterAnimatorData.Params.AttackTrigger);
-        _animator.SetBool(CharacterAnimatorData.Params.IsAttacking, false);
-    }
-
-    private void OnVampirismStarted() =>
+    private void PlayVampirismAnimation() =>
         _animator.SetTrigger(CharacterAnimatorData.Params.VampirismTrigger);
 }

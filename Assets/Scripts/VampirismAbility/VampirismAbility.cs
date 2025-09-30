@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[DisallowMultipleComponent, RequireComponent(typeof(BaseHealth))]
 public class VampirismAbility : MonoBehaviour
 {
     #region ConstantsRegion
@@ -37,16 +38,12 @@ public class VampirismAbility : MonoBehaviour
     private Transform _ownerTransform;
     #endregion
 
-    #region EventsRegion
     public event System.Action AbilityStarted;
     public event System.Action AbilityEnded;
     public event System.Action AbilityReady;
-    #endregion
 
-    #region PropertiesRegion
     public bool IsAbilityActive => _isAbilityActive;
     public bool IsAbilityReady => _isAbilityReady;
-    #endregion
 
     private void Awake()
     {
@@ -150,6 +147,9 @@ public class VampirismAbility : MonoBehaviour
         _damageTickInterval = Mathf.Max(_damageTickInterval, MinTickInterval);
         _damagePerTick = Mathf.Max(_damagePerTick, MinDamagePerTick);
         _healRatio = Mathf.Clamp(_healRatio, MinHealRatio, MaxHealRatio);
+
+        if (_vampirismZone == null)
+            Debug.LogError($"AttackZone Component, not found for \"{GetType().Name}.cs\" on \"{gameObject.name}\" GameObject", this);
     }
 
     private void UpdateTimers()
