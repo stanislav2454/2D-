@@ -16,19 +16,13 @@ public class CharacterAnimator : MonoBehaviour
     private void OnEnable()
     {
         if (_vampirismAbility != null)
-        {
             _vampirismAbility.AbilityStarted += OnVampirismStarted;
-            _vampirismAbility.AbilityEnded += OnVampirismEnded;
-        }
     }
 
     private void OnDisable()
     {
         if (_vampirismAbility != null)
-        {
             _vampirismAbility.AbilityStarted -= OnVampirismStarted;
-            _vampirismAbility.AbilityEnded -= OnVampirismEnded;
-        }
     }
 
     private void OnValidate()
@@ -72,10 +66,8 @@ public class CharacterAnimator : MonoBehaviour
         }
     }
 
-    public void PlayAttackAnimation()
-    {
+    public void PlayAttackAnimation() =>
         _animator.SetTrigger(CharacterAnimatorData.Params.AttackTrigger);
-    }
 
     public void StopAttackAnimation()
     {
@@ -84,8 +76,5 @@ public class CharacterAnimator : MonoBehaviour
     }
 
     private void OnVampirismStarted() =>
-        _animator.SetBool(CharacterAnimatorData.Params.IsVampirismActive, true);
-
-    private void OnVampirismEnded() =>
-        _animator.SetBool(CharacterAnimatorData.Params.IsVampirismActive, false);
+        _animator.SetTrigger(CharacterAnimatorData.Params.VampirismTrigger);
 }
