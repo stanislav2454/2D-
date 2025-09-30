@@ -21,8 +21,6 @@ public class Character : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private GroundDetector _groundDetector;
 
-    //private bool _wasAttacking;
-
     private void Awake()
     {
         _input = GetComponent<UserInputReader>();
@@ -43,9 +41,6 @@ public class Character : MonoBehaviour
         _playerHealth.Died += OnDead;
         _attacker.AttackPerformed += OnAttackPerformed;
 
-        //_vampirismAbility.AbilityStarted += OnVampirismStarted;
-        //_vampirismAbility.AbilityEnded += OnVampirismEnded;
-
         ApplyPlayerSettings();
     }
 
@@ -59,12 +54,6 @@ public class Character : MonoBehaviour
     {
         _playerHealth.Died -= OnDead;
         _attacker.AttackPerformed -= OnAttackPerformed;
-
-        //if (_vampirismAbility != null)
-        //{
-        //    _vampirismAbility.AbilityStarted -= OnVampirismStarted;
-        //    _vampirismAbility.AbilityEnded -= OnVampirismEnded;
-        //}
     }
 
     private void Update()
@@ -115,26 +104,6 @@ public class Character : MonoBehaviour
             _vampirismAbility.StartAbility();
     }
 
-    private void OnAttackPerformed(int damage)
-    {
-        _animator.PlayAttackAnimation();
-    }
-
-    //private void OnVampirismStarted()
-    //{   // Анимация вампиризма теперь управляется в CharacterAnimator через события
-    //    // Здесь можно добавить дополнительную логику, если нужно
-    //    //_animator.PlayVampirismAnimation();
-    //}
-
-    //private void OnVampirismEnded()
-    //{   // Анимация вампиризма теперь управляется в CharacterAnimator через события
-    //    // Здесь можно добавить дополнительную логику, если нужно
-    //    //_animator.StopVampirismAnimation();
-    //}
-
-    private void OnDead(BaseHealth health) =>
-        gameObject.SetActive(false);
-
     private void HandleMovement()
     {
         if (_input.HorizontalDirection != 0)
@@ -151,8 +120,14 @@ public class Character : MonoBehaviour
         _crawler.SetCrawling(_input.IsCrawlPressed, _input.HorizontalDirection);
 
     private void UpdateAnimations()
-    {//_animator.UpdateVampirismAnimation(_vampirismAbility.IsAbilityActive);
+    {
         _animator.UpdateMovementAnimation(_input.HorizontalDirection, _input.IsCrawlPressed);
         _animator.UpdateJumpFallAnimation(_groundDetector.IsGrounded, _rigidbody.velocity.y);
     }
+
+    private void OnAttackPerformed(int damage) =>
+        _animator.PlayAttackAnimation();
+
+    private void OnDead(BaseHealth health) =>
+        gameObject.SetActive(false);
 }

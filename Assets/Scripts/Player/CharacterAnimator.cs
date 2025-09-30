@@ -6,7 +6,7 @@ public class CharacterAnimator : MonoBehaviour
     private const float MinimalDetectionSpeed = 0.2f;
 
     [SerializeField] private Animator _animator;
-    [SerializeField] private VampirismAbility _vampirismAbility; 
+    [SerializeField] private VampirismAbility _vampirismAbility;
 
     private void Awake()
     {
@@ -83,28 +83,9 @@ public class CharacterAnimator : MonoBehaviour
         _animator.SetBool(CharacterAnimatorData.Params.IsAttacking, false);
     }
 
-    private void OnVampirismStarted()
-    {
+    private void OnVampirismStarted() =>
         _animator.SetBool(CharacterAnimatorData.Params.IsVampirismActive, true);
-    }
 
-    private void OnVampirismEnded()
-    {
+    private void OnVampirismEnded() =>
         _animator.SetBool(CharacterAnimatorData.Params.IsVampirismActive, false);
-    }
-    //public void PlayVampirismAnimation()
-    //{
-    //    // Логика запуска анимации вампиризма
-    //    // Например: animator.SetBool("IsVampirism", true);
-    //}
-    //public void StopVampirismAnimation()
-    //{
-    //    // Логика остановки анимации вампиризма
-    //    // Например: animator.SetBool("IsVampirism", false);
-    //}
-    //public void UpdateVampirismAnimation(bool isActive)
-    //{
-    //    // Обновление состояния анимации вампиризма
-    //    // Например: animator.SetBool("IsVampirism", isActive);
-    //}
 }

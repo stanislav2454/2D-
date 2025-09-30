@@ -8,15 +8,6 @@ public class AttackZone : MonoBehaviour
 
     public int TargetsInZoneCount => _targetsInZone.Count;
 
-    public IReadOnlyCollection<IDamageable> Targets
-    {
-        get
-        {
-            CleanDestroyedTargets();
-            return new List<IDamageable>(_targetsInZone).AsReadOnly();
-        }
-    }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.TryGetComponent<IDamageable>(out var damageable))
@@ -27,6 +18,46 @@ public class AttackZone : MonoBehaviour
     {
         if (other.TryGetComponent<IDamageable>(out var damageable))
             _targetsInZone.Remove(damageable);
+    }
+
+    public IReadOnlyCollection<IDamageable> Targets
+    {
+        get
+        {
+            CleanDestroyedTargets();
+            return new List<IDamageable>(_targetsInZone).AsReadOnly();
+        }
+    }
+    public IDamageable FindNearestTarget()// ? модиф.доступа ПАБЛИК ?
+    {// Находит ближайшую цель относительно позиции владельца зоны
+        return FindNearestTarget(transform.position);
+    }
+    public IDamageable FindNearestTarget(Vector3 fromPosition)// ? модиф.доступа ПАБЛИК ?
+    {// Находит ближайшую цель относительно указанной позиции
+        CleanDestroyedTargets();
+
+        if (_targetsInZone.Count == 0)
+            return null;
+
+        IDamageable nearestTarget = null;
+        float nearestDistance = float.MaxValue;
+
+        foreach (var target in _targetsInZone)
+        {
+            if (target == null || target is MonoBehaviour behaviour && behaviour == null)
+                continue;
+
+            Vector3 targetPosition = ((MonoBehaviour)target).transform.position;
+            float sqrDistance = Vector3.SqrMagnitude(targetPosition - fromPosition);
+
+            if (sqrDistance < nearestDistance)
+            {
+                nearestDistance = sqrDistance;
+                nearestTarget = target;
+            }
+        }
+
+        return nearestTarget;
     }
 
     public void CleanDestroyedTargets() =>
