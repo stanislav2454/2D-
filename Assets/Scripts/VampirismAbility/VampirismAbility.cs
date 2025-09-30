@@ -24,7 +24,6 @@ public class VampirismAbility : MonoBehaviour
     [SerializeField] private float _damageTickInterval = 0.2f;
     [SerializeField] private int _damagePerTick = 2;
     [SerializeField] [Range(0f, 1f)] private float _healRatio = 0.5f;
-    //[Header("Visualization")]    //[SerializeField] private float _abilityRadius = 3f;
 
     [Header("References")]
     [SerializeField] private AttackZone _vampirismZone;
@@ -32,7 +31,6 @@ public class VampirismAbility : MonoBehaviour
 
     private bool _isAbilityActive = false;
     private bool _isAbilityReady = true;
-   // private float _sqrAbilityRadius;
     private float _abilityTimer;
     private float _cooldownTimer;
     private Coroutine _abilityCoroutine;
@@ -48,14 +46,11 @@ public class VampirismAbility : MonoBehaviour
     #region PropertiesRegion
     public bool IsAbilityActive => _isAbilityActive;
     public bool IsAbilityReady => _isAbilityReady;
-    //public float AbilityRadius => _abilityRadius;
-    //public float SqrAbilityRadius => _sqrAbilityRadius;
     #endregion
 
     private void Awake()
     {
         InitializeReferences();
-        //CalculateSquaredRanges();
         ValidateSettings();
     }
 
@@ -135,7 +130,6 @@ public class VampirismAbility : MonoBehaviour
         _damageTickInterval = tickInterval;
         _damagePerTick = damagePerTick;
         _healRatio = healRatio;
-        //CalculateSquaredRanges();
     }
 
     private void InitializeReferences()
@@ -148,9 +142,6 @@ public class VampirismAbility : MonoBehaviour
 
         _ownerTransform = transform;
     }
-
-    //private void CalculateSquaredRanges() =>
-    //    _sqrAbilityRadius = _abilityRadius * _abilityRadius;
 
     private void ValidateSettings()
     {
@@ -175,7 +166,6 @@ public class VampirismAbility : MonoBehaviour
 
         while (abilityTimer < _abilityDuration && _isAbilityActive)
         {
-            //IDamageable nearestTarget = FindNearestTarget();
             IDamageable nearestTarget = _vampirismZone?.FindNearestTarget(transform.position);
 
             if (nearestTarget != null)
@@ -200,39 +190,4 @@ public class VampirismAbility : MonoBehaviour
         _isAbilityReady = true;
         AbilityReady?.Invoke();
     }
-
-    //private IDamageable FindNearestTarget()
-    //// Сделать: ? перенести логику в отдельный класс или исп.старый атакЗону или Детектор ?
-    //{// Поиск ближайшей цели в зоне вампиризма
-    //    if (_vampirismZone == null)
-    //        return null;
-
-    //    _vampirismZone.CleanDestroyedTargets();
-    //    var targets = _vampirismZone.Targets;
-
-    //    if (targets.Count == 0)
-    //        return null;
-
-    //    IDamageable nearestTarget = null;
-    //    float nearestDistance = float.MaxValue;
-    //    Vector3 ownerPosition = _ownerTransform.position;
-
-    //    foreach (var target in targets)
-    //    {
-    //        if (target == null || target is MonoBehaviour behaviour && behaviour == null)
-    //            continue;
-
-    //        Vector3 targetPosition = ((MonoBehaviour)target).transform.position;
-    //        Vector3 directionToTarget = targetPosition - ownerPosition;
-    //        float sqrDistance = directionToTarget.sqrMagnitude;
-
-    //        if (sqrDistance < nearestDistance && sqrDistance <= _sqrAbilityRadius)
-    //        {
-    //            nearestDistance = sqrDistance;
-    //            nearestTarget = target;
-    //        }
-    //    }
-
-    //    return nearestTarget;
-    //}
 }

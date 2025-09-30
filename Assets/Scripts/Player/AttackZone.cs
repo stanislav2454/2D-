@@ -28,12 +28,12 @@ public class AttackZone : MonoBehaviour
             return new List<IDamageable>(_targetsInZone).AsReadOnly();
         }
     }
-    public IDamageable FindNearestTarget()// ? модиф.доступа ПАБЛИК ?
-    {// Находит ближайшую цель относительно позиции владельца зоны
-        return FindNearestTarget(transform.position);
-    }
-    public IDamageable FindNearestTarget(Vector3 fromPosition)// ? модиф.доступа ПАБЛИК ?
-    {// Находит ближайшую цель относительно указанной позиции
+
+    public IDamageable FindNearestTarget() =>
+         FindNearestTarget(transform.position);
+
+    public IDamageable FindNearestTarget(Vector3 fromPosition)
+    {
         CleanDestroyedTargets();
 
         if (_targetsInZone.Count == 0)
@@ -62,9 +62,8 @@ public class AttackZone : MonoBehaviour
 
     public void CleanDestroyedTargets() =>
           _targetsInZone.RemoveWhere(target =>
-              target == null ||
-              target.Equals(null) ||
-              (target is MonoBehaviour behaviour && behaviour == null));
+                target == null || target.Equals(null) ||
+               (target is MonoBehaviour behaviour && behaviour == null));
 
     public void ClearTargets() =>
         _targetsInZone.Clear();
