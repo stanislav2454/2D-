@@ -11,7 +11,6 @@ public class PlayerSettings : ScriptableObject
     [field: SerializeField, Min(0)] public int AttackDamage { get; private set; } = 1;
 
 
-    // Vampirism Ability Settings
     [field: Header("Vampirism Settings")]
     [field: SerializeField, Min(0)] public float VampirismDuration { get; private set; } = 6f;
     [field: SerializeField, Min(0)] public float VampirismCooldown { get; private set; } = 4f;

@@ -103,7 +103,7 @@ public class EnemyPool : MonoBehaviour
 
         enemy.Died += OnEnemyDied;
 
-        enemy.ResetEnemy(); // ResetEnemy() вызовет Init() на здоровье
+        enemy.ResetEnemy();
     }
 
 
@@ -120,7 +120,7 @@ public class EnemyPool : MonoBehaviour
     private void OnDestroyPooledObject(Enemy enemy)
     {
         if (enemy != null)
-        {           
+        {
             enemy.Died -= OnEnemyDied;
 
             Destroy(enemy.gameObject);

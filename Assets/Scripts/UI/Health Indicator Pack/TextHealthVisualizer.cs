@@ -16,9 +16,7 @@ public class TextHealthVisualizer : HealthVisualizer
         if (_healthText == null || Health == null)
             return;
 
-        string text = _showMaxHealth
-            ? string.Format(_format, Health.Current, Health.Max)
-            : Health.Current.ToString();
+        string text = _showMaxHealth ? string.Format(_format, Health.Current, Health.Max) : Health.Current.ToString();
 
         _healthText.text = text;
 

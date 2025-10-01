@@ -154,7 +154,6 @@ public class EnemySpawner : MonoBehaviour
 
         _activeEnemies.Clear();
         _spawnedCount = 0;
-
         _enemyCounterUI?.ResetCounter();
     }
 }

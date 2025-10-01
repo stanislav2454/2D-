@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     private EnemyAI _ai;
 
     public event System.Action<Enemy> Died; 
+
     public EnemyMover Movement => _mover;
 
     private void Awake()
@@ -37,7 +38,7 @@ public class Enemy : MonoBehaviour
     public void ResetEnemy()
     {
         transform.rotation = Quaternion.identity;
-        _health.Init(); // Заменил ResetHealth() на Init()
+        _health.Init(); 
         _ai.ResetAI();
     }
 

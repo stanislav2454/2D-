@@ -73,6 +73,15 @@ public class EnemyAI : MonoBehaviour
         _currentWaypointIndex = 0;
     }
 
+    public void ApplySettings(EnemySettings settings)
+    {
+        _settings = settings;
+        _attacker.ApplyEnemySettings(settings);
+
+        if (_detector != null)
+            _detector.SetDetectionRadius(_settings.DetectionRadius);
+    }
+
     private void CalculateSquaredRanges()
     {
         if (_settings != null)
@@ -128,17 +137,6 @@ public class EnemyAI : MonoBehaviour
 
         if (_player == null || _attacker.CanAttack() == false)
             _currentState = EnemyState.Chasing;
-    }
-
-
-
-    public void ApplySettings(EnemySettings settings)
-    {
-        _settings = settings;
-        _attacker.ApplyEnemySettings(settings);
-
-        if (_detector != null)
-            _detector.SetDetectionRadius(_settings.DetectionRadius);
     }
 
     private void OnDrawGizmosSelected()

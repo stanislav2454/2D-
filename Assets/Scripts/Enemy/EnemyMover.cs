@@ -4,8 +4,6 @@
 public class EnemyMover : MonoBehaviour
 {
     [SerializeField] private EnemySettings _settings;
-    //[SerializeField] private float _patrolSpeed = 2f;
-    //[SerializeField] private float _chaseSpeed = 5f;
     [SerializeField] private float _reachThreshold = 0.2f;
     [SerializeField] private Flipper _flipper;
 
@@ -72,7 +70,7 @@ public class EnemyMover : MonoBehaviour
         _isMoving = true;
     }
 
-    public void ApplySettings(EnemySettings settings)//
+    public void ApplySettings(EnemySettings settings)
     {
         _settings = settings;
         _currentSpeed = _settings.WalkSpeed;
