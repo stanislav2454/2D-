@@ -19,7 +19,8 @@ public class Crawler : MonoBehaviour
 
     private void Awake()
     {
-        if (_playerView.TryGetComponent(out _animator) == false) { }
+        if (_playerView.TryGetComponent(out _animator) == false)
+            Debug.LogError($"CharacterAnimator Component in playerView, not found for \"{GetType().Name}.cs\" on \"{gameObject.name}\" GameObject", this);
 
         _collider = GetComponent<CapsuleCollider2D>();
         CacheOriginalValues();
@@ -30,20 +31,23 @@ public class Crawler : MonoBehaviour
         _isCrawling = crawl;
 
         if (_isCrawling)
-            ApplyCrawlState(speedX);
+            ApplyCrawlState();
         else
             ResetCrawlState();
+
+        UpdateCrawlAnimation(speedX);
     }
 
-    private void ApplyCrawlState(float speedX)
+    private void UpdateCrawlAnimation(float speedX) =>
+        _animator?.UpdateMovementAnimation(speedX, _isCrawling);
+
+    private void ApplyCrawlState()
     {
         _playerView.localScale = _crawlTransformScale;
         _playerView.position = new Vector3(transform.position.x, transform.position.y - PositionYoffset, transform.position.z);
 
         _collider.size = new Vector2(_originalColliderSize.x, _isCrawling ? _crawlColliderHeight : _originalColliderSize.y);
         _collider.offset = new Vector2(_originalColliderOffset.x, _originalColliderOffset.y - _originalColliderSize.y * ScaleYoffset);
-
-        _animator?.UpdateMovementAnimation(speedX, _isCrawling);
     }
 
     private void ResetCrawlState()

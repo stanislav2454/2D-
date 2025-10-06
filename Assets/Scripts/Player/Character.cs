@@ -3,8 +3,7 @@
 [DisallowMultipleComponent]
 [RequireComponent(typeof(UserInputReader), typeof(CharacterMover))]
 [RequireComponent(typeof(Jumper), typeof(Crawler), typeof(PlayerHealth))]
-[RequireComponent(typeof(PlayerAttacker), typeof(Rigidbody2D))]
-[RequireComponent(typeof(Rigidbody2D), typeof(GroundDetector))]
+[RequireComponent(typeof(PlayerAttacker), typeof(Rigidbody2D), typeof(GroundDetector))]
 public class Character : MonoBehaviour
 {
     [Header("References")]
@@ -14,7 +13,6 @@ public class Character : MonoBehaviour
     [SerializeField] private Crawler _crawler;
     [SerializeField] private PlayerAttacker _attacker;
     [SerializeField] private VampirismAbility _vampirismAbility;
-    [SerializeField] private CharacterAnimator _animator;
     [SerializeField] private PlayerSettings _playerSettings;
 
     private PlayerHealth _playerHealth;
@@ -32,14 +30,10 @@ public class Character : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
         _groundDetector = GetComponent<GroundDetector>();
 
-        if (_animator == null)
-            _animator = GetComponentInChildren<CharacterAnimator>();
-
         if (_vampirismAbility == null)
             _vampirismAbility = GetComponentInChildren<VampirismAbility>();
 
         _playerHealth.Died += OnDead;
-        _attacker.AttackPerformed += OnAttackPerformed;
 
         ApplyPlayerSettings();
     }
@@ -53,7 +47,6 @@ public class Character : MonoBehaviour
     private void OnDestroy()
     {
         _playerHealth.Died -= OnDead;
-        _attacker.AttackPerformed -= OnAttackPerformed;
     }
 
     private void Update()
@@ -62,7 +55,6 @@ public class Character : MonoBehaviour
         HandleCrawling();
         HandleAttack();
         HandleVampirism();
-        UpdateAnimations();
     }
 
     private void FixedUpdate()
@@ -118,15 +110,6 @@ public class Character : MonoBehaviour
 
     private void HandleCrawling() =>
         _crawler.SetCrawling(_input.IsCrawlPressed, _input.HorizontalDirection);
-
-    private void UpdateAnimations()
-    {
-        _animator.UpdateMovementAnimation(_input.HorizontalDirection, _input.IsCrawlPressed);
-        _animator.UpdateJumpFallAnimation(_groundDetector.IsGrounded, _rigidbody.velocity.y);
-    }
-
-    private void OnAttackPerformed(int damage) =>
-        _animator.PlayAttackAnimation();
 
     private void OnDead(BaseHealth health) =>
         gameObject.SetActive(false);

@@ -22,7 +22,7 @@ public class PlayerAttacker : BaseAttacker
             _attackZone = GetComponentInChildren<AttackZone>();
 
         if (_animator == null)
-            _animator = GetComponentInChildren<CharacterAnimator>();
+            Debug.LogError($"CharacterAnimator Component, not found for \"{GetType().Name}.cs\" on \"{gameObject.name}\" GameObject", this);
     }
 
     private void OnDisable() =>

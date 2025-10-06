@@ -1,46 +1,30 @@
 ﻿using UnityEngine;
 
 [DisallowMultipleComponent, RequireComponent(typeof(Rigidbody2D), typeof(Flipper))]
-public class CharacterMover : MonoBehaviour
+public class CharacterMover : BaseMover
 {
-    [SerializeField] private float _acceleration = 15f;
     [SerializeField] private PlayerSettings _settings;
     [SerializeField] private Transform _playerView;
-    [SerializeField] private Flipper _flipper;
 
     private CharacterAnimator _animator;
-    private Rigidbody2D _rigidbody;
-    private bool _isCrawling;
 
     private void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody2D>();
-        _flipper = GetComponent<Flipper>();
+        base.Awake();
 
-        if (_playerView != null)
-            _animator = _playerView.GetComponent<CharacterAnimator>();
+        if (_playerView.TryGetComponent(out _animator) == false)
+            Debug.LogError($"CharacterAnimator Component, not found for \"{GetType().Name}.cs\" on \"{gameObject.name}\" GameObject", this);
     }
-
-    public void Move(float horizontalDirection, bool isCrawling)
-    {
-        _isCrawling = isCrawling;
-
-        float targetSpeed = horizontalDirection * GetCurrentSpeed();
-        ApplyMovement(targetSpeed);
-
-        _animator?.UpdateMovementAnimation(horizontalDirection, isCrawling);
-        _flipper.Flip(horizontalDirection);
-    }
-
-    private void ApplyMovement(float targetSpeed)
-    {
-        float newSpeed = Mathf.Lerp(_rigidbody.velocity.x, targetSpeed, _acceleration * Time.fixedDeltaTime);
-        _rigidbody.velocity = new Vector2(newSpeed, _rigidbody.velocity.y);
-    }
-
-    private float GetCurrentSpeed() =>
-        _isCrawling ? _settings.CrawlSpeed : _settings.WalkSpeed;
 
     public void ApplyPlayerSettings(PlayerSettings settings) =>
         _settings = settings;
+
+    public override void Move(float horizontalDirection, bool isCrawling)
+    {
+        base.Move(horizontalDirection, isCrawling);
+        _animator?.UpdateMovementAnimation(horizontalDirection, _isCrawling);
+    }
+
+    protected override float GetCurrentSpeed() =>
+        _isCrawling ? _settings.CrawlSpeed : _settings.WalkSpeed;
 }
