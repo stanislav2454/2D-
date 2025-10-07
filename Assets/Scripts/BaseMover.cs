@@ -2,47 +2,38 @@
 
 public abstract class BaseMover : MonoBehaviour
 {
-    private const float SpeedThreshold = 0.1f;
+    [SerializeField] protected float Acceleration = 15f;
+    [SerializeField] protected Flipper Flipper;
 
-    [SerializeField] protected float _acceleration = 15f;
-    [SerializeField] protected Flipper _flipper;
-
-    protected Rigidbody2D _rigidbody;
-    protected bool _isCrawling;
-    protected float _currentSpeed;
+    protected Rigidbody2D Rigidbody;
+    protected float CurrentSpeed;
 
     protected virtual void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody2D>();
-        _flipper = GetComponent<Flipper>();
-    }
-
-    public virtual void Move(float horizontalDirection, bool isCrawling)
-    {
-        _isCrawling = isCrawling;
-        float targetSpeed = horizontalDirection * GetCurrentSpeed();
-        ApplyMovement(targetSpeed);
-
-        if (_flipper != null && horizontalDirection != 0)
-            _flipper.Flip(horizontalDirection);
-    }
-
-    protected virtual void ApplyMovement(float targetSpeed)
-    {
-        float newSpeed = Mathf.Lerp(_rigidbody.velocity.x, targetSpeed, _acceleration * Time.fixedDeltaTime);
-        _rigidbody.velocity = new Vector2(newSpeed, _rigidbody.velocity.y);
+        Rigidbody = GetComponent<Rigidbody2D>();
+        Flipper = GetComponent<Flipper>();
     }
 
     protected abstract float GetCurrentSpeed();
 
-    public virtual void StopMovement()
+    protected virtual void ApplyMovement(float targetSpeed)
     {
-        if (_rigidbody != null)
-            _rigidbody.velocity = new Vector2(0, _rigidbody.velocity.y);
+        float newSpeed = Mathf.Lerp(Rigidbody.velocity.x, targetSpeed, Acceleration * Time.fixedDeltaTime);
+        Rigidbody.velocity = new Vector2(newSpeed, Rigidbody.velocity.y);
     }
 
-    public virtual bool IsMoving()
+    public virtual void Move(float horizontalDirection)
     {
-        return _rigidbody != null && Mathf.Abs(_rigidbody.velocity.x) > SpeedThreshold;
+        float targetSpeedX = horizontalDirection * GetCurrentSpeed();
+        ApplyMovement(targetSpeedX);
+
+        if (horizontalDirection != 0)
+            Flipper?.Flip(horizontalDirection);
+    }
+
+    public virtual void StopMovement()
+    {
+        if (Rigidbody != null)
+            Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
     }
 }

@@ -3,11 +3,6 @@
 [RequireComponent(typeof(EnemyMover), typeof(EnemyAttacker))]
 public class EnemyAI : MonoBehaviour
 {
-    private const float WaypointReachThreshold = 0.5f;
-    private const int WaypointIncrement = 1;
-
-    public enum EnemyState { Patrolling, Chasing, Attacking }
-
     [Header("References")]
     [SerializeField] private EnemySettings _settings;
     [SerializeField] private EnemyMover _mover;
@@ -16,132 +11,121 @@ public class EnemyAI : MonoBehaviour
 
     private EnemyPath _patrolPath;
     private Transform _player;
-    private EnemyState _currentState = EnemyState.Patrolling;
-    private int _currentWaypointIndex = 0;
-    private bool _canAttack = true;
-    private float _sqrAttackRange;
-    private float _sqrWaypointReachThreshold;
+    private EnemyStateMachine _stateMachine;
+
+    public EnemyMover Mover => _mover;
+    public EnemyAttacker Attacker => _attacker;
+    public Detector Detector => _detector;
+    public EnemySettings Settings => _settings;
+    public Transform Player => _player;
+    public EnemyPath PatrolPath => _patrolPath;
+
+    private bool _isInitialized = false;
 
     private void Awake()
     {
-        _mover = GetComponent<EnemyMover>();
-        _attacker = GetComponent<EnemyAttacker>();
+        InitializeComponents();
+    }
 
-        CalculateSquaredRanges();
+    private void Start()
+    {
+        if (_isInitialized)
+            _stateMachine.ChangeState<PatrolState>();
     }
 
     private void OnEnable()
     {
-        _detector.TargetDetected += OnTargetDetected;
-        _detector.TargetLost += OnTargetLost;
-        ResetAI();
+        // Проверяем инициализацию перед подпиской на события
+        if (_isInitialized == false)
+            InitializeComponents();
+
+        if (_detector != null)
+        {
+            _detector.TargetDetected += OnTargetDetected;
+            _detector.TargetLost += OnTargetLost;
+        }
+
+        // Запускаем состояние только если компоненты инициализированы
+        if (_isInitialized && _stateMachine != null)
+        {
+            _stateMachine.ChangeState<PatrolState>();
+        }
     }
 
     private void OnDisable()
     {
-        _detector.TargetDetected -= OnTargetDetected;
-        _detector.TargetLost -= OnTargetLost;
+        if (_detector != null)
+        {
+            _detector.TargetDetected -= OnTargetDetected;
+            _detector.TargetLost -= OnTargetLost;
+        }
     }
 
     private void Update()
     {
-        switch (_currentState)
-        {
-            case EnemyState.Patrolling:
-                PatrolBehavior();
-                break;
-            case EnemyState.Chasing:
-                ChaseBehavior();
-                break;
-            case EnemyState.Attacking:
-                AttackBehavior();
-                break;
-        }
+        if (_isInitialized)
+            _stateMachine.Update();
+    }
+
+    private void FixedUpdate()
+    {
+        if (_isInitialized)
+            _stateMachine.FixedUpdate();
     }
 
     public void ResetAI()
     {
-        _currentState = EnemyState.Patrolling;
-        _canAttack = true;
-        _currentWaypointIndex = 0;
-        StopAllCoroutines();
+        _player = null;
+
+        if (_isInitialized && _stateMachine != null)
+            _stateMachine.ChangeState<PatrolState>();
     }
 
-    public void SetPatrolPath(EnemyPath path)
-    {
-        _patrolPath = path;
-        _currentWaypointIndex = 0;
-    }
+    public void SetPatrolPath(EnemyPath path)    =>
+        _patrolPath = path;    
 
     public void ApplySettings(EnemySettings settings)
     {
         _settings = settings;
-        _attacker.ApplyEnemySettings(settings);
+        _attacker?.ApplyEnemySettings(settings);
 
-        if (_detector != null)
+        if (_detector != null && _settings != null)
             _detector.SetDetectionRadius(_settings.DetectionRadius);
+
+        if (_mover != null && _settings != null)
+            _mover.ApplySettings(settings);
     }
 
-    private void CalculateSquaredRanges()
+    private void InitializeComponents()
     {
-        if (_settings != null)
-            _sqrAttackRange = _settings.AttackRange * _settings.AttackRange;
+        if (_mover == null)
+            _mover = GetComponent<EnemyMover>();
 
-        _sqrWaypointReachThreshold = WaypointReachThreshold * WaypointReachThreshold;
+        if (_attacker == null)
+            _attacker = GetComponent<EnemyAttacker>();
+
+        if (_detector == null)
+            _detector = GetComponent<Detector>();
+
+        _stateMachine = new EnemyStateMachine(this);
+        _isInitialized = true;
     }
 
     private void OnTargetDetected(Transform playerTransform)
     {
         _player = playerTransform;
-        _attacker.Initialize(_player);
-        _currentState = EnemyState.Chasing;
+        _attacker?.Initialize(_player);
     }
 
-    private void OnTargetLost()
-    {
+    private void OnTargetLost() =>
         _player = null;
-        _currentState = EnemyState.Patrolling;
-    }
-
-    private void PatrolBehavior()
-    {
-        if (_patrolPath != null && _patrolPath.Count > 0)
-        {
-            Transform waypoint = _patrolPath.GetWaypoint(_currentWaypointIndex);
-            _mover.SetChasingSpeed(false);
-            _mover.MoveToTarget(waypoint.position);
-
-            if (Vector2.SqrMagnitude(transform.position - waypoint.position) < _sqrWaypointReachThreshold)
-                _currentWaypointIndex = (_currentWaypointIndex + WaypointIncrement) % _patrolPath.Count;
-        }
-    }
-
-    private void ChaseBehavior()
-    {
-        if (_player == null)
-            return;
-
-        _mover.SetChasingSpeed(true);
-        _mover.MoveToTarget(_player.position);
-
-        if (_attacker.CanAttack())
-            _currentState = EnemyState.Attacking;
-    }
-
-    private void AttackBehavior()
-    {
-        _mover.SetChasingSpeed(false);
-        _mover.StopMovement();
-
-        _attacker.PerformAttack();
-
-        if (_player == null || _attacker.CanAttack() == false)
-            _currentState = EnemyState.Chasing;
-    }
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _settings.AttackRange);
+        if (_settings != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, _settings.AttackRange);
+        }
     }
 }

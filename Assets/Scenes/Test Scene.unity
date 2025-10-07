@@ -730,6 +730,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54dcf39a01254ff4bb26d1a128f350b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1291309020 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3488464703015555491, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
+  m_PrefabInstance: {fileID: 2036544907}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 440da53e50863af4088ee7a36ccda20c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1482529047
 GameObject:
   m_ObjectHideFlags: 0
@@ -1039,6 +1050,14 @@ PrefabInstance:
       propertyPath: _coinUI
       value: 
       objectReference: {fileID: 941138851}
+    - target: {fileID: 5810974036215117689, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
+      propertyPath: _animator
+      value: 
+      objectReference: {fileID: 1291309020}
+    - target: {fileID: 6921390616635074050, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
+      propertyPath: Flipper
+      value: 
+      objectReference: {fileID: 2036544908}
     - target: {fileID: 7740266990852344804, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1052,6 +1071,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
+--- !u!114 &2036544908 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5657889954662192325, guid: dd5ae3f8a2d3c0340aa2792d138dad01, type: 3}
+  m_PrefabInstance: {fileID: 2036544907}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfb91644a73328348ad80abfacbea7e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2054013141
 GameObject:
   m_ObjectHideFlags: 0

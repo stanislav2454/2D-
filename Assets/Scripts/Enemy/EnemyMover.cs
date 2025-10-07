@@ -1,115 +1,127 @@
 ﻿using UnityEngine;
 
 [DisallowMultipleComponent, RequireComponent(typeof(Enemy))]
-public class EnemyMover : MonoBehaviour
+public class EnemyMover : BaseMover
 {
     [SerializeField] private EnemySettings _settings;
     [SerializeField] private float _reachThreshold = 0.2f;
-    [SerializeField] private Flipper _flipper;
 
-    private float _currentSpeed;
-    private int _currentWaypointIndex;
-    private bool _isMoving = true;
-    private EnemyPath _path;
+    private EnemyPath _patrolPath;
     private Transform _currentWaypoint;
-    private Vector2 _targetPosition;
+    private int _currentWaypointIndex;
+    private bool _isChasing;
+    private Vector2 _chaseTarget;
+    private Vector2 _movementDirection;
 
-    private void Start()
+    protected override void Awake()
     {
+        Flipper = GetComponent<Flipper>();
+
         if (_settings != null)
-            _currentSpeed = _settings.WalkSpeed;
-        else
-            Debug.LogWarning("EnemySettings not assigned!", this);
+        {
+            CurrentSpeed = _settings.WalkSpeed;
+            Acceleration = _settings.Acceleration;
+        }
     }
 
     private void Update()
     {
-        if (_isMoving && _targetPosition != Vector2.zero)
-            MoveToTarget(_targetPosition);
-        else if (_path != null && _isMoving && _currentWaypoint != null)
-            PatrolUpdate();
+        UpdateMovementDirection();
+        ApplyMovementDirect();
     }
+
+    protected override float GetCurrentSpeed() =>
+        CurrentSpeed;
 
     public void SetChasingSpeed(bool isChasing)
     {
         if (_settings != null)
-            _currentSpeed = isChasing ? _settings.ChaseSpeed : _settings.WalkSpeed;
+            CurrentSpeed = isChasing ? _settings.ChaseSpeed : _settings.WalkSpeed;
+
+        _isChasing = isChasing;
     }
 
-    public void MoveToTarget(Vector2 target)
+    public void StartPatrol(EnemyPath path)
     {
-        _targetPosition = target;
-        transform.position = Vector2.MoveTowards(transform.position, target, _currentSpeed * Time.deltaTime);
+        _patrolPath = path;
+        _isChasing = false;
+        _chaseTarget = Vector2.zero;
 
-        if (_flipper != null)
+        if (path != null && path.Count > 0)
         {
-            float direction = Mathf.Sign(target.x - transform.position.x);
-            _flipper.Flip(direction);
+            _currentWaypointIndex = 0;
+            _currentWaypoint = _patrolPath.GetWaypoint(_currentWaypointIndex);
         }
     }
 
-    public void StartMovement()
+    public void StartChasing(Vector2 target)
     {
-        _isMoving = true;
+        _chaseTarget = target;
+        _isChasing = true;
     }
 
-    public void StopMovement()
+    public void UpdateChaseTarget(Vector2 target)
     {
-        _isMoving = false;
-        _targetPosition = Vector2.zero;
-    }
-
-    public void Initialize(EnemyPath path)
-    {
-        if (path == null || path.Count == 0)
-            return;
-
-        _path = path;
-        _currentWaypointIndex = 0;
-        _currentWaypoint = _path.GetWaypoint(_currentWaypointIndex);
-        _isMoving = true;
+        if (_isChasing)
+            _chaseTarget = target;
     }
 
     public void ApplySettings(EnemySettings settings)
     {
         _settings = settings;
-        _currentSpeed = _settings.WalkSpeed;
+        CurrentSpeed = _settings.WalkSpeed;
+        Acceleration = _settings.Acceleration;
     }
 
-    private void PatrolUpdate()
+    public new void StopMovement() =>
+        _movementDirection = Vector2.zero;
+
+    public void MoveToTarget(Vector2 target) =>
+        StartChasing(target);
+
+    public void Initialize(EnemyPath path) =>
+        StartPatrol(path);
+
+    private void UpdateMovementDirection()
     {
-        transform.position = MoveTowardsWaypoint(transform, _currentWaypoint, _currentSpeed);
+        _movementDirection = Vector2.zero;
 
-        if (_currentWaypoint != null)
+        if (_isChasing && _chaseTarget != Vector2.zero)
         {
-            Vector3 direction = (_currentWaypoint.position - transform.position).normalized;
-
-            if (_flipper != null && direction != Vector3.zero)
-                _flipper.Flip(direction.x);
+            Vector2 direction = (_chaseTarget - (Vector2)transform.position).normalized;
+            _movementDirection = direction;
         }
-
-        _currentWaypoint = IfWaypointReached(transform, _currentWaypoint, _reachThreshold, _path);
-    }
-
-    private Vector3 MoveTowardsWaypoint(Transform current, Transform currentWaypoint, float speed) =>
-          Vector3.MoveTowards(current.position, currentWaypoint.position, speed * Time.deltaTime);
-
-    private Transform IfWaypointReached(
-         Transform current, Transform currentWaypoint, float reachThreshold, EnemyPath path)
-    {
-        float sqrDistance = (current.position - currentWaypoint.position).sqrMagnitude;
-        float sqrReachThreshold = reachThreshold * reachThreshold;
-
-        if (sqrDistance < sqrReachThreshold)
+        else if (_patrolPath != null && _patrolPath.Count > 0)
         {
-            _currentWaypointIndex++;
-
-            if (_currentWaypointIndex >= path.Count)
+            if (_currentWaypoint == null)
+            {
                 _currentWaypointIndex = 0;
+                _currentWaypoint = _patrolPath.GetWaypoint(_currentWaypointIndex);
+            }
 
-            return path.GetWaypoint(_currentWaypointIndex);
+            Vector2 direction = (_currentWaypoint.position - transform.position).normalized;
+            _movementDirection = direction;
+
+            float sqrDistance = ((Vector2)transform.position - (Vector2)_currentWaypoint.position).sqrMagnitude;
+            float sqrReachThreshold = _reachThreshold * _reachThreshold;
+
+            if (sqrDistance < sqrReachThreshold)
+            {
+                _currentWaypointIndex = (_currentWaypointIndex + 1) % _patrolPath.Count;
+                _currentWaypoint = _patrolPath.GetWaypoint(_currentWaypointIndex);
+            }
         }
+    }
 
-        return currentWaypoint;
+    private void ApplyMovementDirect()
+    {
+        if (_movementDirection != Vector2.zero)
+        {
+            Vector2 newPosition = (Vector2)transform.position + _movementDirection * (CurrentSpeed * Time.deltaTime);
+            transform.position = newPosition;
+
+            if (Flipper != null && _movementDirection.x != 0)
+                Flipper.Flip(_movementDirection.x);
+        }
     }
 }

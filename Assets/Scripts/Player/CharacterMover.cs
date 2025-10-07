@@ -7,6 +7,7 @@ public class CharacterMover : BaseMover
     [SerializeField] private Transform _playerView;
 
     private CharacterAnimator _animator;
+    private bool _isCrawling;
 
     private void Awake()
     {
@@ -19,10 +20,13 @@ public class CharacterMover : BaseMover
     public void ApplyPlayerSettings(PlayerSettings settings) =>
         _settings = settings;
 
-    public override void Move(float horizontalDirection, bool isCrawling)
+    public void MoveCharacter(float horizontalDirection, bool isCrawling)
     {
-        base.Move(horizontalDirection, isCrawling);
-        _animator?.UpdateMovementAnimation(horizontalDirection, _isCrawling);
+        _isCrawling = isCrawling;
+
+        Move(horizontalDirection);
+
+        _animator?.UpdateMovementAnimation(horizontalDirection, isCrawling);
     }
 
     protected override float GetCurrentSpeed() =>

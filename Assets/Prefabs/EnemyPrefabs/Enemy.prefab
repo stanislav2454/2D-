@@ -172,8 +172,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9f898b51a5c9b340b5b667e03e5da8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Acceleration: 15
+  Flipper: {fileID: 4759575615336845129}
   _settings: {fileID: 11400000, guid: 977ec2b879843d345aa0a65d731fe970, type: 2}
-  _flipper: {fileID: 4759575615336845129}
+  _reachThreshold: 0.2
 --- !u!114 &4759575615336845129
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -28,13 +28,11 @@ public class EnemySpawner : MonoBehaviour
             _settings = ScriptableObject.CreateInstance<EnemySpawnSettings>();
         }
 
-        if (_enemyPool != null)
-            _enemyPool.ApplySettings(_settings);
+        _enemyPool?.ApplySettings(_settings);
 
         _spawnWait = new WaitForSeconds(_settings.spawnInterval);
 
-        if (_enemyPool != null)
-            _enemyPool.Initialize();
+        _enemyPool?.Initialize();
     }
 
     private void OnValidate()

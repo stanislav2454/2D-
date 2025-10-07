@@ -5,6 +5,7 @@ public class EnemyPool : MonoBehaviour
 {
     [Header("Pool Settings reference")]
     [SerializeField] private EnemySpawnSettings _settings;
+    [SerializeField] private EnemySettings _enemySettings;
 
     [Space(3)]
     [Header("Prefab")]
@@ -83,6 +84,9 @@ public class EnemyPool : MonoBehaviour
         Enemy enemy = Instantiate(_enemyPrefab, transform);
         enemy.gameObject.SetActive(false);
 
+        if (TryGetComponent<EnemyAI>(out EnemyAI enemyAI))
+            enemyAI.ApplySettings(_enemySettings);
+
         enemy.Died += OnEnemyDied;
 
         return enemy;
@@ -100,10 +104,12 @@ public class EnemyPool : MonoBehaviour
     private void OnGetFromPool(Enemy enemy)
     {
         enemy.gameObject.SetActive(true);
+        enemy.ResetEnemy();
+
+        if (TryGetComponent<EnemyAI>(out EnemyAI enemyAI))
+            enemyAI.ApplySettings(_enemySettings);
 
         enemy.Died += OnEnemyDied;
-
-        enemy.ResetEnemy();
     }
 
 
@@ -112,7 +118,6 @@ public class EnemyPool : MonoBehaviour
         if (enemy != null)
         {
             enemy.Died -= OnEnemyDied;
-
             enemy.gameObject.SetActive(false);
         }
     }
@@ -122,7 +127,6 @@ public class EnemyPool : MonoBehaviour
         if (enemy != null)
         {
             enemy.Died -= OnEnemyDied;
-
             Destroy(enemy.gameObject);
         }
     }

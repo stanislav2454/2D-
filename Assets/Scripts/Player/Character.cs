@@ -16,8 +16,6 @@ public class Character : MonoBehaviour
     [SerializeField] private PlayerSettings _playerSettings;
 
     private PlayerHealth _playerHealth;
-    private Rigidbody2D _rigidbody;
-    private GroundDetector _groundDetector;
 
     private void Awake()
     {
@@ -27,8 +25,6 @@ public class Character : MonoBehaviour
         _crawler = GetComponent<Crawler>();
         _attacker = GetComponent<PlayerAttacker>();
         _playerHealth = GetComponent<PlayerHealth>();
-        _rigidbody = GetComponent<Rigidbody2D>();
-        _groundDetector = GetComponent<GroundDetector>();
 
         if (_vampirismAbility == null)
             _vampirismAbility = GetComponentInChildren<VampirismAbility>();
@@ -99,7 +95,9 @@ public class Character : MonoBehaviour
     private void HandleMovement()
     {
         if (_input.HorizontalDirection != 0)
-            _movement.Move(_input.HorizontalDirection, _input.IsCrawlPressed);
+            _movement.MoveCharacter(_input.HorizontalDirection, _input.IsCrawlPressed);
+        else
+            _movement.StopMovement();
     }
 
     private void HandleJump()
