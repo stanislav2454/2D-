@@ -507,7 +507,6 @@ MonoBehaviour:
   _crawler: {fileID: 8875209910760001799}
   _attacker: {fileID: 6050235055221990355}
   _vampirismAbility: {fileID: 3353719827597856834}
-  _animator: {fileID: 3488464703015555491}
   _playerSettings: {fileID: 11400000, guid: f1b91bdfa4633994caa0b46c07e2a650, type: 2}
 --- !u!114 &6921390616635074050
 MonoBehaviour:
@@ -521,10 +520,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5695d0fd211ecfb40a521fe1ae0a84cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _acceleration: 15
+  Acceleration: 15
+  Flipper: {fileID: 5657889954662192325}
   _settings: {fileID: 11400000, guid: f1b91bdfa4633994caa0b46c07e2a650, type: 2}
   _playerView: {fileID: 2351665987133253117}
-  _flipper: {fileID: 5657889954662192325}
 --- !u!114 &5657889954662192325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -550,6 +549,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b172dba1a7427154a8a447fcd5cf4174, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 3488464703015555491}
 --- !u!114 &8328689811286787018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -603,10 +603,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bd1f4f3bfb209149b692fe89acb3460, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _max: 100
   <Current>k__BackingField: 80
-  _testDamageAmount: 10
-  _testHealAmount: 10
+  _settings: {fileID: 11400000, guid: f1b91bdfa4633994caa0b46c07e2a650, type: 2}
 --- !u!114 &6050235055221990355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -905,6 +903,7 @@ GameObject:
   - component: {fileID: 4091904683138248031}
   - component: {fileID: 3374271908544649451}
   - component: {fileID: 2901042694892994746}
+  - component: {fileID: 7717240358788258307}
   m_Layer: 10
   m_Name: Vampirism
   m_TagString: Untagged
@@ -996,7 +995,6 @@ MonoBehaviour:
   _damageTickInterval: 0.2
   _damagePerTick: 2
   _healRatio: 0.5
-  _abilityRadius: 3
   _vampirismZone: {fileID: 707573487663944210}
   _ownerHealth: {fileID: 3528261988038340837}
 --- !u!114 &4091904683138248031
@@ -1048,6 +1046,19 @@ MonoBehaviour:
   _cooldownColor: {r: 0, g: 0, b: 1, a: 1}
   _activeStatusText: Vampirism Ability
   _cooldownStatusText: COOLDOWN
+--- !u!114 &7717240358788258307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8663509809780218984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2c54297250cd864a8fdb1956107cb8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Current>k__BackingField: 0
 --- !u!1 &8798464484430884114
 GameObject:
   m_ObjectHideFlags: 0

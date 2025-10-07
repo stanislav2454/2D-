@@ -18,6 +18,10 @@ MonoBehaviour:
   _detectionRadius: 1.9
   _attackRange: 0.12
   _attackCooldown: 3
+  _attackRangeMarginMultiplier: 1.2
+  _chaseDistanceMultiplier: 1.5
+  _searchDuration: 3
+  _searchReachThreshold: 0.5
   _attackDamage: 2
-  _maxHealth: 100
+  _maxHealth: 70
   _enemyScale: 1

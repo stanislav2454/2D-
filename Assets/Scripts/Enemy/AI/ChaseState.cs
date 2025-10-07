@@ -36,7 +36,7 @@ public class ChaseState : EnemyState
         {
             _lastAttackCheckTime = 0f;
 
-            if (Attacker.CanAttack())
+            if (Attacker.IsAbleToAttack())
             {
                 StateMachine.ChangeState<AttackState>();
                 return;

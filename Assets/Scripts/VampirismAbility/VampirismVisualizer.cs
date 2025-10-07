@@ -35,6 +35,12 @@ public class VampirismVisualizer : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        _timerUI?.UpdateUI();
+        _radiusVisualizer?.UpdateVisualization();
+    }
+
     private void InitializeComponents()
     {
         if (_timerUI != null)
@@ -61,11 +67,5 @@ public class VampirismVisualizer : MonoBehaviour
     {
         _timerUI?.SetActive(false);
         _radiusVisualizer?.SetActive(false);
-    }
-
-    private void Update()
-    {
-        _timerUI?.UpdateUI();
-        _radiusVisualizer?.UpdateVisualization();
     }
 }

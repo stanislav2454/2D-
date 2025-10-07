@@ -35,7 +35,6 @@ public class EnemyAI : MonoBehaviour
 
     private void OnEnable()
     {
-        // Проверяем инициализацию перед подпиской на события
         if (_isInitialized == false)
             InitializeComponents();
 
@@ -45,11 +44,8 @@ public class EnemyAI : MonoBehaviour
             _detector.TargetLost += OnTargetLost;
         }
 
-        // Запускаем состояние только если компоненты инициализированы
         if (_isInitialized && _stateMachine != null)
-        {
             _stateMachine.ChangeState<PatrolState>();
-        }
     }
 
     private void OnDisable()
@@ -81,8 +77,8 @@ public class EnemyAI : MonoBehaviour
             _stateMachine.ChangeState<PatrolState>();
     }
 
-    public void SetPatrolPath(EnemyPath path)    =>
-        _patrolPath = path;    
+    public void SetPatrolPath(EnemyPath path) =>
+        _patrolPath = path;
 
     public void ApplySettings(EnemySettings settings)
     {

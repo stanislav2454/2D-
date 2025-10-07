@@ -29,9 +29,7 @@ public class EnemySpawner : MonoBehaviour
         }
 
         _enemyPool?.ApplySettings(_settings);
-
         _spawnWait = new WaitForSeconds(_settings.spawnInterval);
-
         _enemyPool?.Initialize();
     }
 

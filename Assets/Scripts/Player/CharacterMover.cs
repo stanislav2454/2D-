@@ -9,7 +9,7 @@ public class CharacterMover : BaseMover
     private CharacterAnimator _animator;
     private bool _isCrawling;
 
-    private void Awake()
+    private new void Awake()
     {
         base.Awake();
 

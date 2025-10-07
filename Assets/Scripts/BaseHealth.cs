@@ -3,21 +3,19 @@ using System;
 
 public class BaseHealth : MonoBehaviour, IDamageable, IHealth
 {
-    private const int DefaultValue = 0;
     protected const int MinHealth = 0;
+    private const int DefaultValue = 0;
     private const int MinAllowedMaxHealth = 1;
     private const int MinDamageAmount = 0;
-
-    [SerializeField] private int _max = 100;
 
     public event Action<BaseHealth> Died;
     public event Action<int, int> Changed;
     public event Action Revived;
 
     [field: SerializeField] public int Current { get; protected set; }
-    public int Max => _max;
+    public int Max { get; protected set; } = 100; 
     public bool IsDead { get; private set; }
-    public float Normalized => _max > MinAllowedMaxHealth ? (float)Current / _max : DefaultValue;
+    public float Normalized => Max > MinAllowedMaxHealth ? (float)Current / Max : DefaultValue;
 
     public virtual void Die()
     {
@@ -62,24 +60,22 @@ public class BaseHealth : MonoBehaviour, IDamageable, IHealth
         Changed?.Invoke(Current, Max);
     }
 
+    public virtual void SetMaxHealth(int maxHealth)
+    {
+        if (maxHealth < MinAllowedMaxHealth)
+            return;
+
+        int oldMax = Max;
+        Max = maxHealth;
+
+        if (oldMax != Max)
+        {
+            float healthRatio = oldMax > 0 ? (float)Current / oldMax : 1f;
+            Current = Mathf.RoundToInt(Max * healthRatio);
+            Changed?.Invoke(Current, Max);
+        }
+    }
+
     protected void LimitHealth() =>
         Current = Mathf.Clamp(Current, MinHealth, Max);
-
-#if UNITY_EDITOR
-    [Header("Debug Settings")]
-    [SerializeField] private int _testDamageAmount = 20;
-    [SerializeField] private int _testHealAmount = 10;
-
-    [ContextMenu(nameof(TakeTestDamage))]
-    public void TakeTestDamage() =>
-        TakeDamage(_testDamageAmount);
-
-    [ContextMenu(nameof(TestHeal))]
-    public void TestHeal() =>
-        Heal(_testHealAmount);
-
-    [ContextMenu("Reset Health")]
-    public void EditorResetHealth() =>
-        Init();
-#endif
 }

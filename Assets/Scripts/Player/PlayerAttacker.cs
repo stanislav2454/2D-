@@ -20,33 +20,44 @@ public class PlayerAttacker : BaseAttacker
 
         if (_attackZone == null)
             _attackZone = GetComponentInChildren<AttackZone>();
-
+        //какой способ правильнее, сверху или снизу ?
         if (_animator == null)
             Debug.LogError($"CharacterAnimator Component, not found for \"{GetType().Name}.cs\" on \"{gameObject.name}\" GameObject", this);
     }
 
-    private void OnDisable() =>
+    private new void OnDisable()
+    {
         StopAttacking();
+        base.OnDisable();
+    }
 
     public void StartAttacking()
     {
-        if (_isAttacking || _canAttack == false)
+        if (_isAttacking || CanAttack == false)
             return;
 
         _isAttacking = true;
-        _attackCoroutine = StartCoroutine(AttackRoutine());
+        AttackCoroutine = StartCoroutine(AttackRoutine());
     }
 
     public void StopAttacking()
     {
         _isAttacking = false;
-
-        if (_attackCoroutine != null)
-        {
-            StopCoroutine(_attackCoroutine);
-            _attackCoroutine = null;
-        }
+        StopAttackCoroutine();
     }
+
+    public override void PerformAttack()
+    {
+        int totalDamageDealt = CalculateDamageToTargets(_attackZone, AttackDamage);
+        OnAttackPerformed(totalDamageDealt);
+        _animator?.PlayAttackAnimation();
+    }
+
+    public override bool IsAbleToAttack() =>
+        CanAttack && _attackZone != null && _attackZone.TargetsInZoneCount > 0;
+
+    public void ApplyPlayerSettings(PlayerSettings settings) =>
+        _playerSettings = settings;
 
     private IEnumerator AttackRoutine()
     {
@@ -73,13 +84,6 @@ public class PlayerAttacker : BaseAttacker
         }
     }
 
-    public override void PerformAttack()
-    {
-        int totalDamageDealt = CalculateDamageToTargets(_attackZone, AttackDamage);
-        OnAttackPerformed(totalDamageDealt);
-        _animator?.PlayAttackAnimation();
-    }
-
     private int CalculateDamageToTargets(AttackZone attackZone, int damage)
     {
         int totalDamageDealt = 0;
@@ -95,10 +99,4 @@ public class PlayerAttacker : BaseAttacker
 
         return totalDamageDealt;
     }
-
-    public override bool CanAttack() =>
-        _canAttack && _attackZone != null && _attackZone.TargetsInZoneCount > 0;
-
-    public void ApplyPlayerSettings(PlayerSettings settings) =>
-        _playerSettings = settings;
 }

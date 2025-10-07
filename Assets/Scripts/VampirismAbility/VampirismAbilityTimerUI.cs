@@ -30,19 +30,6 @@ public class VampirismAbilityTimerUI : MonoBehaviour
         SetupUI();
     }
 
-    private void SetupUI()
-    {
-        if (_timerSlider != null)
-        {
-            _timerSlider.minValue = SliderMinValue;
-            _timerSlider.maxValue = SliderMaxValue;
-            _timerSlider.gameObject.SetActive(false);
-        }
-
-        if (_timerText != null)
-            _timerText.gameObject.SetActive(false);
-    }
-
     public void SetActive(bool active)
     {
         _isActive = active;
@@ -83,6 +70,19 @@ public class VampirismAbilityTimerUI : MonoBehaviour
             float seconds = _ability.GetRemainingTime();
             UpdateTimerDisplay(progress, _cooldownStatusText, seconds);
         }
+    }
+
+    private void SetupUI()
+    {
+        if (_timerSlider != null)
+        {
+            _timerSlider.minValue = SliderMinValue;
+            _timerSlider.maxValue = SliderMaxValue;
+            _timerSlider.gameObject.SetActive(false);
+        }
+
+        if (_timerText != null)
+            _timerText.gameObject.SetActive(false);
     }
 
     private void UpdateTimerDisplay(float progress, string status, float seconds)

@@ -60,12 +60,6 @@ public class EnemyMover : BaseMover
         _isChasing = true;
     }
 
-    public void UpdateChaseTarget(Vector2 target)
-    {
-        if (_isChasing)
-            _chaseTarget = target;
-    }
-
     public void ApplySettings(EnemySettings settings)
     {
         _settings = settings;

@@ -38,14 +38,14 @@ public class SearchState : EnemyState
         }
     }
 
+    public override void Exit()
+    {
+        Mover.StopMovement();
+    }
+
     private bool HasReachedLastPosition()
     {
         float sqrDistance = ((Vector2)EnemyAI.transform.position - _lastKnownPosition).sqrMagnitude;
         return sqrDistance < _sqrSearchReachThreshold;
-    }
-
-    public override void Exit()
-    {
-        Mover.StopMovement();
     }
 }

@@ -27,6 +27,11 @@ public class PatrolState : EnemyState
             StateMachine.ChangeState<ChaseState>();
     }
 
+    public override void Exit()
+    {
+        Mover.StopMovement();
+    }
+
     private void PatrolBehavior()
     {
         if (EnemyAI.PatrolPath == null || EnemyAI.PatrolPath.Count == 0)
@@ -35,12 +40,7 @@ public class PatrolState : EnemyState
         Transform waypoint = EnemyAI.PatrolPath.GetWaypoint(_currentWaypointIndex);
         Mover.MoveToTarget(waypoint.position);
 
-        if (Vector2.SqrMagnitude(EnemyAI.transform.position - waypoint.position) < _sqrWaypointReachThreshold)        
-            _currentWaypointIndex = (_currentWaypointIndex + 1) % EnemyAI.PatrolPath.Count;        
-    }
-
-    public override void Exit()
-    {
-        Mover.StopMovement();
+        if (Vector2.SqrMagnitude(EnemyAI.transform.position - waypoint.position) < _sqrWaypointReachThreshold)
+            _currentWaypointIndex = (_currentWaypointIndex + 1) % EnemyAI.PatrolPath.Count;
     }
 }

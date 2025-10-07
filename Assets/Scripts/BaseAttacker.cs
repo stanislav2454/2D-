@@ -6,50 +6,53 @@ public abstract class BaseAttacker : MonoBehaviour
     protected const float TargetCheckInterval = 0.1f;
     protected const float MinAttackRange = 0.01f;
 
-    protected bool _canAttack = true;
-    protected float _sqrAttackRange;
-    protected Coroutine _attackCoroutine;
+    protected bool CanAttack = true;
+    protected float SqrAttackRange;
+    protected Coroutine AttackCoroutine;
 
     protected abstract int AttackDamage { get; }
     protected abstract float AttackCooldown { get; }
     protected abstract float AttackRange { get; }
 
-    public event System.Action<int> AttackPerformed;
-    public event System.Action<int> OnDamageDealt;
+    public event System.Action<int> AttackStarted;
 
     protected virtual void Awake()
     {
         CalculateSqrAttackRange();
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
-        if (_attackCoroutine != null)
+        StopAttackCoroutine();
+    }
+
+    protected void StopAttackCoroutine()
+    {
+        if (AttackCoroutine != null)
         {
-            StopCoroutine(_attackCoroutine);
-            _attackCoroutine = null;
+            StopCoroutine(AttackCoroutine);
+            AttackCoroutine = null;
         }
     }
 
     protected void CalculateSqrAttackRange()
     {
         float range = Mathf.Max(AttackRange, MinAttackRange);
-        _sqrAttackRange = range * range;
+        SqrAttackRange = range * range;
     }
 
     protected IEnumerator AttackCooldownRoutine()
     {
-        _canAttack = false;
+        CanAttack = false;
         yield return new WaitForSeconds(AttackCooldown);
-        _canAttack = true;
+        CanAttack = true;
     }
 
     protected virtual void OnAttackPerformed(int damageDealt)
     {
-        AttackPerformed?.Invoke(damageDealt);
-        OnDamageDealt?.Invoke(damageDealt);
+        AttackStarted?.Invoke(damageDealt);
     }
 
-    public abstract bool CanAttack();
+    public abstract bool IsAbleToAttack();
     public abstract void PerformAttack();
 }

@@ -6,14 +6,15 @@ public class EnemyHealth : BaseHealth
 
     public override void Init()
     {
-        base.Init();
-
         if (_settings != null)
-            Current = _settings.MaxHealth;
+            SetMaxHealth(_settings.MaxHealth); 
+
+        base.Init();
     }
 
     public void ApplySettings(EnemySettings settings)
     {
         _settings = settings;
+        SetMaxHealth(_settings.MaxHealth);
     }
 }

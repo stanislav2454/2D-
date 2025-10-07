@@ -13,13 +13,14 @@ public class EnemyAttacker : BaseAttacker
 
     private void OnEnable()
     {
-        _canAttack = true;
+        CanAttack = true;
         _isAttacking = false;
     }
 
-    private void OnDisable()
+    private new void OnDisable()
     {
         StopAttacking();
+        base.OnDisable();
     }
 
     public void Initialize(Transform player) =>
@@ -31,18 +32,13 @@ public class EnemyAttacker : BaseAttacker
             return;
 
         _isAttacking = true;
-        _attackCoroutine = StartCoroutine(AttackRoutine());
+        AttackCoroutine = StartCoroutine(AttackRoutine());
     }
 
     public void StopAttacking()
     {
         _isAttacking = false;
-
-        if (_attackCoroutine != null)
-        {
-            StopCoroutine(_attackCoroutine);
-            _attackCoroutine = null;
-        }
+        StopAttackCoroutine();
     }
 
     public void ApplyEnemySettings(EnemySettings settings)
@@ -51,21 +47,21 @@ public class EnemyAttacker : BaseAttacker
         CalculateSqrAttackRange();
     }
 
-    public override bool CanAttack()
+    public override bool IsAbleToAttack()
     {
         if (_player == null)
             return false;
 
-        return Vector2.SqrMagnitude(_player.position - transform.position) <= _sqrAttackRange;
+        return Vector2.SqrMagnitude(_player.position - transform.position) <= SqrAttackRange;
     }
 
     public override void PerformAttack()
     {
-        if (_canAttack && _player != null && _enemySettings != null)
+        if (CanAttack && _player != null && _enemySettings != null)
         {
             int damageDealt = AttackPlayer();
-            _canAttack = false; 
-            StartCoroutine(ResetAttackCooldown()); 
+            CanAttack = false;
+            StartCoroutine(ResetAttackCooldown());
             OnAttackPerformed(damageDealt);
         }
     }
@@ -76,7 +72,7 @@ public class EnemyAttacker : BaseAttacker
 
         while (_isAttacking)
         {
-            if (CanAttack())
+            if (IsAbleToAttack())
             {
                 PerformAttack();
                 yield return new WaitForSeconds(AttackCooldown);
@@ -91,7 +87,7 @@ public class EnemyAttacker : BaseAttacker
     private IEnumerator ResetAttackCooldown()
     {
         yield return new WaitForSeconds(AttackCooldown);
-        _canAttack = true;
+        CanAttack = true;
     }
 
     private int AttackPlayer()
