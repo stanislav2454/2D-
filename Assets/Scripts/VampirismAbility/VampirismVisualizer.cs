@@ -1,38 +1,33 @@
 ﻿using UnityEngine;
 
-[DisallowMultipleComponent, RequireComponent(typeof(VampirismAbility))]
+[DisallowMultipleComponent]
 public class VampirismVisualizer : MonoBehaviour
 {
     [Header("Visualization Components")]
     [SerializeField] private VampirismAbilityTimerUI _timerUI;
     [SerializeField] private AbilityRadiusVisualizer _radiusVisualizer;
 
-    private VampirismAbility _vampirismAbility;
-
-    private void Awake()
+    private void Start()
     {
-        _vampirismAbility = GetComponent<VampirismAbility>();
-        InitializeComponents();
-    }
+        var ability = GetComponent<VampirismAbility>();
 
-    private void OnEnable()
-    {
-        if (_vampirismAbility != null)
+        if (ability != null)
         {
-            _vampirismAbility.AbilityStarted += OnAbilityStarted;
-            _vampirismAbility.AbilityEnded += OnAbilityEnded;
-            _vampirismAbility.AbilityReady += OnAbilityReady;
+            InitializeWithAbility(ability);
         }
     }
 
-    private void OnDisable()
+    public void InitializeWithAbility(VampirismAbility ability)
     {
-        if (_vampirismAbility != null)
-        {
-            _vampirismAbility.AbilityStarted -= OnAbilityStarted;
-            _vampirismAbility.AbilityEnded -= OnAbilityEnded;
-            _vampirismAbility.AbilityReady -= OnAbilityReady;
-        }
+        if (_timerUI != null)
+            _timerUI.Initialize(ability);
+
+        if (_radiusVisualizer != null)
+            _radiusVisualizer.Initialize(ability);
+
+        ability.AbilityStarted += OnAbilityStarted;
+        ability.AbilityEnded += OnAbilityEnded;
+        ability.AbilityReady += OnAbilityReady;
     }
 
     private void Update()
@@ -41,27 +36,25 @@ public class VampirismVisualizer : MonoBehaviour
         _radiusVisualizer?.UpdateVisualization();
     }
 
-    private void InitializeComponents()
+    private void OnDestroy()
     {
-        if (_timerUI != null)
-            _timerUI.Initialize(_vampirismAbility);
+        var ability = GetComponent<VampirismAbility>();
 
-        if (_radiusVisualizer != null)
-            _radiusVisualizer.Initialize(_vampirismAbility);
+        if (ability != null)
+        {
+            ability.AbilityStarted -= OnAbilityStarted;
+            ability.AbilityEnded -= OnAbilityEnded;
+            ability.AbilityReady -= OnAbilityReady;
+        }
     }
 
     private void OnAbilityStarted()
     {
         _timerUI?.SetActive(true);
-        _timerUI?.SetActiveState();
         _radiusVisualizer?.SetActive(true);
     }
 
-    private void OnAbilityEnded()
-    {
-        _timerUI?.SetCooldownState();
-        _radiusVisualizer?.SetCooldownState();
-    }
+    private void OnAbilityEnded()    {    }
 
     private void OnAbilityReady()
     {

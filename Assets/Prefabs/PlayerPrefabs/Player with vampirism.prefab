@@ -903,7 +903,6 @@ GameObject:
   - component: {fileID: 4091904683138248031}
   - component: {fileID: 3374271908544649451}
   - component: {fileID: 2901042694892994746}
-  - component: {fileID: 7717240358788258307}
   m_Layer: 10
   m_Name: Vampirism
   m_TagString: Untagged
@@ -990,11 +989,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fb483b6cbeadc348ab8079f23549362, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _abilityDuration: 6
-  _abilityCooldown: 4
-  _damageTickInterval: 0.2
-  _damagePerTick: 2
-  _healRatio: 0.5
+  _settings:
+    _duration: 6
+    _cooldown: 4
+    _tickInterval: 0.2
+    _damagePerTick: 2
+    _healRatio: 0.5
   _vampirismZone: {fileID: 707573487663944210}
   _ownerHealth: {fileID: 3528261988038340837}
 --- !u!114 &4091904683138248031
@@ -1024,9 +1024,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _radiusSprite: {fileID: 7568643214765933874}
-  _radiusScale: 3.5
-  _activeColor: {r: 1, g: 0, b: 0, a: 0.078431375}
-  _cooldownColor: {r: 0.4430349, g: 0.38995194, b: 0.6509434, a: 0.12941177}
+  _settings:
+    radiusScale: 5
+    pulseSpeed: 1.8
+    pulseAmplitude: 0.2
+    activeColor: {r: 1, g: 0, b: 0, a: 0.3}
+    cooldownColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.2}
+    readyColor: {r: 0, g: 1, b: 0, a: 0.1}
 --- !u!114 &2901042694892994746
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1042,23 +1046,13 @@ MonoBehaviour:
   _timerSlider: {fileID: 5992226097189838769}
   _timerText: {fileID: 4061045471530377534}
   _sliderFillImage: {fileID: 6984891310536823786}
-  _activeColor: {r: 1, g: 0, b: 0, a: 1}
-  _cooldownColor: {r: 0, g: 0, b: 1, a: 1}
+  _colors:
+    activeColor: {r: 1, g: 0, b: 0, a: 1}
+    cooldownColor: {r: 0, g: 0, b: 1, a: 1}
+    readyColor: {r: 0, g: 1, b: 0, a: 1}
   _activeStatusText: Vampirism Ability
   _cooldownStatusText: COOLDOWN
---- !u!114 &7717240358788258307
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8663509809780218984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2c54297250cd864a8fdb1956107cb8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <Current>k__BackingField: 0
+  _readyStatusText: READY
 --- !u!1 &8798464484430884114
 GameObject:
   m_ObjectHideFlags: 0

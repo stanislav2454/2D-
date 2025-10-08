@@ -2,20 +2,26 @@
 
 public class AbilityRadiusVisualizer : MonoBehaviour
 {
-    private const float PulseAnimationSpeed = 1.8f;
-    private const float PulseAnimationAmplitude = 1.2f;
-    private const float BaseScaleMultiplier = 1f;
+    [System.Serializable]
+    public class VisualSettings
+    {
+        public float radiusScale = 5f;
+        public float pulseSpeed = 1.8f;
+        public float pulseAmplitude = 0.2f;
+        public Color activeColor = new Color(1f, 0f, 0f, 0.3f);
+        public Color cooldownColor = new Color(0.5f, 0.5f, 0.5f, 0.2f);
+        public Color readyColor = new Color(0f, 1f, 0f, 0.1f);
+    }
 
-    [Header("Radius Visualization")]
+    [Header("Components")]
     [SerializeField] private SpriteRenderer _radiusSprite;
-    [SerializeField] private float _radiusScale = 5f;
 
-    [Header("Colors")]
-    [SerializeField] private Color _activeColor = new Color(1f, 0f, 0f, 0.3f);
-    [SerializeField] private Color _cooldownColor = new Color(0.5f, 0.5f, 0.5f, 0.2f);
+    [Header("Settings")]
+    [SerializeField] private VisualSettings _settings = new VisualSettings();
 
-    private bool _isActive;
     private VampirismAbility _ability;
+    private bool _isActive;
+    private Vector3 _baseScale;
 
     public void Initialize(VampirismAbility ability)
     {
@@ -30,31 +36,43 @@ public class AbilityRadiusVisualizer : MonoBehaviour
         if (_radiusSprite != null)
         {
             _radiusSprite.enabled = active;
-            _radiusSprite.color = active ? _activeColor : _cooldownColor;
+            UpdateColor();
         }
-    }
-
-    public void SetCooldownState()
-    {
-        if (_radiusSprite != null)
-            _radiusSprite.color = _cooldownColor;
     }
 
     public void UpdateVisualization()
     {
-        if (_isActive == false || _radiusSprite == null || _ability.IsAbilityActive == false)
+        if (_isActive == false || _radiusSprite == null)
             return;
 
-        float pulse = Mathf.PingPong(Time.time * PulseAnimationSpeed, PulseAnimationAmplitude) + BaseScaleMultiplier;
-        _radiusSprite.transform.localScale = Vector3.one * (_radiusScale * pulse);
+        if (_ability.IsAbilityActive)
+        {
+            float pulse = Mathf.PingPong(Time.time * _settings.pulseSpeed, _settings.pulseAmplitude) + 1f;
+            _radiusSprite.transform.localScale = _baseScale * pulse;
+        }
+        else
+        {
+            _radiusSprite.transform.localScale = _baseScale;
+        }
+    }
+
+    private void UpdateColor()
+    {
+        if (_radiusSprite == null)
+            return;
+
+        _radiusSprite.color = _ability.IsAbilityActive ? _settings.activeColor :
+                             _ability.IsAbilityReady ? _settings.readyColor :
+                             _settings.cooldownColor;
     }
 
     private void SetupRadiusVisualization()
     {
         if (_radiusSprite != null)
         {
-            _radiusSprite.transform.localScale = Vector3.one * _radiusScale;
-            _radiusSprite.color = _cooldownColor;
+            _baseScale = Vector3.one * _settings.radiusScale;
+            _radiusSprite.transform.localScale = _baseScale;
+            UpdateColor();
             _radiusSprite.enabled = false;
         }
     }

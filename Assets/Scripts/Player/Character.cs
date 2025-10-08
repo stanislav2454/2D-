@@ -68,7 +68,7 @@ public class Character : MonoBehaviour
 
             if (_playerSettings.VampirismDuration > 0)
             {
-                _vampirismAbility.ApplyVampirismSettings(
+                _vampirismAbility.ApplySettings(
                     _playerSettings.VampirismDuration,
                     _playerSettings.VampirismCooldown,
                     _playerSettings.VampirismTickInterval,

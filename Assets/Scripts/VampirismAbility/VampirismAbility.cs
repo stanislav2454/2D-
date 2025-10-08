@@ -1,54 +1,78 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[DisallowMultipleComponent, RequireComponent(typeof(BaseHealth))]
 public class VampirismAbility : MonoBehaviour
 {
-    #region ConstantsRegion
-    private const float MinAbilityDuration = 0.1f;
-    private const float MinCooldown = 0.1f;
-    private const float MinTickInterval = 0.05f;
-    private const int MinDamagePerTick = 1;
-    private const float MinHealRatio = 0f;
-    private const float MaxHealRatio = 1f;
-    private const float ZeroDurationThreshold = 0f;
-    private const float NormalizedMin = 0f;
-    private const float NormalizedMax = 1f;
-    private const float CooldownCompleteThreshold = 1f;
-    private const float TimeRemainingThreshold = 0f;
-    #endregion
+    [System.Serializable]
+    public class AbilitySettings
+    {
+        private const float MinDuration = 0.1f;
+        private const float MinCooldown = 0.1f;
+        private const float MinTickInterval = 0.05f;
+        private const int MinDamage = 1;
 
-    #region FieldsRegion
-    [Header("Ability Settings")]
-    [SerializeField] private float _abilityDuration = 6f;
-    [SerializeField] private float _abilityCooldown = 4f;
-    [SerializeField] private float _damageTickInterval = 0.2f;
-    [SerializeField] private int _damagePerTick = 2;
-    [SerializeField] [Range(0f, 1f)] private float _healRatio = 0.5f;
+        [SerializeField] private float _duration = 6f;
+        [SerializeField] private float _cooldown = 4f;
+        [SerializeField] private float _tickInterval = 0.2f;
+        [SerializeField] private int _damagePerTick = 2;
+        [SerializeField, Range(0f, 1f)] private float _healRatio = 0.5f;
+
+        public float Duration => _duration;
+        public float Cooldown => _cooldown;
+        public float TickInterval => _tickInterval;
+        public int DamagePerTick => _damagePerTick;
+        public float HealRatio => _healRatio;
+
+        public void SetDuration(float duration) =>
+            _duration = Mathf.Max(duration, MinDuration);
+
+        public void SetCooldown(float cooldown) =>
+            _cooldown = Mathf.Max(cooldown, MinCooldown);
+
+        public void SetTickInterval(float interval) =>
+            _tickInterval = Mathf.Max(interval, MinTickInterval);
+
+        public void SetDamagePerTick(int damage) =>
+            _damagePerTick = Mathf.Max(damage, MinDamage);
+
+        public void SetHealRatio(float ratio) =>
+            _healRatio = Mathf.Clamp01(ratio);
+    }
+
+    [Header("Settings")]
+    [SerializeField] private AbilitySettings _settings = new AbilitySettings();
 
     [Header("References")]
     [SerializeField] private AttackZone _vampirismZone;
     [SerializeField] private BaseHealth _ownerHealth;
 
-    private bool _isAbilityActive = false;
-    private bool _isAbilityReady = true;
-    private float _abilityTimer;
-    private float _cooldownTimer;
+    private CooldownTimer _abilityTimer;
+    private CooldownTimer _cooldownTimer;
     private Coroutine _abilityCoroutine;
-    private Transform _ownerTransform;
-    #endregion
 
     public event System.Action AbilityStarted;
     public event System.Action AbilityEnded;
     public event System.Action AbilityReady;
 
-    public bool IsAbilityActive => _isAbilityActive;
-    public bool IsAbilityReady => _isAbilityReady;
+    public bool IsAbilityActive => _abilityTimer.IsActive;
+    public bool IsAbilityReady => _cooldownTimer.IsReady && _abilityTimer.IsActive == false;
+    public float AbilityProgressNormalized => _abilityTimer.ProgressNormalized;
+    public float CooldownProgressNormalized => _cooldownTimer.ProgressNormalized;
+    public float RemainingTime => _abilityTimer.IsActive ? _abilityTimer.RemainingTime : _cooldownTimer.RemainingTime;
+
+    public AttackZone VampirismZone => _vampirismZone;
+    public AbilitySettings Settings => _settings;
 
     private void Awake()
     {
-        InitializeReferences();
+        InitializeComponents();
         ValidateSettings();
+    }
+
+    private void Update()
+    {
+        _abilityTimer.Update(Time.deltaTime);
+        _cooldownTimer.Update(Time.deltaTime);
     }
 
     private void OnDisable()
@@ -56,21 +80,12 @@ public class VampirismAbility : MonoBehaviour
         StopAbility();
     }
 
-    private void Update()
-    {
-        UpdateTimers();
-    }
-
     public void StartAbility()
     {
-        if (_isAbilityActive || _isAbilityReady == false)
+        if (_abilityTimer.IsActive || _cooldownTimer.IsReady == false)
             return;
 
-        _isAbilityActive = true;
-        _isAbilityReady = false;
-        _abilityTimer = ZeroDurationThreshold;
-        _cooldownTimer = ZeroDurationThreshold;
-
+        _abilityTimer.Start();
         AbilityStarted?.Invoke();
 
         if (_abilityCoroutine != null)
@@ -81,9 +96,9 @@ public class VampirismAbility : MonoBehaviour
 
     public void StopAbility()
     {
-        if (_isAbilityActive)
+        if (_abilityTimer.IsActive)
         {
-            _isAbilityActive = false;
+            _abilityTimer.Stop();
             AbilityEnded?.Invoke();
         }
 
@@ -94,100 +109,58 @@ public class VampirismAbility : MonoBehaviour
         }
     }
 
-    public float GetRemainingTimeNormalized()
+    public void ApplySettings(float duration, float cooldown, float tickInterval, int damagePerTick, float healRatio)
     {
-        if (_isAbilityActive == false)
-            return NormalizedMin;
+        _settings.SetDuration(duration);
+        _settings.SetCooldown(cooldown);
+        _settings.SetTickInterval(tickInterval);
+        _settings.SetDamagePerTick(damagePerTick);
+        _settings.SetHealRatio(healRatio);
 
-        return NormalizedMax - (_abilityTimer / _abilityDuration);
+        _abilityTimer.SetDuration(_settings.Duration);
+        _cooldownTimer.SetDuration(_settings.Cooldown);
     }
 
-    public float GetCooldownProgressNormalized()
+    private void InitializeComponents()
     {
-        if (_isAbilityReady)
-            return CooldownCompleteThreshold;
-
-        return _cooldownTimer / _abilityCooldown;
-    }
-
-    public float GetRemainingTime()
-    {
-        if (_isAbilityActive)
-            return Mathf.Max(TimeRemainingThreshold, _abilityDuration - _abilityTimer);
-        else if (_isAbilityReady == false)
-            return Mathf.Max(TimeRemainingThreshold, _abilityCooldown - _cooldownTimer);
-        else
-            return TimeRemainingThreshold;
-    }
-
-    public void ApplyVampirismSettings(float duration, float cooldown, float tickInterval, int damagePerTick, float healRatio)
-    {
-        _abilityDuration = duration;
-        _abilityCooldown = cooldown;
-        _damageTickInterval = tickInterval;
-        _damagePerTick = damagePerTick;
-        _healRatio = healRatio;
-    }
-
-    private void InitializeReferences()
-    {
-        if (_vampirismZone == null)
-            _vampirismZone = GetComponentInChildren<AttackZone>();
-
-        if (_ownerHealth == null)
-            _ownerHealth = GetComponent<BaseHealth>();
-
-        _ownerTransform = transform;
+        _abilityTimer = new CooldownTimer(_settings.Duration);
+        _cooldownTimer = new CooldownTimer(_settings.Cooldown);
     }
 
     private void ValidateSettings()
     {
-        _abilityDuration = Mathf.Max(_abilityDuration, MinAbilityDuration);
-        _abilityCooldown = Mathf.Max(_abilityCooldown, MinCooldown);
-        _damageTickInterval = Mathf.Max(_damageTickInterval, MinTickInterval);
-        _damagePerTick = Mathf.Max(_damagePerTick, MinDamagePerTick);
-        _healRatio = Mathf.Clamp(_healRatio, MinHealRatio, MaxHealRatio);
-
         if (_vampirismZone == null)
-            Debug.LogError($"AttackZone Component, not found for \"{GetType().Name}.cs\" on \"{gameObject.name}\" GameObject", this);
-    }
+            Debug.LogError($"AttackZone not found for {GetType().Name} on {gameObject.name}", this);
 
-    private void UpdateTimers()
-    {
-        if (_isAbilityActive)
-            _abilityTimer += Time.deltaTime;
-        else if (_isAbilityReady == false)
-            _cooldownTimer += Time.deltaTime;
+        if (_ownerHealth == null)
+            Debug.LogError($"BaseHealth not found for {GetType().Name} on {gameObject.name}", this);
     }
 
     private IEnumerator VampirismRoutine()
     {
-        float abilityTimer = ZeroDurationThreshold;
-
-        while (abilityTimer < _abilityDuration && _isAbilityActive)
+        while (_abilityTimer.IsActive)
         {
-            IDamageable nearestTarget = _vampirismZone?.FindNearestTarget(transform.position);
+            var nearestTarget = _vampirismZone?.FindNearestTarget(transform.position);
 
             if (nearestTarget != null)
             {
-                int damageDealt = nearestTarget.TakeDamage(_damagePerTick);
+                int damageDealt = nearestTarget.TakeDamage(_settings.DamagePerTick);
 
                 if (damageDealt > 0)
                 {
-                    int healAmount = Mathf.RoundToInt(damageDealt * _healRatio);
+                    int healAmount = Mathf.RoundToInt(damageDealt * _settings.HealRatio);
                     _ownerHealth.Heal(healAmount);
                 }
             }
 
-            abilityTimer += _damageTickInterval;
-            yield return new WaitForSeconds(_damageTickInterval);
+            yield return new WaitForSeconds(_settings.TickInterval);
         }
 
-        _isAbilityActive = false;
         AbilityEnded?.Invoke();
+        _cooldownTimer.Start();
 
-        yield return new WaitForSeconds(_abilityCooldown);
-        _isAbilityReady = true;
+        yield return new WaitUntil(() => _cooldownTimer.IsReady);
+
         AbilityReady?.Invoke();
     }
 }

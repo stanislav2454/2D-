@@ -4,9 +4,13 @@ using UnityEngine.UI;
 
 public class VampirismAbilityTimerUI : MonoBehaviour
 {
-    private const float SliderMinValue = 0f;
-    private const float SliderMaxValue = 1f;
-    private const string _timerFormat = "{0}\n{1:F1}s";
+    [System.Serializable]
+    public class UIColors
+    {
+        public Color activeColor = Color.red;
+        public Color cooldownColor = Color.blue;
+        public Color readyColor = Color.green;
+    }
 
     [Header("UI References")]
     [SerializeField] private Slider _timerSlider;
@@ -14,12 +18,12 @@ public class VampirismAbilityTimerUI : MonoBehaviour
     [SerializeField] private Image _sliderFillImage;
 
     [Header("Colors")]
-    [SerializeField] private Color _activeColor = Color.red;
-    [SerializeField] private Color _cooldownColor = Color.blue;
+    [SerializeField] private UIColors _colors = new UIColors();
 
     [Header("Text Settings")]
     [SerializeField] private string _activeStatusText = "ACTIVE";
     [SerializeField] private string _cooldownStatusText = "COOLDOWN";
+    [SerializeField] private string _readyStatusText = "READY";
 
     private VampirismAbility _ability;
     private bool _isActive;
@@ -41,48 +45,63 @@ public class VampirismAbilityTimerUI : MonoBehaviour
             _timerText.gameObject.SetActive(active);
     }
 
-    public void SetActiveState()
-    {
-        if (_sliderFillImage != null)
-            _sliderFillImage.color = _activeColor;
-    }
-
-    public void SetCooldownState()
-    {
-        if (_sliderFillImage != null)
-            _sliderFillImage.color = _cooldownColor;
-    }
-
     public void UpdateUI()
     {
         if (_ability == null || _isActive == false)
             return;
 
+        float progress;
+        string status;
+        float seconds;
+
         if (_ability.IsAbilityActive)
         {
-            float progress = _ability.GetRemainingTimeNormalized();
-            float seconds = _ability.GetRemainingTime();
-            UpdateTimerDisplay(progress, _activeStatusText, seconds);
+            progress = _ability.AbilityProgressNormalized;
+            seconds = _ability.RemainingTime;
+            status = _activeStatusText;
+            SetColor(_colors.activeColor);
         }
         else if (_ability.IsAbilityReady == false)
         {
-            float progress = _ability.GetCooldownProgressNormalized();
-            float seconds = _ability.GetRemainingTime();
-            UpdateTimerDisplay(progress, _cooldownStatusText, seconds);
+            progress = _ability.CooldownProgressNormalized;
+            seconds = _ability.RemainingTime;
+            status = _cooldownStatusText;
+            SetColor(_colors.cooldownColor);
         }
+        else
+        {
+            progress = 1f;
+            seconds = 0f;
+            status = _readyStatusText;
+            SetColor(_colors.readyColor);
+        }
+
+        UpdateTimerDisplay(progress, status, seconds);
+    }
+
+    private void SetColor(Color color)
+    {
+        if (_sliderFillImage != null)
+            _sliderFillImage.color = color;
     }
 
     private void SetupUI()
     {
         if (_timerSlider != null)
         {
-            _timerSlider.minValue = SliderMinValue;
-            _timerSlider.maxValue = SliderMaxValue;
+            _timerSlider.minValue = 0f;
+            _timerSlider.maxValue = 1f;
+            _timerSlider.value = 1f;
             _timerSlider.gameObject.SetActive(false);
         }
 
         if (_timerText != null)
+        {
+            _timerText.text = $"{_readyStatusText}\n0.0s";
             _timerText.gameObject.SetActive(false);
+        }
+
+        SetColor(_colors.readyColor);
     }
 
     private void UpdateTimerDisplay(float progress, string status, float seconds)
@@ -91,6 +110,6 @@ public class VampirismAbilityTimerUI : MonoBehaviour
             _timerSlider.value = progress;
 
         if (_timerText != null)
-            _timerText.text = string.Format(_timerFormat, status, seconds);
+            _timerText.text = $"{status}\n{seconds:F1}s";
     }
 }
